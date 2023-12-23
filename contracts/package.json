@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "yarn hardhat clean && yarn hardhat compile && yarn hardhat test",
-    "lint" : "yarn eslint *.ts ."
+    "testNoC": "yarn hardhat test", 
+    "c": "yarn hardhat compile",
+    "lint": "yarn eslint *.ts ."
   },
   "license": "MIT",
   "devDependencies": {
@@ -36,8 +38,8 @@
     "@openzeppelin/contracts": "^5.0.1",
     "eslint": "^8.56.0"
   },
-  "prettier" : {
-    "semi": false ,
+  "prettier": {
+    "semi": false,
     "tabWidth": 2,
     "useTabs": true
   }
