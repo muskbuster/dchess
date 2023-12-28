@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 import { Chess } from "./Chess.sol";
 import { Engine } from "./Engine.sol";
-import {FONA} from "./fiveOutOfNineArt.sol";
+import {fiveoutofnineART} from "./fiveOutOfNineArt.sol";
 
 
 
@@ -78,7 +78,7 @@ contract fiveoutofnine is ERC721, Ownable {
     }
 
     function _tokenURI(uint256 _tokenId) public view returns (string memory) {
-        string memory metaData =  FONA.getMetadata(tokenInternalIds[_tokenId], tokenMoves[_tokenId]);
+        string memory metaData =  fiveoutofnineART.getMetadata(tokenInternalIds[_tokenId], tokenMoves[_tokenId]);
         return metaData;
     }
 

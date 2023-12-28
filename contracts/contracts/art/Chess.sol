@@ -24,7 +24,7 @@ import {Engine} from "./Engine.sol";
 /// The board is an 8x8 representation of a 6x6 chess board. For efficiency, all information is
 /// bitpacked into a single uint256. Thus, unlike typical implementations, board positions are
 /// accessed via bit shifts and bit masks, as opposed to array accesses. Since each piece is 4 bits,
-/// there are 64 ``indices'' to access:
+/// there are 64 ``indices'' to access: # 256bit interger, 4 bits per piece each 4bits represents a slot on the board
 ///                                     63 62 61 60 59 58 57 56
 ///                                     55 54 53 52 51 50 49 48
 ///                                     47 46 45 44 43 42 41 40
@@ -34,8 +34,14 @@ import {Engine} from "./Engine.sol";
 ///                                     15 14 13 12 11 10 09 08
 ///                                     07 06 05 04 03 02 01 00
 /// All numbers in the figure above are in decimal representation.
-/// For example, the piece at index 27 is accessed with ``(board >> (27 << 2)) & 0xF''.
-///
+/// For example, the piece at index 27 is accessed with ``(board >> (27 << 2)) & 0xF''. 
+
+/// 00... 0110 # Board with black king at index 00
+/// 00... 0110 >> 0 << 2 & 1111
+///  00... 0110 >> 0  =  00...0110 
+//// 00... 0110 << 2  -> 00 ... 01100  
+//// 00 ... 0000 1100 & (1111) -> 0000 1100
+/// 
 /// The top/bottom rows and left/right columns are treated as sentinel rows/columns for efficient
 /// boundary validation (see {Chess-generateMoves} and {Chess-isValid}). i.e., (63, ..., 56),
 /// (07, ..., 00), (63, ..., 07), and (56, ..., 00) never contain pieces. Every bit in those rows
