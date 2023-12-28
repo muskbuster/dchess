@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Elo} from "./library/Elo.sol";
 import {fiveoutofnineART, Chess} from "./art/fiveOutOfNineArt.sol";
 
-contract Board is ERC721{
+contract Board is ERC721, Ownable{
     uint256 constant TOKEN_PRICE = 0.02 ether; // Token price of minting an NFT for a solved puzzle
     uint256 constant CREATOR_SPLIT = 15; // Percent of token price that goes to creator (e.g. 15 = 15%)
+    uint256 constant K_FACTOR = 25e18; //  How quickly elo is adjusted
+    uint256 constant RATING_FLOOR = 100e18; // Minimum rating a person or puzzle can have
     uint16 public puzzleCounter;
     uint256 public tokenCount; 
 
@@ -35,8 +38,9 @@ contract Board is ERC721{
     error PuzzleNotSolved(uint16 puzzleId);
     error TokenDoesNotExist(uint256 tokenId);
     error NotEnoughEtherSent(uint256 amountSent, uint256 requiredAmount);
+    error InvalidPuzzleMove(uint16 puzzleId);
 
-    constructor(address initialOwner, string memory name, string memory symbol) ERC721(name, symbol) {}
+    constructor(address initialOwner ,string memory name, string memory symbol) Ownable(initialOwner) ERC721(name, symbol) {}
 
     function userHasSolvedPuzzle(uint16 puzzleId, address user) public view returns (bool) {
         return puzzlesById[puzzleId].userHasSolved[user];
@@ -60,24 +64,33 @@ contract Board is ERC721{
             revert PuzzleNotSolved(puzzleId);
         }
 
-        _mint(_msgSender(), tokenCount);
+        tokenIdToPuzzleId[tokenCount] = puzzleId;
         tokenCount++;
+        _mint(_msgSender(), tokenCount);
         payable(puzzle.creator).transfer(msg.value* CREATOR_SPLIT / 100);
     }
 
-    function addPuzzle(string memory fen, bytes32 solutionHash) public{
+    function addPuzzle(string memory fen, bytes32 solutionHash, Chess.Move memory move) public{
         if(bytes(fen).length == 0){
             revert StringCannotBeEmpty(fen);
         }
         if((solutionHash).length ==0){
             revert BytesCannotBeEmpty(solutionHash);
         } 
+        if(move.board ==0 || move.metadata==0){
+            revert InvalidPuzzleMove(puzzleCounter);
+        }
+
+        // Call to ensure that getMetadata is valid
+        fiveoutofnineART.getMetadata(puzzleCounter, move);
 
         uint16 puzzleId = puzzleCounter;
         Puzzle storage puzzle = puzzlesById[puzzleId];
         puzzle.fen = fen;
         puzzle.solutionHash = solutionHash;
         puzzle.creator = _msgSender();
+        puzzle.rating = 1000e18;
+        puzzle.move = move;
         puzzleCounter = puzzleCounter + 1;
     }
 
@@ -102,25 +115,29 @@ contract Board is ERC721{
         if (puzzle.solutionHash == keccak256(solution)) {
             puzzle.userHasSolved[_msgSender()] = true;
             puzzle.solveCount += 1;
-            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 1e18, 25e18);
+            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 1e18, K_FACTOR);
             userRatings[_msgSender()] = userRating + ratingAdjustment;
-            if(puzzleRating > 100e18 + ratingAdjustment){
+            if(puzzleRating > RATING_FLOOR + ratingAdjustment){
                 puzzle.rating = puzzleRating - ratingAdjustment;
             }
             else{
-                puzzle.rating = 100e18; // Ratings flooor
+                puzzle.rating = RATING_FLOOR; // Ratings flooor
             }
             return true;
         } else {
-            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 0, 25e18);
+            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 0, K_FACTOR);
             puzzleRating = puzzleRating + ratingAdjustment;
-            if(userRating > 100e18 + ratingAdjustment){
+            if(userRating > RATING_FLOOR + ratingAdjustment){
                 userRatings[_msgSender()] = userRating - ratingAdjustment;
             }
             else{
-                userRatings[_msgSender()] = 100e18;
+                userRatings[_msgSender()] = RATING_FLOOR;
             }
             return false;
         }
+    }
+
+    function withdraw() public onlyOwner{
+        payable(_msgSender()).transfer(address(this).balance);
     }
 }
