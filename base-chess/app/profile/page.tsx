@@ -1,5 +1,11 @@
+import PrivyWrapper from "@/components/Common/PrivyWrapper";
+
 const ProfilePage = () => {
-  return <section className="w-full h-screen">Profile</section>;
+  return (
+    <section className="w-full">
+      <PrivyWrapper page="Profile" />
+    </section>
+  );
 };
 
 export default ProfilePage;

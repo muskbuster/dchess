@@ -1,6 +1,7 @@
 import PrivyWrapper from "@/components/Common/PrivyWrapper";
 
-const App = () => {
+const PlayPage = ({ params }: { params: { id: string } }) => {
+  // const puzzleId = params.id;
   return (
     <section className="w-full">
       <PrivyWrapper page="Play" />
@@ -8,4 +9,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default PlayPage;
