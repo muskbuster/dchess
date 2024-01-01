@@ -2,12 +2,24 @@ import Link from "next/link";
 
 import { StyledButton } from "./StyledButton";
 import { usePrivy } from "@privy-io/react-auth";
+import { Address, useAccount, useBalance } from "wagmi";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();
+  const { address } = useAccount();
+  const {
+    data: rawBalance,
+    isError,
+    isLoading,
+  } = useBalance({
+    address,
+  });
 
-  const balance = 0.001;
-  const rank = 1200;
+  let balance = "0.0";
+  if (!isError && !isLoading) {
+    balance = Number(rawBalance?.formatted).toFixed(4);
+  }
+  let rank = 1200;
 
   return (
     <nav className="navbar flex flex-row bg-slate-600 border-b border-white p-2 justify-between">
