@@ -1,238 +1,143 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {Elo} from "./library/Elo.sol";
+import {fiveoutofnineART, Chess} from "./art/fiveOutOfNineArt.sol";
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-
-contract Board is ERC1155, Ownable {
-    using ECDSA for bytes32;
-    using Strings for uint256;
-
-    enum PuzzleStatus {
-        Locked,
-        Unlocked,
-        Solved,
-        Expired
-    }
+contract Board is ERC1155, Ownable{
+    uint256 constant TOKEN_PRICE = 0.02 ether; // Token price of minting an NFT for a solved puzzle
+    uint256 constant CREATOR_SPLIT = 15; // Percent of token price that goes to creator (e.g. 15 = 15%)
+    uint256 constant K_FACTOR = 25e18; //  How quickly elo is adjusted
+    uint256 constant RATING_FLOOR = 100e18; // Minimum rating a person or puzzle can have
+    uint256 constant DEFAULT_RATING = 1000e18; // Minimum rating a person or puzzle can have
+    uint16 public puzzleCounter;
+    uint256 public tokenCount; 
 
     struct Puzzle {
         string fen;
-        bytes solution; // hash of the solution
-        uint256 price;
-        uint256 solveCount; // amount of puzzles solved
-        uint256 expiredCount; // amount of puzzle expired
-        uint256 unlockCount; // amount of attempts made
-        uint256 staked; // cumulative amount staked
-        address[] solvers;
-        uint256 activeAttemptCount; // active attempts (unlocked)
-        address[] activeAttempts; // users that are actively attempting; used for redistribution when expired
-        mapping(address => uint256) claim; // amount a receiver has claim over
-        mapping(address => PuzzleStatus) status;
-        mapping(address => uint256) unlockTimestamp; // time when puzzle was unlocked
+        bytes32 solutionHash; // Hash of the solution
+        uint256 solveCount; 
+        uint256 attemptCount; 
+        mapping(address => bool) userHasSolved;
+        mapping(address => bool) userHasAttempted;
+        uint256 rating;
+        Chess.Move move; // Used to generate nft art
+        address creator ;
     }
 
-    uint256 private INITIAL_VALUE = 0.001 ether; // 0.001 ETH
-    uint256 private FACTOR = 125; // 1.25 creates problems with floating numbers
-    uint256 private expireLength = 1 hours; // 1 hour
-
-    uint16 public puzzleCounter;
     mapping(uint16 => Puzzle) public puzzlesById;
-    mapping(address => uint256) public accountBalance; // separate from NFT balance
+    mapping(address => uint256 ) public userRatings;
+    mapping(uint256 => uint16) public tokenIdToPuzzleId;
 
-    error NotAuthorized();
-    error AlreadyUnlocked(uint16 puzzleId);
-    error PuzzleLocked(uint16 puzzleId);
-    error PuzzleExpired(uint16 puzzleId);
-    error PuzzleSolved(uint16 puzzleId);
+    error StringCannotBeEmpty(string s);
+    error BytesCannotBeEmpty(bytes32 b);
+    error InvalidPuzzle(uint16 puzzleId );
+    error AlreadyAttempted(uint16 puzzleId);
+    error PuzzleNotSolved(uint16 puzzleId);
+    error TokenDoesNotExist(uint256 tokenId);
+    error NotEnoughEtherSent(uint256 amountSent, uint256 requiredAmount);
+    error InvalidPuzzleMove(uint16 puzzleId);
 
-    constructor(address initialOwner) ERC1155("") Ownable(initialOwner) {}
+    constructor(address initialOwner) Ownable(initialOwner) ERC1155("") {}
 
-    function getSolvers(uint16 puzzleId) public view returns (address[] memory) {
-        return puzzlesById[puzzleId].solvers;
+    function userHasSolvedPuzzle(uint16 puzzleId, address user) public view returns (bool) {
+        return puzzlesById[puzzleId].userHasSolved[user];
     }
 
-    function getStatus(uint16 puzzleId, address user) public view returns (PuzzleStatus) {
-        return puzzlesById[puzzleId].status[user];
+    function uri(uint256 _tokenId) public view override returns (string memory) {
+        if(_tokenId >= tokenCount){
+            revert TokenDoesNotExist(_tokenId);
+        }
+        uint16 _puzzleId = tokenIdToPuzzleId[_tokenId];
+        return fiveoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].move);
     }
 
-    function uri(uint256 _tokenId) public pure override returns (string memory) {
-        bytes memory dataURI = abi.encodePacked(
-            "{",
-            '"name": "Puzzle #',
-            (_tokenId + 1).toString(),
-            '",',
-            '"description": "Chess puzzles on chain",',
-            '"image": "',
-            generateImage(_tokenId),
-            '"',
-            "}"
-        );
-        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(dataURI)));
+
+    function mint(uint16 puzzleId) public payable{
+        if(msg.value < TOKEN_PRICE){
+            revert NotEnoughEtherSent(msg.value, TOKEN_PRICE);
+        }
+        Puzzle storage puzzle =puzzlesById[puzzleId];
+        if(!puzzle.userHasSolved[_msgSender()]){
+            revert PuzzleNotSolved(puzzleId);
+        }
+
+        tokenIdToPuzzleId[tokenCount] = puzzleId;
+        tokenCount++;
+        _mint(_msgSender(),  puzzleId, 1, "");
+        payable(puzzle.creator).transfer(msg.value* CREATOR_SPLIT / 100);
     }
 
-    function generateImage(uint256 _tokenId) public pure returns (string memory) {
-        bytes memory svg = abi.encodePacked(
-            '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350">',
-            "<style>.base { fill: white; font-family: serif; font-size: 14px; }</style>",
-            '<rect width="100%" height="100%" fill="blue" />',
-            '<text x="50%" y="40%" class="base" dominant-baseline="middle" text-anchor="middle">',
-            "Grandmaster",
-            "</text>",
-            '<text x="50%" y="50%" class="base" dominant-baseline="middle" text-anchor="middle">',
-            "Puzzle: #",
-            (_tokenId + 1).toString(),
-            "</text>",
-            "</svg>"
-        );
-        return string(abi.encodePacked("data:image/svg+xml;base64,", Base64.encode(svg)));
-    }
+    function addPuzzle(string memory fen, bytes32 solutionHash, Chess.Move memory move) public{
+        if(bytes(fen).length == 0){
+            revert StringCannotBeEmpty(fen);
+        }
+        if((solutionHash).length ==0){
+            revert BytesCannotBeEmpty(solutionHash);
+        } 
+        if(move.board ==0 || move.metadata==0){
+            revert InvalidPuzzleMove(puzzleCounter);
+        }
 
-    function addPuzzle(string memory fen, bytes memory solution) public onlyOwner {
+        // Call to ensure that getMetadata is valid
+        fiveoutofnineART.getMetadata(puzzleCounter, move);
+
         uint16 puzzleId = puzzleCounter;
-
         Puzzle storage puzzle = puzzlesById[puzzleId];
         puzzle.fen = fen;
-        puzzle.solution = solution;
-        puzzle.price = INITIAL_VALUE;
-        puzzle.solveCount = 0;
-        puzzle.expiredCount = 0;
-        puzzle.unlockCount = 0;
-
-        puzzleCounter += 1;
+        puzzle.solutionHash = solutionHash;
+        puzzle.creator = _msgSender();
+        puzzle.rating = DEFAULT_RATING;
+        puzzle.move = move;
+        puzzleCounter = puzzleCounter + 1;
     }
 
-    function unlockPuzzle(uint16 puzzleId) public payable {
-        require(puzzleId < puzzleCounter);
+    function submitSolution(uint16 puzzleId, bytes memory solution) public returns (bool) {
+        if(puzzleId >= puzzleCounter){
+            revert InvalidPuzzle(puzzleId);
+        }
 
         Puzzle storage puzzle = puzzlesById[puzzleId];
-        require(msg.value >= puzzle.price);
-        if (puzzle.status[_msgSender()] == PuzzleStatus.Locked || puzzle.status[_msgSender()] == PuzzleStatus.Expired) {
-            puzzle.unlockTimestamp[_msgSender()] = block.timestamp;
-            puzzle.status[_msgSender()] = PuzzleStatus.Unlocked;
-            puzzle.staked += puzzle.price;
-            puzzle.claim[_msgSender()] += puzzle.price;
-            puzzle.activeAttemptCount += 1;
-            puzzle.activeAttempts.push(_msgSender());
-            puzzle.unlockCount += 1;
-        } else {
-            revert AlreadyUnlocked(puzzleId);
-        }
-    }
 
-    function solvePuzzle(uint16 puzzleId, bytes memory solution, bytes memory sig) public returns (bool) {
-        require(puzzleId < puzzleCounter);
-        Puzzle storage puzzle = puzzlesById[puzzleId];
-
-        if (puzzle.status[_msgSender()] == PuzzleStatus.Locked) {
-            revert PuzzleLocked(puzzleId);
+        if(puzzle.userHasAttempted[_msgSender()]){
+            revert AlreadyAttempted(puzzleId);
         }
 
-        if (
-            puzzle.status[_msgSender()] == PuzzleStatus.Expired
-                || (block.timestamp > (puzzle.unlockTimestamp[_msgSender()] + expireLength))
-        ) {
-            revert PuzzleExpired(puzzleId);
-        }
+        puzzle.userHasAttempted[_msgSender()] = true;
+        puzzle.attemptCount += 1;
+        // cache ratings for gas savings
+        uint256 userRating  = userRatings[_msgSender()];
+        userRating = userRating > 0? userRating : DEFAULT_RATING;
+        uint256 puzzleRating = puzzle.rating; 
 
-        if (puzzle.status[_msgSender()] == PuzzleStatus.Solved) {
-            revert PuzzleSolved(puzzleId);
-        }
-
-        address signerAddress = recoverAddress(keccak256(abi.encodePacked(solution)), sig);
-
-        if (signerAddress != owner()) {
-            revert NotAuthorized();
-        }
-
-        if (keccak256(puzzle.solution) == keccak256(solution)) {
-            _mint(_msgSender(), puzzleId, 1, "");
-            puzzle.status[_msgSender()] = PuzzleStatus.Solved;
-            puzzle.solvers.push(_msgSender());
+        if (puzzle.solutionHash == keccak256(solution)) {
+            puzzle.userHasSolved[_msgSender()] = true;
             puzzle.solveCount += 1;
-            accountBalance[_msgSender()] += puzzle.claim[_msgSender()];
-            adjustPrice(puzzleId, true);
+            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 1e18, K_FACTOR);
+            userRatings[_msgSender()] = userRating + ratingAdjustment;
+            if(puzzleRating > RATING_FLOOR + ratingAdjustment){
+                puzzle.rating = puzzleRating - ratingAdjustment;
+            }
+            else{
+                puzzle.rating = RATING_FLOOR; // Ratings flooor
+            }
             return true;
         } else {
-            puzzle.expiredCount += 1;
-            puzzle.status[_msgSender()] = PuzzleStatus.Expired;
-            disperseFunds(puzzleId, _msgSender());
-            adjustPrice(puzzleId, false);
+            (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 0, K_FACTOR);
+            puzzle.rating = puzzleRating + ratingAdjustment;
+            if(userRating > RATING_FLOOR + ratingAdjustment){
+                userRatings[_msgSender()] = userRating - ratingAdjustment;
+            }
+            else{
+                userRatings[_msgSender()] = RATING_FLOOR;
+            }
             return false;
         }
     }
 
-    function checkExpiredAll() public {
-        for (uint16 i = 0; i < puzzleCounter; i++) {
-            checkExpired(i);
-        }
-    }
-
-    function checkExpired(uint16 puzzleId) public {
-        Puzzle storage puzzle = puzzlesById[puzzleId];
-
-        // for each puzzle: go over all active attempts
-        address[] memory activeAttempts = puzzle.activeAttempts;
-        delete puzzle.activeAttempts; // refresh active attempts
-
-        uint256 newActiveAttemptCount = 0;
-        for (uint256 i = 0; i < puzzle.activeAttemptCount; i++) {
-            address user = activeAttempts[i];
-            if (puzzle.status[user] == PuzzleStatus.Unlocked) {
-                if (block.timestamp > (puzzle.unlockTimestamp[user] + expireLength)) {
-                    puzzle.status[user] = PuzzleStatus.Expired;
-                    puzzle.expiredCount += 1;
-                    disperseFunds(puzzleId, user);
-                    adjustPrice(puzzleId, false);
-                } else {
-                    newActiveAttemptCount += 1;
-                    puzzle.activeAttempts.push(user);
-                }
-            }
-        }
-        puzzle.activeAttemptCount = newActiveAttemptCount;
-    }
-
-    function withdraw() public {
-        address payable receiver = payable(_msgSender());
-        uint256 userBalance = accountBalance[_msgSender()];
-        accountBalance[_msgSender()] = 0;
-        receiver.transfer(userBalance);
-    }
-
-    /* INTERNAL FUNCTIONS */
-
-    function disperseFunds(uint16 puzzleId, address user) internal {
-        Puzzle storage puzzle = puzzlesById[puzzleId];
-
-        if (puzzle.solveCount == 0) {
-            return;
-        }
-
-        uint256 amount = puzzle.claim[user] / puzzle.solveCount;
-        for (uint256 i = 0; i < puzzle.solveCount; i++) {
-            accountBalance[puzzle.solvers[i]] += amount;
-        }
-        puzzle.claim[user] = 0;
-    }
-
-    function adjustPrice(uint16 puzzleId, bool increase) internal {
-        Puzzle storage puzzle = puzzlesById[puzzleId];
-
-        if (increase) {
-            puzzle.price = (puzzle.price * FACTOR) / 100;
-        } else {
-            puzzle.price = (puzzle.price / FACTOR) * 100;
-        }
-    }
-
-    function recoverAddress(bytes32 hash, bytes memory signature) internal pure returns (address) {
-        bytes32 hashed = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
-        return hashed.recover(signature);
+    function withdraw() public onlyOwner{
+        payable(_msgSender()).transfer(address(this).balance);
     }
 }
