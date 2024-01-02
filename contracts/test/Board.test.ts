@@ -70,9 +70,20 @@ describe("Board", function () {
 
 	describe("Add an unencrypted problem", function () {
 		it("Be able to see it but not solve it", async function () {
-			await instance
-				.connect(puzzleCreator)
-				.addPuzzle(sampleProblem1, solution1, move1)
+			await expect(
+				instance
+					.connect(puzzleCreator)
+					.addPuzzle(sampleProblem1, solution1, move1)
+			)
+				.to.emit(instance, "PuzzleAdded")
+				.withArgs(
+					0,
+					sampleProblem1,
+					solution1,
+					move1.board,
+					move1.metadata,
+					puzzleCreator.address
+				)
 
 			expect(await instance.puzzleCounter()).to.equal(1)
 			const puzzle = await instance.puzzlesById(0)
@@ -96,9 +107,15 @@ describe("Board", function () {
 
 		describe("for an incorrectly solved problem", () => {
 			beforeEach(async () => {
-				await instance
-					.connect(player)
-					.submitSolution(0, ethers.toUtf8Bytes("abcd"))
+				await expect(
+					instance.connect(player).submitSolution(0, ethers.toUtf8Bytes("abcd"))
+				)
+					.to.emit(instance, "PuzzleAttempted")
+					.withArgs(0, player.address, ethers.toUtf8Bytes("abcd"))
+					.to.emit(instance, "UserRatingChanged")
+					.withArgs(player.address, parseEther("987.5"))
+					.to.emit(instance, "PuzzleRatingChanged")
+					.withArgs(0, parseEther("1012.5"))
 			})
 
 			it("Puzzle elo updates correctly", async function () {
@@ -127,7 +144,16 @@ describe("Board", function () {
 		describe("For a correctly solved problem", async () => {
 			beforeEach(async () => {
 				expect(await instance.userRatings(owner.address)).to.equal(0)
-				await instance.connect(player).submitSolution(0, solution1Bytes)
+
+				await expect(instance.connect(player).submitSolution(0, solution1Bytes))
+					.to.emit(instance, "PuzzleAttempted")
+					.withArgs(0, player.address, solution1Bytes)
+					.to.emit(instance, "UserRatingChanged")
+					.withArgs(player.address, parseEther("1012.5"))
+					.to.emit(instance, "PuzzleRatingChanged")
+					.withArgs(0, parseEther("987.5"))
+					.to.emit(instance, "PuzzleSolved")
+					.withArgs(0, player.address)
 			})
 
 			it("A user's and the puzzle's ratings should be correctly updated", async function () {
@@ -174,9 +200,13 @@ describe("Board", function () {
 				beforeEach(async () => {
 					beforeCreatorBalance = await ethers.provider.getBalance(puzzleCreator)
 					beforeOwnerBalance = await ethers.provider.getBalance(owner)
-					await instance
-						.connect(player)
-						.mint(0, { value: ethers.parseEther(".02") })
+					await expect(
+						instance
+							.connect(player)
+							.mint(0, { value: ethers.parseEther(".02") })
+					)
+						.to.emit(instance, "TokenMinted")
+						.withArgs(0, player.address, 0)
 				})
 
 				it("Properly disperses funds when a user mints a token", async function () {
@@ -197,7 +227,9 @@ describe("Board", function () {
 							"OwnableUnauthorizedAccount"
 						)
 						.withArgs(await player.getAddress())
-					await instance.connect(owner).withdraw()
+					await expect(instance.connect(owner).withdraw())
+						.to.emit(instance, "Withdraw")
+						.withArgs(owner.address, ethers.parseEther(".017"))
 					expect(await ethers.provider.getBalance(owner)).to.be.closeTo(
 						ethers.parseEther(".017") + beforeOwnerBalance,
 						parseEther("0.001")

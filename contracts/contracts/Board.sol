@@ -5,8 +5,9 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {Elo} from "./library/Elo.sol";
 import {fiveoutofnineART, Chess} from "./art/fiveOutOfNineArt.sol";
+import {IBoard} from "./interfaces/IBoard.sol";
 
-contract Board is ERC1155, Ownable{
+contract Board is IBoard, ERC1155, Ownable{
     uint256 constant TOKEN_PRICE = 0.02 ether; // Token price of minting an NFT for a solved puzzle
     uint256 constant CREATOR_SPLIT = 15; // Percent of token price that goes to creator (e.g. 15 = 15%)
     uint256 constant K_FACTOR = 25e18; //  How quickly elo is adjusted
@@ -64,9 +65,11 @@ contract Board is ERC1155, Ownable{
             revert PuzzleNotSolved(puzzleId);
         }
 
-        tokenIdToPuzzleId[tokenCount] = puzzleId;
-        tokenCount++;
+        uint256 tokenCount_ = tokenCount; // Cache for gas savings
+        tokenIdToPuzzleId[tokenCount_] = puzzleId;
+        tokenCount = tokenCount_ + 1;
         _mint(_msgSender(),  puzzleId, 1, "");
+        emit TokenMinted(puzzleId, _msgSender(), tokenCount_);
         payable(puzzle.creator).transfer(msg.value* CREATOR_SPLIT / 100);
     }
 
@@ -92,6 +95,8 @@ contract Board is ERC1155, Ownable{
         puzzle.rating = DEFAULT_RATING;
         puzzle.move = move;
         puzzleCounter = puzzleCounter + 1;
+
+        emit PuzzleAdded(puzzleId, fen, solutionHash, move.board, move.metadata, _msgSender());
     }
 
     function submitSolution(uint16 puzzleId, bytes memory solution) public returns (bool) {
@@ -104,6 +109,9 @@ contract Board is ERC1155, Ownable{
         if(puzzle.userHasAttempted[_msgSender()]){
             revert AlreadyAttempted(puzzleId);
         }
+
+        
+        emit PuzzleAttempted(puzzleId, _msgSender(), solution);
 
         puzzle.userHasAttempted[_msgSender()] = true;
         puzzle.attemptCount += 1;
@@ -119,25 +127,36 @@ contract Board is ERC1155, Ownable{
             userRatings[_msgSender()] = userRating + ratingAdjustment;
             if(puzzleRating > RATING_FLOOR + ratingAdjustment){
                 puzzle.rating = puzzleRating - ratingAdjustment;
+                emit PuzzleRatingChanged(puzzleId, puzzleRating - ratingAdjustment); 
             }
             else{
-                puzzle.rating = RATING_FLOOR; // Ratings flooor
+                puzzle.rating = RATING_FLOOR; 
+                emit PuzzleRatingChanged(puzzleId, RATING_FLOOR);
             }
+
+            emit PuzzleSolved(puzzleId, _msgSender());
+            emit UserRatingChanged(_msgSender(), puzzleRating + ratingAdjustment);
             return true;
         } else {
             (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 0, K_FACTOR);
             puzzle.rating = puzzleRating + ratingAdjustment;
             if(userRating > RATING_FLOOR + ratingAdjustment){
                 userRatings[_msgSender()] = userRating - ratingAdjustment;
+                emit UserRatingChanged(_msgSender(), puzzleRating - ratingAdjustment); 
             }
             else{
                 userRatings[_msgSender()] = RATING_FLOOR;
+                emit UserRatingChanged(_msgSender(), RATING_FLOOR); 
             }
+
+            emit PuzzleRatingChanged(puzzleId, puzzleRating + ratingAdjustment);
             return false;
         }
     }
 
     function withdraw() public onlyOwner{
-        payable(_msgSender()).transfer(address(this).balance);
+        uint256 amount = address(this).balance;
+        payable(_msgSender()).transfer(amount);
+        emit Withdraw(_msgSender(), amount);
     }
 }

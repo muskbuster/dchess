@@ -23,7 +23,7 @@ describe("test elo system updates correctly", () => {
 			ethers.parseEther("1")
 		)
 	})
-	it.only("updates elo correctly for failed puzzle", async () => {
+	it("updates elo correctly for failed puzzle", async () => {
 		// Set user rating to 1000
 		await NFTContract.setUserRating(user1, ethers.parseEther("1477"))
 		await NFTContract.setPuzzleRating(1, ethers.parseEther("1609"))
@@ -33,5 +33,4 @@ describe("test elo system updates correctly", () => {
 			ethers.parseEther("1")
 		)
 	})
-    
 })
