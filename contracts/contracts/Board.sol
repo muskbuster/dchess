@@ -2,15 +2,16 @@
 pragma solidity ^0.8.20;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {Elo} from "./library/Elo.sol";
 import {fiveoutofnineART, Chess} from "./art/fiveOutOfNineArt.sol";
 
-contract Board is ERC721, Ownable{
+contract Board is ERC1155, Ownable{
     uint256 constant TOKEN_PRICE = 0.02 ether; // Token price of minting an NFT for a solved puzzle
     uint256 constant CREATOR_SPLIT = 15; // Percent of token price that goes to creator (e.g. 15 = 15%)
     uint256 constant K_FACTOR = 25e18; //  How quickly elo is adjusted
     uint256 constant RATING_FLOOR = 100e18; // Minimum rating a person or puzzle can have
+    uint256 constant DEFAULT_RATING = 1000e18; // Minimum rating a person or puzzle can have
     uint16 public puzzleCounter;
     uint256 public tokenCount; 
 
@@ -26,7 +27,6 @@ contract Board is ERC721, Ownable{
         address creator ;
     }
 
-
     mapping(uint16 => Puzzle) public puzzlesById;
     mapping(address => uint256 ) public userRatings;
     mapping(uint256 => uint16) public tokenIdToPuzzleId;
@@ -40,18 +40,18 @@ contract Board is ERC721, Ownable{
     error NotEnoughEtherSent(uint256 amountSent, uint256 requiredAmount);
     error InvalidPuzzleMove(uint16 puzzleId);
 
-    constructor(address initialOwner ,string memory name, string memory symbol) Ownable(initialOwner) ERC721(name, symbol) {}
+    constructor(address initialOwner) Ownable(initialOwner) ERC1155("") {}
 
     function userHasSolvedPuzzle(uint16 puzzleId, address user) public view returns (bool) {
         return puzzlesById[puzzleId].userHasSolved[user];
     }
 
-    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
+    function uri(uint256 _tokenId) public view override returns (string memory) {
         if(_tokenId >= tokenCount){
             revert TokenDoesNotExist(_tokenId);
-
         }
-        return fiveoutofnineART.getMetadata(_tokenId, puzzlesById[tokenIdToPuzzleId[_tokenId]].move);
+        uint16 _puzzleId = tokenIdToPuzzleId[_tokenId];
+        return fiveoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].move);
     }
 
 
@@ -66,7 +66,7 @@ contract Board is ERC721, Ownable{
 
         tokenIdToPuzzleId[tokenCount] = puzzleId;
         tokenCount++;
-        _mint(_msgSender(), tokenCount);
+        _mint(_msgSender(),  puzzleId, 1, "");
         payable(puzzle.creator).transfer(msg.value* CREATOR_SPLIT / 100);
     }
 
@@ -89,7 +89,7 @@ contract Board is ERC721, Ownable{
         puzzle.fen = fen;
         puzzle.solutionHash = solutionHash;
         puzzle.creator = _msgSender();
-        puzzle.rating = 1000e18;
+        puzzle.rating = DEFAULT_RATING;
         puzzle.move = move;
         puzzleCounter = puzzleCounter + 1;
     }
@@ -107,9 +107,9 @@ contract Board is ERC721, Ownable{
 
         puzzle.userHasAttempted[_msgSender()] = true;
         puzzle.attemptCount += 1;
-
         // cache ratings for gas savings
         uint256 userRating  = userRatings[_msgSender()];
+        userRating = userRating > 0? userRating : DEFAULT_RATING;
         uint256 puzzleRating = puzzle.rating; 
 
         if (puzzle.solutionHash == keccak256(solution)) {
@@ -126,7 +126,7 @@ contract Board is ERC721, Ownable{
             return true;
         } else {
             (uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(userRating, puzzleRating, 0, K_FACTOR);
-            puzzleRating = puzzleRating + ratingAdjustment;
+            puzzle.rating = puzzleRating + ratingAdjustment;
             if(userRating > RATING_FLOOR + ratingAdjustment){
                 userRatings[_msgSender()] = userRating - ratingAdjustment;
             }

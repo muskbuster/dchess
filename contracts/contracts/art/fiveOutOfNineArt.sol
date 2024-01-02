@@ -130,14 +130,14 @@ library fiveoutofnineART{
         uint256 depth;
 
         {
-            whiteMove = (_move.metadata >> 0xC) & 0xFFF;
-            blackMove = _move.metadata & 0xFFF;
+            // whiteMove = (_move.metadata >> 0xC) & 0xFFF;
+            // blackMove = _move.metadata & 0xFFF;
 
-            boardAfterWhiteMove = _move.board.applyMove(whiteMove);
-            boardAfterBlackMove = boardAfterWhiteMove.applyMove(blackMove);
+            // boardAfterWhiteMove = _move.board.applyMove(whiteMove);
+            // boardAfterBlackMove = boardAfterWhiteMove.applyMove(blackMove);
 
-            whiteCaptures = _move.board.isCapture(_move.board >> ((whiteMove & 0x3F) << 2));
-            blackCaptures = boardAfterWhiteMove.isCapture(boardAfterWhiteMove >> ((blackMove & 0x3F) << 2));
+            // whiteCaptures = _move.board.isCapture(_move.board >> ((whiteMove & 0x3F) << 2));
+            // blackCaptures = boardAfterWhiteMove.isCapture(boardAfterWhiteMove >> ((blackMove & 0x3F) << 2));
 
             depth = _move.metadata >> 0x18;
         }
@@ -145,74 +145,75 @@ library fiveoutofnineART{
         {
             uint256 numSquares;
             {
-                uint256 whitePieceType = (_move.board >> ((whiteMove >> 6) << 2)) & 7;
-                uint256 blackPieceType = (boardAfterWhiteMove >> ((blackMove >> 6) << 2)) & 7;
+                // uint256 whitePieceType = (_move.board >> ((whiteMove >> 6) << 2)) & 7;
+                // uint256 blackPieceType = (boardAfterWhiteMove >> ((blackMove >> 6) << 2)) & 7;
 
-                if (whitePieceType == 1) numSquares = 6;
-                else if (whitePieceType == 3) numSquares = 2;
-                else if (whitePieceType == 4) numSquares = 4;
-                else if (whitePieceType == 5) numSquares = 12;
-                else numSquares = 1;
-                if (blackPieceType == 2) numSquares = 3;
+                numSquares = 6;
+                // if (whitePieceType == 1) numSquares = 6;
+                // else if (whitePieceType == 3) numSquares = 2;
+                // else if (whitePieceType == 4) numSquares = 4;
+                // else if (whitePieceType == 5) numSquares = 12;
+                // else numSquares = 1;
+                // if (blackPieceType == 2) numSquares = 3;
             }
 
             uint256 seed = uint256(keccak256(abi.encodePacked(_internalId, boardAfterBlackMove, _move.metadata)));
 
-            (image, attributes) = getImage(boardAfterBlackMove, numSquares, seed, whiteCaptures || blackCaptures);
+            (image, attributes) = getImage(_move.board, numSquares, seed, whiteCaptures || blackCaptures);
         }
 
         // Lots of unusual identation and braces to get around the 16 local variable limitation.
         {
-            description = string(
-                abi.encodePacked(
-                    "---\\n\\n**Player** plays **`",
-                    indexToPosition(whiteMove >> 6, true),
-                    "` ",
-                    getPieceName((_move.board >> ((whiteMove >> 6) << 2)) & 7),
-                    "**",
-                    whiteCaptures ? " captures " : " to ",
-                    "**`",
-                    indexToPosition(whiteMove & 0x3F, true)
-                )
-            );
+            // description = string(
+            //     abi.encodePacked(
+            //         "---\\n\\n**Player** plays **`",
+            //         indexToPosition(whiteMove >> 6, true),
+            //         "` ",
+            //         getPieceName((_move.board >> ((whiteMove >> 6) << 2)) & 7),
+            //         "**",
+            //         whiteCaptures ? " captures " : " to ",
+            //         "**`",
+            //         indexToPosition(whiteMove & 0x3F, true)
+            //     )
+            // );
         }
         {
-            description = string(
-                abi.encodePacked(
-                    description,
-                    "`",
-                    whiteCaptures ? " " : "",
-                    whiteCaptures ? getPieceName((_move.board >> ((whiteMove & 0x3F) << 2)) & 7) : "",
-                    "**.\\n\\n",
-                    drawMove(boardAfterWhiteMove, whiteMove >> 6),
-                    "\\n\\n---\\n\\n**fiveoutofnine** "
-                )
-            );
+            // description = string(
+            //     abi.encodePacked(
+            //         description,
+            //         "`",
+            //         whiteCaptures ? " " : "",
+            //         whiteCaptures ? getPieceName((_move.board >> ((whiteMove & 0x3F) << 2)) & 7) : "",
+            //         "**.\\n\\n",
+            //         drawMove(boardAfterWhiteMove, whiteMove >> 6),
+            //         "\\n\\n---\\n\\n**fiveoutofnine** "
+            //     )
+            // );
         }
 
         {
-            if (blackMove == 0) {
-                description = string(abi.encodePacked(description, "**resigns**."));
-            } else {
-                description = string(
-                    abi.encodePacked(
-                        description,
-                        "responds with **`",
-                        indexToPosition(blackMove >> 6, false),
-                        "` ",
-                        getPieceName((boardAfterWhiteMove >> ((blackMove >> 6) << 2)) & 7),
-                        "**",
-                        blackCaptures ? " captures " : " to ",
-                        "**`",
-                        indexToPosition(blackMove & 0x3F, false),
-                        "`",
-                        blackCaptures ? " " : "",
-                        blackCaptures ? getPieceName((boardAfterWhiteMove >> ((blackMove & 0x3F) << 2)) & 7) : "",
-                        "**.\\n\\n",
-                        drawMove(boardAfterBlackMove, blackMove >> 6)
-                    )
-                );
-            }
+            // if (blackMove == 0) {
+            //     description = string(abi.encodePacked(description, "**resigns**."));
+            // } else {
+            //     description = string(
+            //         abi.encodePacked(
+            //             description,
+            //             "responds with **`",
+            //             indexToPosition(blackMove >> 6, false),
+            //             "` ",
+            //             getPieceName((boardAfterWhiteMove >> ((blackMove >> 6) << 2)) & 7),
+            //             "**",
+            //             blackCaptures ? " captures " : " to ",
+            //             "**`",
+            //             indexToPosition(blackMove & 0x3F, false),
+            //             "`",
+            //             blackCaptures ? " " : "",
+            //             blackCaptures ? getPieceName((boardAfterWhiteMove >> ((blackMove & 0x3F) << 2)) & 7) : "",
+            //             "**.\\n\\n",
+            //             drawMove(boardAfterBlackMove, blackMove >> 6)
+            //         )
+            //     );
+            // }
         }
 
         return string(

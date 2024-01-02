@@ -17,7 +17,7 @@ library Elo {
      * @dev To get how much B's score needs to be update, take negative of the returned value
      * @dev returns the amount that A's elo changes, and a boolean that signifies if it's a negative or positive change
      */
-    function calculateEloUpdate(uint256 ratingA, uint256 ratingB, uint256 scoreA, uint256 k)public pure returns (uint256 , bool){
+    function calculateEloUpdate(uint256 ratingA, uint256 ratingB, uint256 scoreA, uint256 k)internal pure returns (uint256 , bool){
         uint256 ratingDiff;
         bool comparison = ratingA>= ratingB; 
         if(comparison){
@@ -30,7 +30,7 @@ library Elo {
         uint256 exp = comparison ? 
             PRBMathUD60x18.div(1e18 , PRBMathUD60x18.pow(10e18, ratingDiff /400)):
             PRBMathUD60x18.pow(10e18, ratingDiff /400); 
-        
+
         uint256 Ea = PRBMathUD60x18.div(1e18, 1e18 + exp);  // expected value of A at current rating
         if(scoreA > Ea){
             ratingDiff = PRBMathUD60x18.mul( k, scoreA - Ea);
@@ -38,6 +38,7 @@ library Elo {
         }
         else{
             ratingDiff = PRBMathUD60x18.mul( k, Ea - scoreA );
+            return (ratingDiff, false);
         }
 
     }

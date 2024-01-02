@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import {Chess} from "./art/fiveOutOfNineArt.sol";
 import {fiveoutofnineART} from "./art/fiveOutOfNineArt.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {console} from "hardhat/console.sol";
 
 contract NFT is ERC721, Ownable{
     using Strings for  uint256;
@@ -56,15 +55,11 @@ contract NFT is ERC721, Ownable{
             ratingDiff =  puzzleRating - userRating;
         }
 
-        console.log("compairson", comparison);
-        console.log("ratingDif", ratingDiff/400);
 
         uint256 exp = comparison ? 
             PRBMathUD60x18.div(1e18 , PRBMathUD60x18.pow(10e18, ratingDiff /400)):
             PRBMathUD60x18.pow(10e18, ratingDiff /400); 
 
-        console.log("exp", exp);
-        
         uint256 Ea = PRBMathUD60x18.div(1e18, 1e18 + exp);  //expected value of A at current rating
         if(scoreA > Ea){
             ratingDiff = PRBMathUD60x18.mul( 25e18, scoreA - Ea);
