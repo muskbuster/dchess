@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { StyledButton } from "./StyledButton";
 import { usePrivy } from "@privy-io/react-auth";
-import { Address, useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();

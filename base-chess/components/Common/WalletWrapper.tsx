@@ -11,8 +11,10 @@ import ProfileScreen from "../Screen/Profile/ProfileScreen";
 
 const WalletWrapper = ({
   page,
+  args,
 }: {
   page: "Create" | "Play" | "Stats" | "Profile";
+  args?: any;
 }) => {
   const { wallets } = useWallets();
   const { ready, authenticated } = usePrivy();
@@ -35,7 +37,7 @@ const WalletWrapper = ({
   const screen = (() => {
     switch (page) {
       case "Play":
-        return <PlayScreen />;
+        return <PlayScreen args={args} />;
       case "Create":
         return <CreateScreen />;
       case "Stats":

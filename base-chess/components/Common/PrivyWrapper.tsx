@@ -24,8 +24,10 @@ const queryClient = new QueryClient();
 
 const PrivyWrapper = ({
   page,
+  args,
 }: {
   page: "Create" | "Play" | "Stats" | "Profile";
+  args?: any;
 }) => {
   const handleLogin = async (user: User) => {
     console.log("User logged in: ", user);
@@ -45,7 +47,7 @@ const PrivyWrapper = ({
       onSuccess={handleLogin}
     >
       <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-        <WalletWrapper page={page} />
+        <WalletWrapper page={page} args={args} />
       </PrivyWagmiConnector>
     </PrivyProvider>
   );
