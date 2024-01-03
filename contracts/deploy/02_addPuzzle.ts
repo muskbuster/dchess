@@ -5,10 +5,11 @@ import { FENToBoard } from "../utils/fiveOutOfNineArt"
 
 const sampleProblem1 = ""
 const sampleSolution1 = ""
-const solution1 = hashed(sampleSolution1)
-const move1 = FENToBoard(sampleProblem1)
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+	const solution1 = hashed(sampleSolution1)
+	const move1 = FENToBoard(sampleProblem1)
+
 	const { deployments } = hre
 	const boardDeployment = await deployments.get("Board")
 	const board = await hre.ethers.getContractAt("Board", boardDeployment.address)

@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs"
+import { ethers } from "hardhat"
 
 export const tokenURIToHtml = (tokenURI: string): string => {
 	const base64Token = tokenURI.split(",")[1]
@@ -15,4 +16,11 @@ export const parseAndSaveTokenUri = (
 	const htmlContent = tokenURIToHtml(tokenUri)
 	writeFileSync(`./${outName}`, htmlContent)
 	return
+}
+
+export function hashed(str: string) {
+	// first convert to bytes
+	const _bytes = ethers.toUtf8Bytes(str)
+	// then hash it
+	return ethers.keccak256(_bytes)
 }

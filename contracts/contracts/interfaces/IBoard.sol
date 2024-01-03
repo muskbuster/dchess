@@ -7,7 +7,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Chess} from "../art/Chess.sol";
 
 interface IBoard {
-    event PuzzleAdded(uint16 puzzleId, string fen, bytes32 solutionHash, uint256 baord, uint256 metadata, address creator); 
+    event PuzzleAdded(uint16 puzzleId, string fen, bytes32 solutionHash, uint256 board, uint256 metadata, address creator); 
     event PuzzleSolved(uint16 puzzleId, address user);
     event PuzzleAttempted(uint16 puzzleId, address user, bytes solutionSubmission);
     event UserRatingChanged(address user, uint256 newUserRating);

@@ -6,6 +6,7 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers"
 import { FENToBoard } from "../utils/fiveOutOfNineArt"
 import { parseEther } from "ethers"
 import { parseAndSaveTokenUri, tokenURIToHtml } from "../utils/encoding"
+import { hashed } from "../utils/encoding"
 
 const _INTERFACE_ID_IERC1155 = "0xd9b67a26"
 const DEFAULT_RATING = parseEther("1000")
@@ -38,13 +39,6 @@ describe("Board", function () {
 	const solution2 = hashed(sampleSolution2)
 	const solution2Bytes = ethers.toUtf8Bytes(sampleSolution2)
 	const move2 = FENToBoard(sampleProblem2)
-
-	function hashed(str: string) {
-		// first convert to bytes
-		const _bytes = ethers.toUtf8Bytes(str)
-		// then hash it
-		return ethers.keccak256(_bytes)
-	}
 
 	async function generateSignature(hash: string) {
 		const messageHash = ethers.keccak256(hash)
