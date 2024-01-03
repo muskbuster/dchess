@@ -37,7 +37,7 @@ const CreateScreen = () => {
           <div className="text-sm font-extralight">{tooltip}</div>
           <div className="text-xl font-bold">Description</div>
           <textarea
-            className="text-black p-2 h-44 bg-slate-500 text-base rounded-md"
+            className="input input-bordered text-white p-2 h-44 bg-slate-500 text-sm rounded-md"
             value={description}
             onChange={handleDescriptionChange}
             disabled={false}

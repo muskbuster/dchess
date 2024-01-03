@@ -31,7 +31,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           <StyledButton wide={false}>Create</StyledButton>
         </Link>
         <Link href="/stats">
-          <StyledButton wide={false}>Stats</StyledButton>
+          <StyledButton wide={false}>Leaderboard</StyledButton>
         </Link>
       </div>
       <div>
