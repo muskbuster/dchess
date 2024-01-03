@@ -1,12 +1,15 @@
 import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-toolbox"
 import "hardhat-deploy"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY! as string
 const ALCHEMY_BASE_GOERLI_HTTPS = process.env.ALCHEMY_BASE_GOERLI_HTTPS
 	? process.env.ALCHEMY_BASE_GOERLI_HTTPS
 	: "https://goerli.base.org"
-// const ALCHEMY_BASE_HTTPS = process.env.ALCHEMY_BASE_HTTPS as string
+
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY as string
 
 const config: HardhatUserConfig = {
@@ -23,17 +26,25 @@ const config: HardhatUserConfig = {
 		],
 	},
 	networks: {
+		hardhat: {
+			forking: {
+				url: ALCHEMY_BASE_GOERLI_HTTPS,
+			},
+		},
 		// for mainnet
 		"base-mainnet": {
 			url: ALCHEMY_BASE_GOERLI_HTTPS,
 			accounts: PRIVATE_KEY ? [PRIVATE_KEY] : "remote",
-			gasPrice: 1000000000,
 		},
 		// for testnet
 		"base-goerli": {
 			url: ALCHEMY_BASE_GOERLI_HTTPS,
 			accounts: PRIVATE_KEY ? [PRIVATE_KEY] : "remote",
+		},
+		localhost: {
+			url: "http://localhost:8545",
 			gasPrice: 1000000000,
+			chainId: 111,
 		},
 	},
 	etherscan: {

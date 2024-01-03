@@ -6,7 +6,8 @@
     "test": "yarn hardhat clean && yarn hardhat compile && yarn hardhat test",
     "testNoC": "yarn hardhat test",
     "c": "yarn hardhat compile",
-    "lint": "yarn eslint *.ts ."
+    "lint": "yarn eslint *.ts .",
+    "dev": "yarn hardhat node"
   },
   "license": "MIT",
   "devDependencies": {
@@ -37,6 +38,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.1",
     "chess.js": "^1.0.0-beta.7",
+    "dotenv": "^16.3.1",
     "eslint": "^8.56.0",
     "prb-math": "^2.4.3"
   },
