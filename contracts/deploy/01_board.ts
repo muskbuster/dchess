@@ -4,7 +4,6 @@ import { DeployFunction } from "hardhat-deploy/types"
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const { deployments } = hre
 	const [deployer] = await hre.getUnnamedAccounts()
-	console.log("deployer", deployer)
 
 	await deployments.deploy("Board", {
 		from: deployer,
