@@ -18,7 +18,6 @@ const WalletWrapper = ({
 }) => {
   const { wallets } = useWallets();
   const { ready, authenticated } = usePrivy();
-  const router = useRouter();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
 
   /* Switch wallets as soon as its available */
@@ -37,7 +36,7 @@ const WalletWrapper = ({
   const screen = (() => {
     switch (page) {
       case "Play":
-        return <PlayScreen args={args} />;
+        return <PlayScreen args={args} loggedIn={authenticated} />;
       case "Create":
         return <CreateScreen />;
       case "Stats":
