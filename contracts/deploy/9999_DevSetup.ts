@@ -14,6 +14,7 @@ const solution2Bytes = ethers.toUtf8Bytes(sampleSolution2)
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	if (hre.network.name == "hardhat") {
+		// Only run for test/dev environments
 		const { deployments } = hre
 		const [deployer, creator, player1, player2] = await hre.ethers.getSigners()
 		const boardDeployment = await deployments.get("Board")
