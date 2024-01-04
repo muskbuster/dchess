@@ -1,34 +1,79 @@
+// prettier-ignore
 // @ts-ignore
-import { NextEditor } from "next-chessground";
+import { NextEditor, NextChessground, Stockfish } from "next-chessground";
+import { Chess, SQUARES } from "chess.js";
 import { useRef, useState } from "react";
 
 import { StyledButton } from "@/components/Layout/StyledButton";
+import { FaUndo } from "react-icons/fa";
+
+enum CreateState {
+  Problem,
+  Solution,
+}
 
 const CreateScreen = () => {
+  const emptyFen = "8/8/8/8/8/8/8/8 w - - 0 1";
+
   const ref = useRef();
   const [description, setDescription] = useState("");
+  const [fen, setFen] = useState("8/8/8/8/8/8/8/8 w - - 0 1");
+  const [createState, setCreateState] = useState(CreateState.Problem);
+  const [winningMove, setWinningMove] = useState("--");
+  const [viewOnly, setViewOnly] = useState(false);
+  const [validGame, setValidGame] = useState(false);
+  const [attempts, setAttempts] = useState(0);
 
   const handleSelect = (fen: any) => {
-    //
+    setFen(fen);
+    try {
+      const chess = new Chess(fen);
+      if (!chess.isGameOver()) setValidGame(true);
+    } catch (e) {
+      setValidGame(false);
+    }
   };
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-    // do stuff
+    console.log(fen);
+    setCreateState(CreateState.Solution);
   }
 
   function handleDescriptionChange(e: any) {
     setDescription(e.target.value);
   }
 
+  const undoMove = () => {
+    setWinningMove("--");
+    setAttempts(attempts + 1);
+    setViewOnly(false);
+  };
+
+  const onMove = async (chess: any) => {
+    setWinningMove(chess.history()[0]);
+    setViewOnly(true);
+  };
+
   const placeholderDescription = `Black just played Qe2, which is a big mistake. White to play and win. I didn't find the move and ended up loosing badly. Can you find it?`;
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
 
   return (
     <div className="mt-20 flex flex-row justify-center">
-      <div className="w-96 text-black p-5 rounded-md bg-slate-50">
-        <NextEditor ref={ref} onSelect={handleSelect} />
-      </div>
+      {createState == CreateState.Problem ? (
+        <div className="w-96 text-black p-5 rounded-md bg-slate-50">
+          <NextEditor ref={ref} onSelect={handleSelect} />
+        </div>
+      ) : (
+        <div className="w-96">
+          <NextChessground
+            fen={fen}
+            key={attempts}
+            onMove={onMove}
+            viewOnly={viewOnly}
+          />
+        </div>
+      )}
       <form
         onSubmit={handleSubmit}
         className="ml-20 w-96 flex flex-col justify-between"
@@ -37,14 +82,27 @@ const CreateScreen = () => {
           <div className="text-sm font-extralight">{tooltip}</div>
           <div className="text-xl font-bold">Description</div>
           <textarea
-            className="input input-bordered text-white p-2 h-44 bg-slate-500 text-sm rounded-md"
+            className="input input-bordered h-32 text-white p-2 bg-slate-500 disabled:bg-slate-700 disabled:text-slate-500 disabled:border-slate-800 text-sm rounded-md"
             value={description}
             onChange={handleDescriptionChange}
-            disabled={false}
+            disabled={createState !== CreateState.Problem}
             placeholder={placeholderDescription}
           />
+          {createState == CreateState.Solution ? (
+            <div className="flex flex-row space-x-2 items-start">
+              <div className="font-light mb-5 text-sm">{`winning move: ${winningMove}`}</div>
+              <FaUndo size={15} onClick={undoMove} />
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
-        <StyledButton className="w-32 mb-40">Submit</StyledButton>
+        <StyledButton
+          className="w-32 mb-40"
+          disabled={!validGame || description == ""}
+        >
+          Submit
+        </StyledButton>
       </form>
     </div>
   );
