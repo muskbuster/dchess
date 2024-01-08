@@ -42,7 +42,7 @@ const WalletWrapper = ({
       case "Stats":
         return <StatsScreen />;
       case "Profile":
-        return <ProfileScreen />;
+        return <ProfileScreen args={args} loggedIn={authenticated} />;
     }
   })();
 
