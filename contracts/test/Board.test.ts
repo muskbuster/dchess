@@ -5,7 +5,7 @@ import { Board } from "../typechain-types"
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers"
 import { FENToBoard } from "../utils/fiveOutOfNineArt"
 import { parseEther } from "ethers"
-import { parseAndSaveTokenUri, tokenURIToHtml } from "../utils/encoding"
+import { parseAndSaveTokenUri } from "../utils/encoding"
 import { hashed } from "../utils/encoding"
 
 const _INTERFACE_ID_IERC1155 = "0xd9b67a26"
