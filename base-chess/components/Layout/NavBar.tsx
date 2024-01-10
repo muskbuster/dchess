@@ -3,6 +3,11 @@ import Link from "next/link";
 import { StyledButton } from "./StyledButton";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount, useBalance } from "wagmi";
+import { useQuery } from "@apollo/client";
+import { SINGLE_USER_RATING } from "@/utils/graphQLQueries";
+import { bigIntToOnes } from "@/utils/general";
+import Ribbon from "../../public/Ribbon.svg";
+import EthIcon from "../../public/Ethereum.svg";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();
@@ -15,11 +20,16 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
     address,
   });
 
+  const userRating = useQuery(SINGLE_USER_RATING, {
+    variables: { userAddress: address },
+  });
+
   let balance = "0.0";
   if (!isError && !isLoading) {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
-  let rank = 1200;
+
+  console.log("rating", userRating); //.user.rating);
 
   return (
     <nav className="navbar flex flex-row bg-slate-600 border-b border-white p-2 justify-between">
@@ -35,10 +45,16 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </Link>
       </div>
       <div>
-        {loggedIn ? (
+        {loggedIn && !userRating.loading ? (
           <Link href="/profile">
-            <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
-              {`${rank} ${balance} ETH`}
+            <div className="flex">
+              <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
+                <Ribbon className="h-6 w-6" />
+                {userRating.data.user
+                  ? bigIntToOnes(userRating.data.user.rating)
+                  : "--"}
+                <EthIcon className="h-6 w-6 ml-2" /> {balance} ETH
+              </div>
             </div>
           </Link>
         ) : (
