@@ -2,13 +2,8 @@ import { ponder } from "@/generated";
 import { DEFAULT_RATING } from "./constants";
 import { BoardAbi } from "../abis/Board";
 
-// const createNewPuzzle = async({Puzzle}) => {
-//   await
-
-// }
-
 ponder.on("Board:PuzzleAdded", async ({ event, context }) => {
-  const { Puzzle, User } = context.db;
+  const { Puzzle, User, UserPuzzle } = context.db;
   console.log("CREATING PUZZLE", event.args);
 
   const creator = await User.findUnique({ id: event.args.creator });
@@ -40,11 +35,11 @@ ponder.on("Board:PuzzleAdded", async ({ event, context }) => {
 
 ponder.on("Board:PuzzleSolved", async ({ event, context }) => {
   console.log("PUZZLE SOLVED", event.args);
-  const { User, Puzzle } = context.db;
+  const { User, Puzzle, UserPuzzle } = context.db;
 
-  const userToUpdate = await User.findUnique({ id: event.args.user });
+  const beforeUserToUpdate = await User.findUnique({ id: event.args.user });
 
-  if (!userToUpdate) {
+  if (!beforeUserToUpdate) {
     await User.create({
       id: event.args.user,
       data: {
@@ -56,15 +51,15 @@ ponder.on("Board:PuzzleSolved", async ({ event, context }) => {
     });
   }
 
-  if (userToUpdate) {
-    // Update user and puzzle information when a puzzle is solved
-    await User.update({
-      id: event.args.user,
-      data: {
-        totalSolved: userToUpdate.totalSolved + 1n,
-      },
-    });
-  }
+  const userToUpdate = await User.findUnique({ id: event.args.user });
+
+  // Update user and puzzle information when a puzzle is solved
+  await User.update({
+    id: event.args.user,
+    data: {
+      totalSolved: userToUpdate!.totalSolved + 1n,
+    },
+  });
 
   const puzzleToUpdate = await Puzzle.findUnique({ id: event.args.puzzleId });
   if (puzzleToUpdate) {
@@ -75,6 +70,15 @@ ponder.on("Board:PuzzleSolved", async ({ event, context }) => {
       },
     });
   }
+
+  // await UserPuzzle.create({
+  // id: `${event.args.user}-${event.args.puzzleId}`,
+  // data: {
+  //   userId: event.args.user,
+  //   puzzleId: event.args.puzzleId,
+  //   metadata:
+  // },
+  // });
 });
 
 ponder.on("Board:PuzzleAttempted", async ({ event, context }) => {
@@ -156,6 +160,7 @@ ponder.on("Board:TokenMinted", async ({ event, context }) => {
     data: {
       puzzleId: event.args.puzzleId,
       uri,
+      userId: event.args.solver,
     },
   });
 });

@@ -1,5 +1,4 @@
 import PrivyWrapper from "@/components/Common/PrivyWrapper";
-
 const ProfilePage = () => {
   return (
     <section className="w-full">

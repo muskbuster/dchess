@@ -20,8 +20,6 @@ const configureChainsConfig = configureChains(
   ]
 );
 
-const queryClient = new QueryClient();
-
 const PrivyWrapper = ({
   page,
   args,
