@@ -2,10 +2,15 @@
 // @ts-ignore
 import { NextEditor, NextChessground, Stockfish } from "next-chessground";
 import { Chess, SQUARES } from "chess.js";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { StyledButton } from "@/components/Layout/StyledButton";
 import { FaUndo } from "react-icons/fa";
+import { hashed } from "@/utils/general";
+import { FENToBoard } from "@/utils/fiveOutOfNineArt";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { BOARD_ADDRESS } from "@/utils/addresses";
+import { BoardAbi } from "@/utils/abis/Board";
 
 enum CreateState {
   Problem,
@@ -22,6 +27,7 @@ const CreateScreen = () => {
   const [winningMove, setWinningMove] = useState("--");
   const [viewOnly, setViewOnly] = useState(false);
   const [validGame, setValidGame] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(true);
   const [attempts, setAttempts] = useState(0);
 
   const handleSelect = (fen: any) => {
@@ -34,10 +40,44 @@ const CreateScreen = () => {
     }
   };
 
+  const { data, write, isError, isSuccess } = useContractWrite({
+    address: BOARD_ADDRESS,
+    abi: BoardAbi,
+    functionName: "addPuzzle",
+    chainId: 31337,
+  });
+
+  const waitForTx = useWaitForTransaction({
+    hash: data?.hash,
+  });
+
+  useEffect(() => {
+    if (waitForTx.isSuccess && waitForTx.data?.logs.length === 1) {
+      setSubmitSuccess(true);
+    }
+  }, [waitForTx]);
+
   async function handleSubmit(e: any) {
     e.preventDefault();
-    console.log(fen);
-    setCreateState(CreateState.Solution);
+
+    if (winningMove == "--") {
+      // User needs to set winning move
+      setCreateState(CreateState.Solution);
+    } else {
+      // Actually submit to chain
+      const solutionHash = hashed(winningMove);
+      const board = FENToBoard(fen);
+      console.log("fen", fen);
+      console.log("solution hash", solutionHash);
+      console.log("board", board);
+
+      if (write) {
+        ("writing");
+        write({
+          args: [fen, solutionHash, board],
+        });
+      }
+    }
   }
 
   function handleDescriptionChange(e: any) {
@@ -74,6 +114,7 @@ const CreateScreen = () => {
           />
         </div>
       )}
+
       <form
         onSubmit={handleSubmit}
         className="ml-20 w-96 flex flex-col justify-between"
@@ -103,6 +144,13 @@ const CreateScreen = () => {
         >
           Submit
         </StyledButton>
+        {submitSuccess ? (
+          <div className="text-sm font-light">
+            Puzzle successfully submitted !{" "}
+          </div>
+        ) : (
+          <></>
+        )}
       </form>
     </div>
   );

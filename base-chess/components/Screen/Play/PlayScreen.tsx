@@ -153,7 +153,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
 
   const description = `Black just played Qe2, which is a big mistake. White to play and win. I didn't find the move and ended up loosing badly. Can you find it?`;
   const submitter = "0xasdf.eth (1721)";
-  const maxPuzzleId = 3;
+  const maxPuzzleId = !puzzles.loading ? puzzles.data.puzzles.length : 1;
 
   const handleSubmit = async () => {
     setSubmittedTx(true);

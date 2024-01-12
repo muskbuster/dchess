@@ -1,4 +1,4 @@
-import { formatEther } from "viem";
+import { formatEther, keccak256, stringToBytes } from "viem";
 
 export function truncateAddress(address: string) {
   return (
@@ -12,3 +12,13 @@ export function truncateAddress(address: string) {
 export const bigIntToOnes = (n: bigint) => {
   return formatEther(n).split(".")[0];
 };
+
+export function hashed(str: string) {
+  // first convert to bytes
+  const _bytes = stringToBytes(str);
+  // then hash it
+  return keccak256(_bytes);
+}
+
+
+
