@@ -36,13 +36,13 @@ const WalletWrapper = ({
   const screen = (() => {
     switch (page) {
       case "Play":
-        return <PlayScreen args={args} loggedIn={authenticated} />;
+        return <PlayScreen loggedIn={authenticated} />;
       case "Create":
         return <CreateScreen />;
       case "Stats":
         return <StatsScreen />;
       case "Profile":
-        return <ProfileScreen args={args} loggedIn={authenticated} />;
+        return <ProfileScreen />;
     }
   })();
 

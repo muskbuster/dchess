@@ -49,9 +49,19 @@ export const RANKED_USERS = gql`
 `;
 
 export const SINGLE_USER_RATING = gql`
-  query MyQueryII($userAddress: String!) {
+  query MyQuery($userAddress: String!) {
     user(id: $userAddress) {
       rating
+    }
+  }
+`;
+
+export const ALL_PUZZLES = gql`
+  query AllPuzzles {
+    puzzles {
+      fen
+      id
+      uri
     }
   }
 `;

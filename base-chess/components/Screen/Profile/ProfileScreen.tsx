@@ -39,7 +39,7 @@ const ProfileScreen = () => {
   const { authenticated, logout, exportWallet } = usePrivy();
   const router = useRouter();
   const result = useQuery(GET_USER_DATA, {
-    variables: { userAddress: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" },
+    variables: { userAddress: address },
   });
 
   const handleLogout = () => {

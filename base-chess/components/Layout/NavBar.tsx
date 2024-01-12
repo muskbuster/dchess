@@ -29,12 +29,10 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
 
-  console.log("rating", userRating); //.user.rating);
-
   return (
     <nav className="navbar flex flex-row bg-slate-600 border-b border-white p-2 justify-between">
       <div className="flex flex-row space-x-2">
-        <Link href="/">
+        <Link href="/play/1">
           <StyledButton wide={false}>Play</StyledButton>
         </Link>
         <Link href="/create">
@@ -45,7 +43,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </Link>
       </div>
       <div>
-        {loggedIn && !userRating.loading ? (
+        {loggedIn && !userRating.loading && userRating.data ? (
           <Link href="/profile">
             <div className="flex">
               <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">

@@ -9,9 +9,20 @@ import { FaPlusSquare } from "react-icons/fa";
 import { FaMinusSquare } from "react-icons/fa";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import Image from "next/image";
-import placeholder from "@/public/placeholder.png";
+import { useEffect, useRef, useState } from "react";
+import {
+  useContractWrite,
+  useContractRead,
+  useWaitForTransaction,
+} from "wagmi";
+import { BoardAbi } from "@/utils/abis/Board";
+import { BOARD_ADDRESS } from "@/utils/addresses";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import { encodePacked, parseEther } from "viem";
+import { useParams } from "next/navigation";
+import { useQuery } from "@apollo/client";
+import { ALL_PUZZLES } from "@/utils/graphQLQueries";
+import NFTVisual from "../Profile/NFTVisual";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -35,27 +46,91 @@ const confettiProps = {
   // colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
 };
 
-const PlayScreen = ({
-  loggedIn,
-  args,
-}: {
-  loggedIn: boolean;
-  args?: { puzzleId: string };
-}) => {
+const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const [problemStatus, setProblemStatus] = useState(ProblemStatus.Attempt);
   const [selectedMove, setSelectedMove] = useState("--");
+  const [submittedTx, setSubmittedTx] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [viewOnly, setViewOnly] = useState(false);
   const [mintImage, setMintImage] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
   const [mintCount, setMintCount] = useState(1);
   const [mintSuccess, setMintSuccess] = useState(false);
+  const puzzleIdParams = useParams().id as string;
+  const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 1;
+
+  const { data, write, isSuccess, isError } = useContractWrite({
+    address: BOARD_ADDRESS,
+    abi: BoardAbi,
+    functionName: "submitSolution",
+    chainId: 31337,
+  });
+
+  const waitForTx = useWaitForTransaction({ hash: data?.hash });
+
+  const {
+    data: mintData,
+    write: mintWrite,
+    isSuccess: isMintSuccess,
+    isError: isMintError,
+  } = useContractWrite({
+    address: BOARD_ADDRESS,
+    abi: BoardAbi,
+    functionName: "mint",
+    chainId: 31337,
+    value: parseEther(".02"),
+  });
+
+  const waitForMint = useWaitForTransaction({ hash: mintData?.hash });
 
   const isAttempt = problemStatus.valueOf() == ProblemStatus.Attempt.valueOf();
-  const isSuccess = problemStatus.valueOf() == ProblemStatus.Success.valueOf();
+  const successfulSolved =
+    problemStatus.valueOf() == ProblemStatus.Success.valueOf();
   const isFail = problemStatus.valueOf() == ProblemStatus.Fail.valueOf();
 
+  const { wallet: activeWallet } = usePrivyWagmi();
+
   const ref = useRef();
+  const puzzles = useQuery(ALL_PUZZLES);
+
+  const hasAttemptedPuzzle = useContractRead({
+    abi: BoardAbi,
+    address: BOARD_ADDRESS,
+    functionName: "userHasAttemptedPuzzle",
+    args: [
+      puzzleId - 1,
+      activeWallet ? (activeWallet.address as `0x${string}`) : "0x",
+    ],
+  });
+
+  const hasSolvedPuzzle = useContractRead({
+    abi: BoardAbi,
+    address: BOARD_ADDRESS,
+    functionName: "userHasSolvedPuzzle",
+    args: [
+      puzzleId - 1,
+      activeWallet ? (activeWallet.address as `0x${string}`) : "0x",
+    ],
+  });
+
+  useEffect(() => {
+    // Initial load
+    if (hasSolvedPuzzle.isSuccess && hasSolvedPuzzle.data) {
+      setProblemStatus(ProblemStatus.Success);
+    } else if (hasAttemptedPuzzle.isSuccess && hasAttemptedPuzzle.data) {
+      setProblemStatus(ProblemStatus.Fail);
+    }
+    // On tx submit
+    else if (waitForTx && waitForTx.data?.logs.length == 4) {
+      setProblemStatus(ProblemStatus.Success);
+    } else if (waitForTx && waitForTx.data?.logs.length == 3) {
+      setProblemStatus(ProblemStatus.Fail);
+    }
+
+    if (waitForMint.data && waitForMint.data?.logs.length == 2) {
+      setMintSuccess(true);
+    }
+  }, [waitForTx, setSubmittedTx, waitForMint]);
 
   const onMove = async (chess: any) => {
     setSelectedMove(chess.history()[0]);
@@ -69,22 +144,23 @@ const PlayScreen = ({
   };
 
   const flipImage = () => {
-    if (isSuccess) setMintImage(!mintImage);
-  };
-
-  const handleSubmit = () => {
-    setProblemStatus(ProblemStatus.Success);
-    setTimeout(() => setIsExploding(true), 100);
+    if (successfulSolved) setMintImage(!mintImage);
   };
 
   const handleMint = () => {
-    setMintSuccess(true);
+    mintWrite({ args: [puzzleId - 1] });
   };
 
-  const puzzleId = Number(args?.puzzleId) || 1;
   const description = `Black just played Qe2, which is a big mistake. White to play and win. I didn't find the move and ended up loosing badly. Can you find it?`;
   const submitter = "0xasdf.eth (1721)";
-  const maxPuzzleId = 5;
+  const maxPuzzleId = 3;
+
+  const handleSubmit = async () => {
+    setSubmittedTx(true);
+    write({
+      args: [puzzleId - 1, encodePacked(["string"], [selectedMove])],
+    });
+  };
 
   return (
     <div className="mt-20 flex flex-row justify-center">
@@ -92,15 +168,21 @@ const PlayScreen = ({
         <FaArrowRotateLeft
           size={30}
           onClick={flipImage}
-          className={`${!isSuccess ? "opacity-5" : "cursor-pointer"}`}
+          className={`${!successfulSolved ? "opacity-5" : "cursor-pointer"}`}
         />
         {mintImage ? (
-          <Image src={placeholder} alt="logo" />
+          puzzles.loading ? (
+            <div>...loading</div>
+          ) : (
+            <NFTVisual uri={puzzles.data.puzzles[puzzleId - 1].uri} />
+          )
+        ) : puzzles.loading ? (
+          <div>loading</div>
         ) : (
           <NextChessground
             key={attempts}
             ref={ref}
-            fen="8/1kPK4/8/8/8/8/8/8 w - - 0 1"
+            fen={puzzles.data.puzzles[puzzleId - 1].fen}
             onMove={onMove}
             viewOnly={viewOnly}
           />
@@ -143,7 +225,7 @@ const PlayScreen = ({
           </div>
           <div className="max-w-96 my-5">{description}</div>
           <div className="font-extralight">{`submitted by ${submitter}`}</div>
-          {isSuccess ? (
+          {successfulSolved ? (
             <div className="mt-10 font-extrabold text-green-500">solved!</div>
           ) : isFail ? (
             <div className="mt-10 font-extrabold text-red-500">wrong!</div>
@@ -169,7 +251,7 @@ const PlayScreen = ({
         ) : (
           <></>
         )}
-        {isSuccess ? (
+        {successfulSolved ? (
           <div className="mb-20">
             <div className="my-2 flex flex-row items-center space-x-2">
               <FaMinusSquare
