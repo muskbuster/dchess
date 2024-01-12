@@ -716,25 +716,6 @@ export const BoardAbi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint16",
-        name: "_puzzleId",
-        type: "uint16",
-      },
-    ],
-    name: "previewUri",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "puzzleCounter",
     outputs: [

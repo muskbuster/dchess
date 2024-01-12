@@ -14,7 +14,7 @@ export default createConfig({
     Board: {
       network: "localhost",
       abi: BoardAbi,
-      address: "0x3de00f44ce68FC56DB0e0E33aD4015C6e78eCB39", // From dev setup in contracts/repo
+      address: "0x92A00fc48Ad3dD4A8b5266a8F467a52Ac784fC83", // From dev setup in contracts/repo
     },
   },
 });

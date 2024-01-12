@@ -40,6 +40,7 @@ type Puzzle {
   totalSolves: BigInt!
   creator: String!
   uesrPuzzles(skip: Int = 0, first: Int = 100, orderBy: String = "id", orderDirection: String = "asc", timestamp: Int): [UserPuzzle!]!
+  uri: String!
 }
 
 type NFT {
@@ -164,6 +165,16 @@ input PuzzleFilter {
   creator_ends_with: String
   creator_not_starts_with: String
   creator_not_ends_with: String
+  uri: String
+  uri_not: String
+  uri_in: [String]
+  uri_not_in: [String]
+  uri_contains: String
+  uri_not_contains: String
+  uri_starts_with: String
+  uri_ends_with: String
+  uri_not_starts_with: String
+  uri_not_ends_with: String
 }
 
 input UserPuzzleFilter {

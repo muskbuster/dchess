@@ -47,11 +47,19 @@ contract Board is IBoard, ERC1155, Ownable{
         return puzzlesById[puzzleId].userHasSolved[user];
     }
 
+    function userHasAttemptedPuzzle(uint16 puzzleId, address user) public view returns (bool) {
+        return puzzlesById[puzzleId].userHasAttempted[user];
+    }
+
     function uri(uint256 _tokenId) public view override returns (string memory) {
         if(_tokenId >= tokenCount){
             revert TokenDoesNotExist(_tokenId);
         }
         uint16 _puzzleId = tokenIdToPuzzleId[_tokenId];
+        return fiveoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].move);
+    }
+
+    function previewUri(uint16 _puzzleId) public view returns (string memory) {
         return fiveoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].move);
     }
 

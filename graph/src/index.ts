@@ -19,6 +19,14 @@ ponder.on("Board:PuzzleAdded", async ({ event, context }) => {
     });
   }
 
+  const Board = context.contracts.Board;
+  const uri = await context.client.readContract({
+    abi: BoardAbi,
+    address: Board.address,
+    functionName: "previewUri",
+    args: [event.args.puzzleId],
+  });
+
   await Puzzle.create({
     id: event.args.puzzleId,
     data: {
@@ -29,6 +37,7 @@ ponder.on("Board:PuzzleAdded", async ({ event, context }) => {
       boardMetaData: event.args.metadata,
       board: event.args.board,
       creator: event.args.creator,
+      uri: uri,
     },
   });
 });

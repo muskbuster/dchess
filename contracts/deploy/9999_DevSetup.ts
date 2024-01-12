@@ -11,6 +11,7 @@ const sampleProblem2 = "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 1"
 const sampleSolution2 = "Qd5+"
 const solution2 = hashed(sampleSolution2)
 const solution2Bytes = ethers.toUtf8Bytes(sampleSolution2)
+console.log("bytes", solution2Bytes)
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	if (hre.network.name == "hardhat") {
@@ -33,6 +34,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 			.connect(player2)
 			.submitSolution(1, hre.ethers.toUtf8Bytes("abcd"))
 		await board.connect(player1).mint(0, { value: BigInt(0.02e18) })
+
+		await board
+			.connect(creator)
+			.addPuzzle(sampleProblem2, solution2, FENToBoard(sampleProblem2))
 	}
 }
 

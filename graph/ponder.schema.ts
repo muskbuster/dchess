@@ -21,6 +21,7 @@ export default createSchema((p) => ({
     totalSolves: p.bigint(),
     creator: p.string(),
     uesrPuzzles: p.many("UserPuzzle.puzzleId"), // Puzzles solved by users
+    uri: p.string(),
   }),
 
   UserPuzzle: p.createTable({
