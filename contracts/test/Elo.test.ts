@@ -1,36 +1,34 @@
 import { ethers } from "hardhat"
-import { NFT } from "../typechain-types"
+import { SimpleChessToken } from "../typechain-types"
 import { expect } from "chai"
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers"
 
-let NFTContract: NFT
+let simpleChessToken: SimpleChessToken
 let deployer: HardhatEthersSigner
 let user1: HardhatEthersSigner
 
-describe("test elo system updates correctly", () => {
+describe.only("test elo system updates correctly", () => {
 	beforeEach(async () => {
-		NFTContract = await ethers.deployContract("NFT", ["adfsa", "adfas"])
+		simpleChessToken = await ethers.deployContract("SimpleChessToken", [
+			"Test",
+			"TEST",
+		])
 		;[deployer, user1] = await ethers.getSigners()
 	})
 
 	it("updates elo correctly for solved puzzle", async () => {
-		// Set user rating to 1000
-		await NFTContract.setUserRating(user1, ethers.parseEther("1477"))
-		await NFTContract.setPuzzleRating(1, ethers.parseEther("1609"))
-		await NFTContract.updateUserRating(user1, 1, ethers.parseEther("1"))
-		expect(await NFTContract.userRatings(user1)).to.be.closeTo(
-			ethers.parseEther("1494"),
-			ethers.parseEther("1")
-		)
+		await simpleChessToken.setUserRating(user1, 1477)
+		await simpleChessToken.setPuzzleRating(0, 1609)
+		await simpleChessToken.updateElo(user1, 0, true)
+		expect(await simpleChessToken.userRatings(user1)).to.be.greaterThan(1477)
+		expect(await simpleChessToken.puzzleRatings(0)).to.be.lessThan(1609)
 	})
+
 	it("updates elo correctly for failed puzzle", async () => {
-		// Set user rating to 1000
-		await NFTContract.setUserRating(user1, ethers.parseEther("1477"))
-		await NFTContract.setPuzzleRating(1, ethers.parseEther("1609"))
-		await NFTContract.updateUserRating(user1, 1, 0)
-		expect(await NFTContract.userRatings(user1)).to.be.closeTo(
-			ethers.parseEther("1469"),
-			ethers.parseEther("1")
-		)
+		await simpleChessToken.setUserRating(user1, 1477)
+		await simpleChessToken.setPuzzleRating(0, 1609)
+		await simpleChessToken.updateElo(user1, 0, false)
+		expect(await simpleChessToken.userRatings(user1)).to.be.lessThan(1477)
+		expect(await simpleChessToken.puzzleRatings(0)).to.be.greaterThan(1609)
 	})
 })

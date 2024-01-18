@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { DeployFunction } from "hardhat-deploy/types"
 import { hashed } from "../utils/encoding"
-import { FENToBoard } from "../utils/fiveOutOfNineArt"
+import { FENToBoard } from "../utils/parser"
 import { SAMPLE_PROBLEM_1, SAMPLE_SOLUTION_1 } from "./00_config"
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

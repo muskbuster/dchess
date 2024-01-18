@@ -1,6 +1,16 @@
 import { writeFileSync } from "fs"
 import { ethers } from "hardhat"
-import { tokenURIToHtml } from "./frontend"
+
+const tokenURIToHtml = (tokenURI: string): string => {
+	const base64Token = tokenURI.split(",")[1]
+	const decodedBase64Token = atob(base64Token)
+	const decodedJSON = JSON.parse(decodedBase64Token)
+	const encodedAnimation = decodedJSON.animation_url.split(",")[1]
+	return `<body style="margin: 0px">
+	<div> ${atob(encodedAnimation)} </div>
+	</body>
+	`
+}
 
 export const parseAndSaveTokenUri = (
 	tokenUri: string,

@@ -3,7 +3,7 @@ import { deployments, ethers } from "hardhat"
 
 import { Board } from "../typechain-types"
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers"
-import { FENToBoard } from "../utils/fiveOutOfNineArt"
+import { FENToBoard } from "../utils/parser"
 import { parseEther } from "ethers"
 import { parseAndSaveTokenUri } from "../utils/encoding"
 import { hashed } from "../utils/encoding"

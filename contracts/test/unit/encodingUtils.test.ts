@@ -2,7 +2,7 @@ import {
 	FENToBoard,
 	FENtoFiveOutOfNineIndex,
 	indexToBytes,
-} from "../../utils/fiveOutOfNineArt"
+} from "../../utils/parser"
 import { expect } from "chai"
 import { Chess } from "chess.js"
 

@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import { DeployFunction } from "hardhat-deploy/types"
 import { hashed } from "../utils/encoding"
-import { FENToBoard } from "../utils/fiveOutOfNineArt"
+import { FENToBoard } from "../utils/parser"
 import { ethers } from "hardhat"
 
 const sampleSolution1 = "Nf6+"
