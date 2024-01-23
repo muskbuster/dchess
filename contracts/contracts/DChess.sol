@@ -3,190 +3,209 @@ pragma solidity ^0.8.20;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-import {Elo} from "./lib/CustomElo.sol";
+import {Elo} from "./lib/Elo.sol";
 import {threeoutofnineART} from "./lib/threeoutofnineART.sol";
+
 import {IDChess} from "./interfaces/IDChess.sol";
 
+// import "hardhat/console.sol";
+
 contract DChess is IDChess, ERC1155, Ownable {
-	uint256 constant TOKEN_PRICE = 0.02 ether; // Token price of minting an NFT for a solved puzzle
-	uint256 constant CREATOR_SPLIT = 15; // Percent of token price that goes to creator (e.g. 15 = 15%)
-	uint256 constant K_FACTOR = 25e18; //  How quickly elo is adjusted
-	uint256 constant RATING_FLOOR = 100e18; // Minimum rating a person or puzzle can have
-	uint256 constant DEFAULT_RATING = 1000e18; // Minimum rating a person or puzzle can have
-	uint16 public puzzleCounter;
-	uint256 public tokenCount;
+    using MerkleProof for bytes32[];
 
-	struct Puzzle {
-		string fen;
-		bytes32 solutionHash; // Hash of the solution
-		uint256 solveCount;
-		uint256 attemptCount;
-		mapping(address => bool) userHasSolved;
-		mapping(address => bool) userHasAttempted;
-		uint256 rating;
-		uint256 position; // Used to generate nft art
-		address creator;
-	}
+    uint256 constant DEFAULT_RATING = 1000;
 
-	mapping(uint16 => Puzzle) public puzzlesById;
-	mapping(address => uint256) public userRatings;
-	mapping(uint256 => uint16) public tokenIdToPuzzleId;
+    uint256 public internalTokenCounter;
+    uint256 public tokenMintPrice; // Token price of minting an NFT for a solved puzzle
+    uint256 public kFactor;
+    uint256 public platformFee; // Percent of token price that goes to the platform (the rest goes to creator)
+    bytes32 public merkleRoot; // used for checking if a user is a creator
 
-	error StringCannotBeEmpty(string s);
-	error BytesCannotBeEmpty(bytes32 b);
-	error InvalidPuzzle(uint16 puzzleId);
-	error AlreadyAttempted(uint16 puzzleId);
-	error PuzzleNotSolved(uint16 puzzleId);
-	error TokenDoesNotExist(uint256 tokenId);
-	error NotEnoughEtherSent(uint256 amountSent, uint256 requiredAmount);
-	error InvalidPuzzleMove(uint16 puzzleId);
+    struct Puzzle {
+        string fen;
+        bytes32 solution; // Hash of the solution
+        mapping(address => bool) userHasSolved;
+        mapping(address => bool) userHasAttempted;
+        uint256 rating;
+        uint256 metadata; // Used to generate nft art
+        address creator;
+    }
 
-	constructor(address initialOwner) Ownable(initialOwner) ERC1155("") {}
+    mapping(uint256 => Puzzle) public puzzlesById;
+    mapping(address => uint256) public userRatings;
 
-	function userHasSolvedPuzzle(
-		uint16 puzzleId,
-		address user
-	) public view returns (bool) {
-		return puzzlesById[puzzleId].userHasSolved[user];
-	}
+    constructor(address initialOwner) Ownable(initialOwner) ERC1155("") {
+        tokenMintPrice = 0.002 ether;
+        kFactor = 50;
+        platformFee = 40;
+        merkleRoot = 0x0000000000000000000000000000000000000000000000000000000000000000;
+    }
 
-	function userHasAttemptedPuzzle(
-		uint16 puzzleId,
-		address user
-	) public view returns (bool) {
-		return puzzlesById[puzzleId].userHasAttempted[user];
-	}
+    function setTokenMintPrice(uint256 _price) public onlyOwner {
+        tokenMintPrice = _price;
+    }
 
-	function uri(uint256 _tokenId) public view override returns (string memory) {
-		if (_tokenId >= tokenCount) {
-			revert TokenDoesNotExist(_tokenId);
-		}
-		uint16 _puzzleId = tokenIdToPuzzleId[_tokenId];
-		return
-			threeoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].position);
-	}
+    function setKFactor(uint256 _kFactor) public onlyOwner {
+        kFactor = _kFactor;
+    }
 
-	function previewUri(uint16 _puzzleId) public view returns (string memory) {
-		return
-			threeoutofnineART.getMetadata(_puzzleId, puzzlesById[_puzzleId].position);
-	}
+    function setPlatformFee(uint256 _fee) public onlyOwner {
+        platformFee = _fee;
+    }
 
-	function mint(uint16 puzzleId) public payable {
-		if (msg.value < TOKEN_PRICE) {
-			revert NotEnoughEtherSent(msg.value, TOKEN_PRICE);
-		}
-		Puzzle storage puzzle = puzzlesById[puzzleId];
-		if (!puzzle.userHasSolved[_msgSender()]) {
-			revert PuzzleNotSolved(puzzleId);
-		}
+    function setMerkleRoot(bytes32 _merkleRoot) public onlyOwner {
+        merkleRoot = _merkleRoot;
+    }
 
-		uint256 tokenCount_ = tokenCount; // Cache for gas savings
-		tokenIdToPuzzleId[tokenCount_] = puzzleId;
-		tokenCount = tokenCount_ + 1;
-		_mint(_msgSender(), puzzleId, 1, "");
-		emit TokenMinted(puzzleId, _msgSender(), tokenCount_);
-		payable(puzzle.creator).transfer((msg.value * CREATOR_SPLIT) / 100);
-	}
+    function userHasSolvedPuzzle(
+        uint256 internalTokenId,
+        address user
+    ) public view returns (bool) {
+        return puzzlesById[internalTokenId].userHasSolved[user];
+    }
 
-	function addPuzzle(
-		string memory fen,
-		bytes32 solutionHash,
-		uint256 position
-	) public {
-		if (bytes(fen).length == 0) {
-			revert StringCannotBeEmpty(fen);
-		}
-		if ((solutionHash).length == 0) {
-			revert BytesCannotBeEmpty(solutionHash);
-		}
-		if (position == 0) {
-			revert InvalidPuzzleMove(puzzleCounter);
-		}
+    function userHasAttemptedPuzzle(
+        uint256 internalTokenId,
+        address user
+    ) public view returns (bool) {
+        return puzzlesById[internalTokenId].userHasAttempted[user];
+    }
 
-		// Call to ensure that getMetadata is valid
-		threeoutofnineART.getMetadata(puzzleCounter, position);
+    function uri(
+        uint256 internalTokenId
+    ) public view override returns (string memory) {
+        return
+            threeoutofnineART.getMetadata(
+                internalTokenId,
+                puzzlesById[internalTokenId].metadata
+            );
+    }
 
-		uint16 puzzleId = puzzleCounter;
-		Puzzle storage puzzle = puzzlesById[puzzleId];
-		puzzle.fen = fen;
-		puzzle.solutionHash = solutionHash;
-		puzzle.creator = _msgSender();
-		puzzle.rating = DEFAULT_RATING;
-		puzzle.position = position;
-		puzzleCounter = puzzleCounter + 1;
+    function addPuzzle(
+        string calldata fen,
+        bytes32 solution,
+        uint256 metadata,
+        bytes32[] calldata proof
+    ) public {
+        if (!isWhitelisted(_msgSender(), proof)) {
+            revert UserNotAuthorized(_msgSender());
+        }
+        if (bytes(fen).length == 0) {
+            revert FENCannotBeEmpty(fen);
+        }
+        if ((solution).length == 0) {
+            revert SolutionCannotBeEmpty(solution);
+        }
+        if (metadata == 0) {
+            revert InvalidMetadata(internalTokenCounter, metadata);
+        }
 
-		emit PuzzleAdded(puzzleId, fen, solutionHash, position, _msgSender());
-	}
+        // Call to ensure that getMetadata is valid
+        threeoutofnineART.getMetadata(internalTokenCounter, metadata);
 
-	function submitSolution(
-		uint16 puzzleId,
-		bytes memory solution
-	) public returns (bool) {
-		if (puzzleId >= puzzleCounter) {
-			revert InvalidPuzzle(puzzleId);
-		}
+        uint256 internalTokenId = internalTokenCounter;
+        Puzzle storage puzzle = puzzlesById[internalTokenId];
+        puzzle.fen = fen;
+        puzzle.solution = solution;
+        puzzle.creator = _msgSender();
+        puzzle.rating = DEFAULT_RATING;
+        puzzle.metadata = metadata;
+        internalTokenCounter = internalTokenCounter + 1;
 
-		Puzzle storage puzzle = puzzlesById[puzzleId];
+        emit PuzzleAdded(
+            internalTokenId,
+            fen,
+            solution,
+            metadata,
+            _msgSender()
+        );
+    }
 
-		if (puzzle.userHasAttempted[_msgSender()]) {
-			revert AlreadyAttempted(puzzleId);
-		}
+    function submitSolution(
+        uint256 internalTokenId,
+        bytes memory solution
+    ) public returns (bool) {
+        if (internalTokenId >= internalTokenCounter) {
+            revert InvalidPuzzle(internalTokenId);
+        }
 
-		emit PuzzleAttempted(puzzleId, _msgSender(), solution);
+        Puzzle storage puzzle = puzzlesById[internalTokenId];
 
-		puzzle.userHasAttempted[_msgSender()] = true;
-		puzzle.attemptCount += 1;
-		// cache ratings for gas savings
-		uint256 userRating = userRatings[_msgSender()];
-		userRating = userRating > 0 ? userRating : DEFAULT_RATING;
-		uint256 puzzleRating = puzzle.rating;
+        if (puzzle.userHasAttempted[_msgSender()]) {
+            revert AlreadyAttempted(internalTokenId);
+        }
 
-		if (puzzle.solutionHash == keccak256(solution)) {
-			puzzle.userHasSolved[_msgSender()] = true;
-			puzzle.solveCount += 1;
-			(uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(
-				userRating,
-				puzzleRating,
-				1e18,
-				K_FACTOR
-			);
-			userRatings[_msgSender()] = userRating + ratingAdjustment;
-			if (puzzleRating > RATING_FLOOR + ratingAdjustment) {
-				puzzle.rating = puzzleRating - ratingAdjustment;
-				emit PuzzleRatingChanged(puzzleId, puzzleRating - ratingAdjustment);
-			} else {
-				puzzle.rating = RATING_FLOOR;
-				emit PuzzleRatingChanged(puzzleId, RATING_FLOOR);
-			}
+        puzzle.userHasAttempted[_msgSender()] = true;
+        emit PuzzleAttempted(internalTokenId, _msgSender(), solution);
 
-			emit PuzzleSolved(puzzleId, _msgSender());
-			emit UserRatingChanged(_msgSender(), puzzleRating + ratingAdjustment);
-			return true;
-		} else {
-			(uint256 ratingAdjustment, ) = Elo.calculateEloUpdate(
-				userRating,
-				puzzleRating,
-				0,
-				K_FACTOR
-			);
-			puzzle.rating = puzzleRating + ratingAdjustment;
-			if (userRating > RATING_FLOOR + ratingAdjustment) {
-				userRatings[_msgSender()] = userRating - ratingAdjustment;
-				emit UserRatingChanged(_msgSender(), puzzleRating - ratingAdjustment);
-			} else {
-				userRatings[_msgSender()] = RATING_FLOOR;
-				emit UserRatingChanged(_msgSender(), RATING_FLOOR);
-			}
+        if (puzzle.solution == keccak256(solution)) {
+            puzzle.userHasSolved[_msgSender()] = true;
+            adjustRatings(internalTokenId, true);
+            emit PuzzleSolved(internalTokenId, _msgSender());
+            return true;
+        } else {
+            adjustRatings(internalTokenId, false);
+            return false;
+        }
+    }
 
-			emit PuzzleRatingChanged(puzzleId, puzzleRating + ratingAdjustment);
-			return false;
-		}
-	}
+    function mint(uint256 internalTokenId) public payable {
+        if (msg.value < tokenMintPrice) {
+            revert NotEnoughEtherSent(msg.value, tokenMintPrice);
+        }
+        Puzzle storage puzzle = puzzlesById[internalTokenId];
+        if (!puzzle.userHasSolved[_msgSender()]) {
+            revert PuzzleNotSolved(internalTokenId);
+        }
 
-	function withdraw() public onlyOwner {
-		uint256 amount = address(this).balance;
-		payable(_msgSender()).transfer(amount);
-		emit Withdraw(_msgSender(), amount);
-	}
+        _mint(_msgSender(), internalTokenId, 1, "");
+        emit TokenMinted(internalTokenId, _msgSender());
+        payable(puzzle.creator).transfer(
+            (msg.value * (100 - platformFee)) / 100
+        );
+    }
+
+    function isWhitelisted(
+        address user,
+        bytes32[] calldata proof
+    ) public view returns (bool) {
+        return proof.verify(merkleRoot, keccak256(abi.encodePacked(user)));
+    }
+
+    function withdraw() public onlyOwner {
+        uint256 amount = address(this).balance;
+        payable(_msgSender()).transfer(amount);
+        emit Withdraw(_msgSender(), amount);
+    }
+
+    function adjustRatings(uint256 internalTokenId, bool success) private {
+        Puzzle storage puzzle = puzzlesById[internalTokenId];
+        uint256 puzzleRating = puzzle.rating;
+        uint256 userRating = userRatings[_msgSender()];
+        if (userRating == 0) {
+            // initialize to DEFAULT if no rating found
+            userRating = DEFAULT_RATING;
+            userRatings[_msgSender()] = DEFAULT_RATING;
+        }
+        (uint256 change, bool negative) = Elo.ratingChange(
+            userRating,
+            puzzleRating,
+            success ? 100 : 0,
+            kFactor
+        );
+        change = change / 100; // change is 2 decimal places (1501 = 15.01 ELO change)
+
+        if (negative) {
+            userRatings[_msgSender()] -= change;
+            puzzle.rating += change;
+        } else {
+            userRatings[_msgSender()] += change;
+            puzzle.rating -= change;
+        }
+        emit PuzzleRatingChanged(internalTokenId, puzzleRating);
+        emit UserRatingChanged(_msgSender(), userRatings[_msgSender()]);
+    }
 }

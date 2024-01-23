@@ -7,7 +7,7 @@ let simpleChessToken: SimpleChessToken
 let deployer: HardhatEthersSigner
 let user1: HardhatEthersSigner
 
-describe.only("test elo system updates correctly", () => {
+describe("Validate ELO ratings", () => {
 	beforeEach(async () => {
 		simpleChessToken = await ethers.deployContract("SimpleChessToken", [
 			"Test",

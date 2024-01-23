@@ -1,31 +1,17 @@
-/// Each chess piece is defined with 4 bits as follows:
-///     * The first bit denotes the color (0 means black; 1 means white).
-///     * The last 3 bits denote the type:
-///         | Bits | # | Type   |
-///         | ---- | - | ------ |
-///         | 000  | 0 | Empty  |
-///         | 001  | 1 | Pawn   |
-///         | 010  | 2 | Bishop |
-///         | 011  | 3 | Rook   |
-///         | 100  | 4 | Knight |
-///         | 101  | 5 | Queen  |
-///         | 110  | 6 | King   |
 export const CHESS_PIECE_TO_BYTE: Record<string, number> = {
-	p: 0b0001,
-	r: 0b0011,
-	n: 0b0100,
-	q: 0b0101,
-	b: 0b0010,
-	k: 0b0110,
-	P: 0b1001,
-	R: 0b1011,
-	N: 0b1100,
-	Q: 0b1101,
-	K: 0b1110,
-	B: 0b1010,
+	p: 0b0001, //       Each chess piece is defined with 4 bits as follows:
+	r: 0b0011, //           * The first bit denotes the color (0 means black; 1 means white).
+	n: 0b0100, //           * The last 3 bits denote the type:
+	q: 0b0101, //               | Bits | # | Type   |
+	b: 0b0010, //               | ---- | - | ------ |
+	k: 0b0110, //               | 000  | 0 | Empty  |
+	P: 0b1001, //               | 001  | 1 | Pawn   |
+	R: 0b1011, //               | 010  | 2 | Bishop |
+	N: 0b1100, //               | 011  | 3 | Rook   |
+	Q: 0b1101, //               | 100  | 4 | Knight |
+	K: 0b1110, //               | 101  | 5 | Queen  |
+	B: 0b1010, //               | 110  | 6 | King   |
 }
-
-// 0 (top left) 0 (top right) 0 (bottom left) 0 (bottom right)
 
 // Converts FEN string to board uint as represented in fiveoutofnine
 export const FENToBoard = (FEN: string) => {

@@ -1,5 +1,23 @@
 # DChess Contracts
 
+## Setup
+
+### Hardhat deploy
+
+https://github.com/wighawag/hardhat-deploy
+
+### Environment Variables
+
+The dev setup forks from goerli network from an alchemy node. Make sure .env file contains necessary variables - `PRIVATE_KEY` and `ALCHEMY_BASE_GOERLI_HTTPS`.
+Then start up a forked network with all deploy scripts run by running:
+`yarn dev`
+
+### Scripts
+
+`yarn dev` $\rightarrow$ run the local node and deploys fixtures
+`yarn test` $\rightarrow$ deploys fixtures and runs test (make sure you ran `npx hardhat node` before)
+`yarn c` $\rightarrow$ compiles contracts
+
 ## Features
 
 ### Art from fiveoutofnine
@@ -8,9 +26,9 @@ The artwork is adapted from [fiveoutofnine's chess NFTs](https://github.com/five
 
 Key differences:
 
-- Instead of playing a game against an AI, we only need to represent a fixed board position for representing puzzles. And so, instead of a `board` and a `move`, we only have `board`.
-- Off-chain library is used for converting FEN to binary board representation.
-- The code is modified so we can represent 8x8 board.
+-   Instead of playing a game against an AI, we only need to represent a fixed board position for representing puzzles. And so, instead of a `board` and a `move`, we only have `board`.
+-   Off-chain library is used for converting FEN to binary board representation.
+-   The code is modified so we can represent 8x8 board.
 
 ### ELO ratings
 
@@ -33,9 +51,3 @@ $$ R_A' = {R_A + K . (S_A - E_A)} $$
 Where $S_A$ is actual score which can be 0 (lose) or 1 (win).
 
 The higher value of K (usually for weaker players) means that the ratings will fluctuate quite a bit. We will assign higher K value for newer players.
-
-# Sample Hardhat Project
-
-The dev setup forks from goerli network from an alchemy node. Make sure .env file contains necessary variables - `PRIVATE_KEY` and `ALCHEMY_BASE_GOERLI_HTTPS`.
-Then start up a forked network with all deploy scripts run by running:
-`yarn dev`
