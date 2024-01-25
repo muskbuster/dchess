@@ -11,8 +11,6 @@ function hashed(str: string) {
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-    if (hre.network.name != "hardhat") return; // only run locally
-
     const { deployments } = hre;
     const dChessDeployment = await deployments.get("DChess");
     const dChess = await hre.ethers.getContractAt(
@@ -23,19 +21,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const [owner, creator1, creator2, creator3] = await hre.ethers.getSigners();
     const creatorArr = [creator1, creator2, creator3];
 
-    await Promise.all(
-        puzzleSet.map(async (puzzle) => {
-            const problem = puzzle[0];
-            const solution = puzzle[1];
-            const description = puzzle[2];
+    let puzzleCount = 0;
+    for (let puzzle of puzzleSet) {
+        const problem = puzzle[0];
+        const solution = puzzle[1];
+        const description = puzzle[2];
 
-            const boardPosition = FENToBoard(problem);
-            const solutionHashed = hashed(solution);
+        const boardPosition = FENToBoard(problem);
+        const solutionHashed = hashed(solution);
 
-            const randomCreator =
-                creatorArr[Math.floor(Math.random() * creatorArr.length)];
+        const randomCreator =
+            creatorArr[Math.floor(Math.random() * creatorArr.length)];
 
-            await dChess.connect(randomCreator).addPuzzle(
+        const nonce = await randomCreator.getNonce();
+
+        try {
+            const response = await dChess.connect(randomCreator).addPuzzle(
                 problem,
                 solutionHashed,
                 boardPosition,
@@ -45,8 +46,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                     randomCreator.address,
                 ),
             );
-        }),
-    );
+            await response.wait();
+            console.log("puzzle added: ", puzzleCount + 1);
+        } catch (e) {
+            console.log(e);
+        }
+        puzzleCount++;
+    }
 
     const count = await dChess.internalTokenCounter();
 

@@ -17,7 +17,6 @@ const ATTEMPT_COUNT = 50;
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     return; // temporarily disabling
-    // if (hre.network.name != "hardhat") return; // only run locally
 
     const { deployments } = hre;
     const dChessDeployment = await deployments.get("DChess");
