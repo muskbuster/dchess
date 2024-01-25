@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { getMerkleRoot } from "../utils/whitelistingHelper";
+import { getMerkleRoot } from "../../utils/whitelistingHelper";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     if (hre.network.name != "hardhat") return; // only run locally

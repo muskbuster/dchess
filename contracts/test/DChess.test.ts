@@ -74,6 +74,7 @@ describe("DChess", function () {
         const rawSolution = "Nf6+";
         const solution = hashed(rawSolution);
         const metadata = FENToBoard(problem);
+        const description = "White to play and something";
 
         it("Fails when creator not whitelisted", async function () {
             const proof = getProof(
@@ -83,7 +84,7 @@ describe("DChess", function () {
             await expect(
                 instance
                     .connect(creator3)
-                    .addPuzzle(problem, solution, metadata, proof),
+                    .addPuzzle(problem, solution, metadata, description, proof),
             )
                 .to.be.revertedWithCustomError(instance, "UserNotAuthorized")
                 .withArgs(creator3.address);
@@ -94,7 +95,7 @@ describe("DChess", function () {
             await expect(
                 instance
                     .connect(creator2)
-                    .addPuzzle(problem, solution, metadata, proof),
+                    .addPuzzle(problem, solution, metadata, description, proof),
             )
                 .to.be.revertedWithCustomError(instance, "UserNotAuthorized")
                 .withArgs(creator2.address);
@@ -106,7 +107,7 @@ describe("DChess", function () {
             await expect(
                 instance
                     .connect(creator2)
-                    .addPuzzle(problem, solution, metadata, proof),
+                    .addPuzzle(problem, solution, metadata, description, proof),
             )
                 .to.emit(instance, "PuzzleAdded")
                 .withArgs(
@@ -137,7 +138,7 @@ describe("DChess", function () {
             await expect(
                 instance
                     .connect(creator3)
-                    .addPuzzle(problem, solution, metadata, proof),
+                    .addPuzzle(problem, solution, metadata, description, proof),
             )
                 .to.emit(instance, "PuzzleAdded")
                 .withArgs(4, problem, solution, metadata, creator3.address);
@@ -231,7 +232,7 @@ describe("DChess", function () {
         it("Succeeds when solver tries", async () => {
             const platformFee = await instance.platformFee();
             const mintValue = await instance.tokenMintPrice();
-            const puzzleCreatorAddress = (await instance.puzzlesById(1))[4];
+            const puzzleCreatorAddress = (await instance.puzzlesById(2))[4];
             const creator = [creator1, creator2, creator3].find(
                 (c) => c.address == puzzleCreatorAddress,
             ) as HardhatEthersSigner;

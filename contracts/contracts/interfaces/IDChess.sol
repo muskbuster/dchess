@@ -41,9 +41,10 @@ interface IDChess {
     function mint(uint256 internalTokenId) external payable;
 
     function addPuzzle(
-        string memory fen,
+        string calldata fen,
         bytes32 solutionHash,
         uint256 position,
+        string calldata description,
         bytes32[] calldata proof
     ) external;
 

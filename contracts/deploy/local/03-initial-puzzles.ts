@@ -1,10 +1,10 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { FENToBoard } from "../utils/boardEncoder";
+import { FENToBoard } from "../../utils/boardEncoder";
 import { ethers } from "hardhat";
-import { getProof } from "../utils/whitelistingHelper";
+import { getProof } from "../../utils/whitelistingHelper";
 
-import puzzleSet from "../data/puzzleSet.json";
+import testPuzzleSet from "../../data/testPuzzleSet.json";
 
 function hashed(str: string) {
     return ethers.keccak256(ethers.toUtf8Bytes(str));
@@ -24,9 +24,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const creatorArr = [creator1, creator2];
 
     await Promise.all(
-        puzzleSet.map(async (puzzle) => {
+        testPuzzleSet.map(async (puzzle) => {
             const problem = puzzle[0];
             const solution = puzzle[1];
+            const description = puzzle[2];
 
             const boardPosition = FENToBoard(problem);
             const solutionHashed = hashed(solution);
@@ -38,6 +39,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                 problem,
                 solutionHashed,
                 boardPosition,
+                description,
                 getProof(
                     creatorArr.map((c) => c.address),
                     randomCreator.address,

@@ -1,8 +1,52 @@
 [
     [
-        "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 1",
-        "Nf6+"
+        "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 0",
+        "Nf6+",
+        "Henry Buckle vs NN, London, 1840"
     ],
-    ["1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 1", "Qd5+"],
-    ["4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0", "Qb8+"]
+    [
+        "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 0",
+        "Qd5+",
+        "Louis Paulsen vs Blachy, New York, 1857"
+    ],
+    [
+        "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0",
+        "Qb8+",
+        "Paul Morphy vs Duke Isouard, Paris, 1858"
+    ],
+    [
+        "r1b2k1r/ppp1bppp/8/1B1Q4/5q2/2P5/PPP2PPP/R3R1K1 w - - 1 0",
+        "Qd8+",
+        "Johannes Zukertort vs Adolf Anderssen, Breslau, 1865"
+    ],
+    [
+        "5rkr/pp2Rp2/1b1p1Pb1/3P2Q1/2n3P1/2p5/P4P2/4R1K1 w - - 1 0",
+        "Qxg6+",
+        "Gustav Neumann vs Carl Mayet, Berlin, 1866"
+    ],
+    [
+        "1r1kr3/Nbppn1pp/1b6/8/6Q1/3B1P2/Pq3P1P/3RR1K1 w - - 1 0",
+        "Qxd7+",
+        "Joseph Blackburne vs Martin, England, 1876"
+    ],
+    [
+        "5rk1/1p1q2bp/p2pN1p1/2pP2Bn/2P3P1/1P6/P4QKP/5R2 w - - 1 0",
+        "Qxf8+",
+        "Wilfried Paulsen vs Adolf Anderssen, Frankfurt, 1878"
+    ],
+    [
+        "r1nk3r/2b2ppp/p3b3/3NN3/Q2P3q/B2B4/P4PPP/4R1K1 w - - 1 0",
+        "Qd7+",
+        "Joseph Blackburne vs Smith, Simul, 1882"
+    ],
+    [
+        "r4br1/3b1kpp/1q1P4/1pp1RP1N/p7/6Q1/PPB3PP/2KR4 w - - 1 0",
+        "Qg6+",
+        "Wilhelm Steinitz vs David Sands, New York, 1887"
+    ],
+    [
+        "r1b2k1r/ppppq3/5N1p/4P2Q/4PP2/1B6/PP5P/n2K2R1 w - - 1 0",
+        "Qxh6+",
+        "Wilhelm Steinitz vs Albert Hodges, New York, 1891"
+    ]
 ]

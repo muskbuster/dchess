@@ -14,9 +14,12 @@ Then start up a forked network with all deploy scripts run by running:
 
 ### Scripts
 
-`yarn dev` $\rightarrow$ run the local node and deploys fixtures
-`yarn test` $\rightarrow$ deploys fixtures and runs test (make sure you ran `npx hardhat node` before)
-`yarn c` $\rightarrow$ compiles contracts
+-   `yarn compile` $\rightarrow$ cleans and compiles
+-   `yarn test` $\rightarrow$ deploys fixtures and runs test on hardhat network
+-   `yarn hardhat --network <networkName> deploy` $\rightarrow$ will deploy the code to the right network
+-   `yarn hardhat run scripts/parseProblems.ts` $\rightarrow$ parses problem sets (in frequently needed)
+-   `yarn hardhat --network <networkName> run scripts/whitelistCreators.ts` $\rightarrow$ whitelists creators found in `/data/whitelistedCreators.json`. This is used for updating the list (use this for mainnet as well)
+-   `yarn hardhat --network <networkName> run scripts/addPuzzles.ts` $\rightarrow$ randomly selects creators (that should be whitelisted seperately) and adds a collection of problems from `/data/puzzleSet.json` (can be used for mainnet but be careful about the puzzle set being used)
 
 ## Features
 

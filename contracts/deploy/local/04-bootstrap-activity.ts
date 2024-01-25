@@ -1,10 +1,10 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { FENToBoard } from "../utils/boardEncoder";
+import { FENToBoard } from "../../utils/boardEncoder";
 import { ethers } from "hardhat";
-import { getProof } from "../utils/whitelistingHelper";
+import { getProof } from "../../utils/whitelistingHelper";
 
-import puzzleSet from "../data/puzzleSet.json";
+import puzzleSet from "../../data/puzzleSet.json";
 
 function hashed(str: string) {
     // first convert to bytes

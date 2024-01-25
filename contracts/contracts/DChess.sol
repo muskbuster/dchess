@@ -32,6 +32,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         uint256 rating;
         uint256 metadata; // Used to generate nft art
         address creator;
+        string description; // description of the puzzle
     }
 
     mapping(uint256 => Puzzle) public puzzlesById;
@@ -88,6 +89,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         string calldata fen,
         bytes32 solution,
         uint256 metadata,
+        string calldata description,
         bytes32[] calldata proof
     ) public {
         if (!isWhitelisted(_msgSender(), proof)) {
@@ -112,6 +114,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         puzzle.solution = solution;
         puzzle.creator = _msgSender();
         puzzle.rating = DEFAULT_RATING;
+        puzzle.description = description;
         puzzle.metadata = metadata;
         internalTokenCounter = internalTokenCounter + 1;
 
