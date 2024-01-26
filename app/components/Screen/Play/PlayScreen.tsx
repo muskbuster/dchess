@@ -3,7 +3,7 @@ import { NextChessground } from "next-chessground";
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
 
 import Confetti from "react-dom-confetti";
-import { StyledButton } from "@/components/Layout/StyledButton";
+import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 import { FaPlusSquare } from "react-icons/fa";
 import { FaMinusSquare } from "react-icons/fa";
@@ -16,9 +16,8 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { BoardAbi } from "@/utils/abis/Board";
-import { BOARD_ADDRESS } from "@/utils/addresses";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-import { encodePacked, parseEther } from "viem";
+import { Address, encodePacked, parseEther } from "viem";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { ALL_PUZZLES } from "@/utils/graphQLQueries";
@@ -32,6 +31,8 @@ enum ProblemStatus {
   Success,
   Fail,
 }
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
 const confettiProps = {
   // angle: 90,
@@ -60,7 +61,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 1;
 
   const { data, write, isSuccess, isError } = useContractWrite({
-    address: BOARD_ADDRESS,
+    address: CONTRACT_ADDRESS,
     abi: BoardAbi,
     functionName: "submitSolution",
     chainId: 31337,
@@ -74,7 +75,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
     isSuccess: isMintSuccess,
     isError: isMintError,
   } = useContractWrite({
-    address: BOARD_ADDRESS,
+    address: CONTRACT_ADDRESS,
     abi: BoardAbi,
     functionName: "mint",
     chainId: 31337,
@@ -95,7 +96,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
 
   const hasAttemptedPuzzle = useContractRead({
     abi: BoardAbi,
-    address: BOARD_ADDRESS,
+    address: CONTRACT_ADDRESS,
     functionName: "userHasAttemptedPuzzle",
     args: [
       puzzleId - 1,
@@ -105,7 +106,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
 
   const hasSolvedPuzzle = useContractRead({
     abi: BoardAbi,
-    address: BOARD_ADDRESS,
+    address: CONTRACT_ADDRESS,
     functionName: "userHasSolvedPuzzle",
     args: [
       puzzleId - 1,

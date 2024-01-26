@@ -2,24 +2,25 @@
 
 import { PrivyProvider, User } from "@privy-io/react-auth";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
-import { base, baseGoerli, foundry } from "@wagmi/chains";
+import { baseSepolia } from "viem/chains";
 import { configureChains } from "wagmi";
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
-import { QueryClient } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import WalletWrapper from "@/components/Common/WalletWrapper";
-import { RPC_URL } from "@/utils/addresses";
 
 const configureChainsConfig = configureChains(
-  [foundry],
+  [baseSepolia],
   [
     jsonRpcProvider({
       rpc: (chain) => ({
-        http: RPC_URL, // process.env.NEXT_PUBLIC_ALCHEMY_HTTPS as string,
-        webSocket: RPC_URL, // process.env.NEXT_PUBLIC_ALCHEMY_WSS as string,
+        http: process.env.NEXT_PUBLIC_ALCHEMY_HTTPS as string,
+        webSocket: process.env.NEXT_PUBLIC_ALCHEMY_WSS as string,
       }),
     }),
   ]
 );
+
+const queryClient = new QueryClient();
 
 const PrivyWrapper = ({
   page,
@@ -42,13 +43,13 @@ const PrivyWrapper = ({
           theme: "dark",
           accentColor: "#676FFF",
         },
-        defaultChain: foundry,
-        supportedChains: [foundry],
       }}
       onSuccess={handleLogin}
     >
       <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-        <WalletWrapper page={page} args={args} />
+        <QueryClientProvider client={queryClient}>
+          <WalletWrapper page={page} args={args} />
+        </QueryClientProvider>
       </PrivyWagmiConnector>
     </PrivyProvider>
   );

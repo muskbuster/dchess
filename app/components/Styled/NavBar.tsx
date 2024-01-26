@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { StyledButton } from "./StyledButton";
+import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount, useBalance } from "wagmi";
 import { useQuery } from "@apollo/client";

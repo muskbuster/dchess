@@ -3,7 +3,7 @@ import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import NavBar from "@/components/Layout/NavBar";
+import NavBar from "@/components/Styled/NavBar";
 import CreateScreen from "../Screen/Create/CreateScreen";
 import PlayScreen from "../Screen/Play/PlayScreen";
 import StatsScreen from "../Screen/Stats/StatsScreen";

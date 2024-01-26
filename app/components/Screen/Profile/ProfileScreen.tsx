@@ -2,7 +2,7 @@
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 
-import { StyledButton } from "@/components/Layout/StyledButton";
+import { StyledButton } from "@/components/Styled/Button";
 import { useAccount } from "wagmi";
 import AddressBar from "@/components/Common/AddressBar";
 import { useQuery } from "@apollo/client";

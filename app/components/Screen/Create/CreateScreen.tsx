@@ -4,18 +4,19 @@ import { NextEditor, NextChessground, Stockfish } from "next-chessground";
 import { Chess, SQUARES } from "chess.js";
 import { useEffect, useRef, useState } from "react";
 
-import { StyledButton } from "@/components/Layout/StyledButton";
+import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 import { hashed } from "@/utils/general";
 import { FENToBoard } from "@/utils/fiveOutOfNineArt";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
-import { BOARD_ADDRESS } from "@/utils/addresses";
 import { BoardAbi } from "@/utils/abis/Board";
 
 enum CreateState {
   Problem,
   Solution,
 }
+
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string;
 
 const CreateScreen = () => {
   const emptyFen = "8/8/8/8/8/8/8/8 w - - 0 1";
@@ -41,7 +42,7 @@ const CreateScreen = () => {
   };
 
   const { data, write, isError, isSuccess } = useContractWrite({
-    address: BOARD_ADDRESS,
+    address: CONTRACT_ADDRESS,
     abi: BoardAbi,
     functionName: "addPuzzle",
     chainId: 31337,
@@ -71,12 +72,14 @@ const CreateScreen = () => {
       console.log("solution hash", solutionHash);
       console.log("board", board);
 
+      /*
       if (write) {
         ("writing");
         write({
           args: [fen, solutionHash, board],
         });
       }
+      */
     }
   }
 
