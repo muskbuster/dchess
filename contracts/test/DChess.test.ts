@@ -116,6 +116,7 @@ describe("DChess", function () {
                     solution,
                     metadata,
                     creator2.address,
+                    description,
                 );
 
             expect(await instance.internalTokenCounter()).to.equal(
@@ -141,7 +142,14 @@ describe("DChess", function () {
                     .addPuzzle(problem, solution, metadata, description, proof),
             )
                 .to.emit(instance, "PuzzleAdded")
-                .withArgs(4, problem, solution, metadata, creator3.address);
+                .withArgs(
+                    4,
+                    problem,
+                    solution,
+                    metadata,
+                    creator3.address,
+                    description,
+                );
         });
     });
 

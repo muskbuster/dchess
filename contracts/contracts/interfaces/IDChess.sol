@@ -10,7 +10,8 @@ interface IDChess {
         string fen,
         bytes32 solutionHash,
         uint256 board,
-        address creator
+        address creator,
+        string description
     );
     event PuzzleSolved(uint256 internalTokenId, address user);
     event PuzzleAttempted(

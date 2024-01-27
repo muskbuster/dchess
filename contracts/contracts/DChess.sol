@@ -123,7 +123,8 @@ contract DChess is IDChess, ERC1155, Ownable {
             fen,
             solution,
             metadata,
-            _msgSender()
+            _msgSender(),
+            description
         );
     }
 
@@ -208,7 +209,7 @@ contract DChess is IDChess, ERC1155, Ownable {
             userRatings[_msgSender()] += change;
             puzzle.rating -= change;
         }
-        emit PuzzleRatingChanged(internalTokenId, puzzleRating);
+        emit PuzzleRatingChanged(internalTokenId, puzzle.rating);
         emit UserRatingChanged(_msgSender(), userRatings[_msgSender()]);
     }
 }
