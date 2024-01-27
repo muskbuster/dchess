@@ -1,26 +1,18 @@
 // @ts-ignore
 import { NextChessground } from "next-chessground";
-import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import { useParams } from "next/navigation";
 
+import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
 import Confetti from "react-dom-confetti";
 import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 import { FaPlusSquare } from "react-icons/fa";
 import { FaMinusSquare } from "react-icons/fa";
 import { FaArrowRotateLeft } from "react-icons/fa6";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import {
-  useContractWrite,
-  useContractRead,
-  useWaitForTransaction,
-} from "wagmi";
-import { BoardAbi } from "@/utils/abis/Board";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-import { Address, encodePacked, parseEther } from "viem";
-import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
-import { ALL_PUZZLES } from "@/utils/graphQLQueries";
+
 import NFTVisual from "../Profile/NFTVisual";
 
 // Documentation for the NextChessground
@@ -31,8 +23,6 @@ enum ProblemStatus {
   Success,
   Fail,
 }
-
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
 const confettiProps = {
   // angle: 90,
@@ -60,30 +50,6 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const puzzleIdParams = useParams().id as string;
   const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 1;
 
-  const { data, write, isSuccess, isError } = useContractWrite({
-    address: CONTRACT_ADDRESS,
-    abi: BoardAbi,
-    functionName: "submitSolution",
-    chainId: 31337,
-  });
-
-  const waitForTx = useWaitForTransaction({ hash: data?.hash });
-
-  const {
-    data: mintData,
-    write: mintWrite,
-    isSuccess: isMintSuccess,
-    isError: isMintError,
-  } = useContractWrite({
-    address: CONTRACT_ADDRESS,
-    abi: BoardAbi,
-    functionName: "mint",
-    chainId: 31337,
-    value: parseEther(".02"),
-  });
-
-  const waitForMint = useWaitForTransaction({ hash: mintData?.hash });
-
   const isAttempt = problemStatus.valueOf() == ProblemStatus.Attempt.valueOf();
   const successfulSolved =
     problemStatus.valueOf() == ProblemStatus.Success.valueOf();
@@ -92,28 +58,28 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const { wallet: activeWallet } = usePrivyWagmi();
 
   const ref = useRef();
-  const puzzles = useQuery(ALL_PUZZLES);
 
-  const hasAttemptedPuzzle = useContractRead({
-    abi: BoardAbi,
-    address: CONTRACT_ADDRESS,
-    functionName: "userHasAttemptedPuzzle",
-    args: [
-      puzzleId - 1,
-      activeWallet ? (activeWallet.address as `0x${string}`) : "0x",
-    ],
-  });
+  const puzzles = {
+    loading: false,
+    data: {
+      puzzles: [
+        {
+          fen: "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 0",
+          uri: "",
+        },
+        {
+          fen: "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 0",
+          uri: "",
+        },
+        {
+          fen: "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0",
+          uri: "",
+        },
+      ],
+    },
+  };
 
-  const hasSolvedPuzzle = useContractRead({
-    abi: BoardAbi,
-    address: CONTRACT_ADDRESS,
-    functionName: "userHasSolvedPuzzle",
-    args: [
-      puzzleId - 1,
-      activeWallet ? (activeWallet.address as `0x${string}`) : "0x",
-    ],
-  });
-
+  /*
   useEffect(() => {
     // Initial load
     if (hasSolvedPuzzle.isSuccess && hasSolvedPuzzle.data) {
@@ -132,6 +98,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
       setMintSuccess(true);
     }
   }, [waitForTx, setSubmittedTx, waitForMint]);
+  */
 
   const onMove = async (chess: any) => {
     setSelectedMove(chess.history()[0]);
@@ -149,7 +116,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   };
 
   const handleMint = () => {
-    mintWrite({ args: [puzzleId - 1] });
+    // mintWrite({ args: [puzzleId - 1] });
   };
 
   const description = `Black just played Qe2, which is a big mistake. White to play and win. I didn't find the move and ended up loosing badly. Can you find it?`;
@@ -157,10 +124,10 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const maxPuzzleId = !puzzles.loading ? puzzles.data.puzzles.length : 1;
 
   const handleSubmit = async () => {
-    setSubmittedTx(true);
-    write({
-      args: [puzzleId - 1, encodePacked(["string"], [selectedMove])],
-    });
+    // setSubmittedTx(true);
+    // write({
+    //   args: [puzzleId - 1, encodePacked(["string"], [selectedMove])],
+    // });
   };
 
   return (

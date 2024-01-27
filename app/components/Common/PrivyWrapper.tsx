@@ -7,6 +7,7 @@ import { configureChains } from "wagmi";
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
 import { QueryClient, QueryClientProvider } from "react-query";
 import WalletWrapper from "@/components/Common/WalletWrapper";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const configureChainsConfig = configureChains(
   [baseSepolia],
@@ -19,6 +20,11 @@ const configureChainsConfig = configureChains(
     }),
   ]
 );
+
+const client = new ApolloClient({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT as string,
+  cache: new InMemoryCache(),
+});
 
 const queryClient = new QueryClient();
 
@@ -47,9 +53,11 @@ const PrivyWrapper = ({
       onSuccess={handleLogin}
     >
       <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-        <QueryClientProvider client={queryClient}>
-          <WalletWrapper page={page} args={args} />
-        </QueryClientProvider>
+        <ApolloProvider client={client}>
+          <QueryClientProvider client={queryClient}>
+            <WalletWrapper page={page} args={args} />
+          </QueryClientProvider>
+        </ApolloProvider>
       </PrivyWagmiConnector>
     </PrivyProvider>
   );

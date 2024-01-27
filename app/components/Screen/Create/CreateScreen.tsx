@@ -8,8 +8,6 @@ import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 import { hashed } from "@/utils/general";
 import { FENToBoard } from "@/utils/fiveOutOfNineArt";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
-import { BoardAbi } from "@/utils/abis/Board";
 
 enum CreateState {
   Problem,
@@ -41,22 +39,13 @@ const CreateScreen = () => {
     }
   };
 
-  const { data, write, isError, isSuccess } = useContractWrite({
-    address: CONTRACT_ADDRESS,
-    abi: BoardAbi,
-    functionName: "addPuzzle",
-    chainId: 31337,
-  });
-
-  const waitForTx = useWaitForTransaction({
-    hash: data?.hash,
-  });
-
+  /*
   useEffect(() => {
     if (waitForTx.isSuccess && waitForTx.data?.logs.length === 1) {
       setSubmitSuccess(true);
     }
   }, [waitForTx]);
+  */
 
   async function handleSubmit(e: any) {
     e.preventDefault();
