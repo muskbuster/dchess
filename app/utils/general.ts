@@ -19,3 +19,10 @@ export function hashed(str: string) {
   // then hash it
   return keccak256(_bytes);
 }
+
+export function canonicalFen(fen: string) {
+  let fenArr = fen.split(" ");
+  fenArr[5] = "1";
+
+  return fenArr.join(" ");
+}

@@ -15,7 +15,7 @@ import { FaArrowRotateLeft } from "react-icons/fa6";
 
 import NFTVisual from "../Profile/NFTVisual";
 import useFetchPuzzles from "@/hooks/useFetchPuzzles";
-import { truncateAddress } from "@/utils/general";
+import { canonicalFen, truncateAddress } from "@/utils/general";
 import { zeroAddress, Address } from "viem";
 
 // Documentation for the NextChessground
@@ -45,7 +45,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const [selectedMove, setSelectedMove] = useState("--");
   const [submittedTx, setSubmittedTx] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const [viewOnly, setViewOnly] = useState(false);
+  const [viewOnly, setViewOnly] = useState(false || !loggedIn);
   const [mintImage, setMintImage] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
   const [mintCount, setMintCount] = useState(1);
@@ -116,7 +116,9 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   if (!fetchPuzzlesLoading && !fetchPuzzlesError) {
     description = puzzles[puzzleId].description;
     submitter = truncateAddress(puzzles[puzzleId].creator);
-    fen = puzzles[puzzleId].fen;
+    // BUG: Chessground doesn't accept 0 as a valid full-move number
+    // so we replace 0 with 1 for the full-move number
+    fen = canonicalFen(puzzles[puzzleId].fen);
     maxPuzzleId = puzzles.length - 1;
   }
 
@@ -142,8 +144,6 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
             <div></div>
             // <NFTVisual uri={puzzles.data.puzzles[puzzleId - 1].uri} />
           )
-        ) : fetchPuzzlesLoading ? (
-          <div>loading</div>
         ) : (
           <NextChessground
             key={attempts}

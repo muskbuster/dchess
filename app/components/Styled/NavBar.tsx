@@ -3,9 +3,6 @@ import Link from "next/link";
 import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount, useBalance } from "wagmi";
-import { useQuery } from "@apollo/client";
-import { SINGLE_USER_RATING } from "@/utils/graphQLQueries";
-import { bigIntToOnes } from "@/utils/general";
 import Ribbon from "../../public/Ribbon.svg";
 import EthIcon from "../../public/Ethereum.svg";
 
@@ -20,9 +17,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
     address,
   });
 
-  const userRating = useQuery(SINGLE_USER_RATING, {
-    variables: { userAddress: address },
-  });
+  let userRating = "1000";
 
   let balance = "0.0";
   if (!isError && !isLoading) {
@@ -43,14 +38,12 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </Link>
       </div>
       <div>
-        {loggedIn && !userRating.loading && userRating.data ? (
+        {loggedIn ? (
           <Link href="/profile">
             <div className="flex">
               <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
                 <Ribbon className="h-6 w-6" />
-                {userRating.data.user
-                  ? bigIntToOnes(userRating.data.user.rating)
-                  : "--"}
+                {userRating}
                 <EthIcon className="h-6 w-6 ml-2" /> {balance} ETH
               </div>
             </div>
