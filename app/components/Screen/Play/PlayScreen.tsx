@@ -14,6 +14,9 @@ import { FaMinusSquare } from "react-icons/fa";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 
 import NFTVisual from "../Profile/NFTVisual";
+import useFetchPuzzles from "@/hooks/useFetchPuzzles";
+import { truncateAddress } from "@/utils/general";
+import { zeroAddress, Address } from "viem";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -48,7 +51,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
   const [mintCount, setMintCount] = useState(1);
   const [mintSuccess, setMintSuccess] = useState(false);
   const puzzleIdParams = useParams().id as string;
-  const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 1;
+  const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 0;
 
   const isAttempt = problemStatus.valueOf() == ProblemStatus.Attempt.valueOf();
   const successfulSolved =
@@ -59,25 +62,11 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
 
   const ref = useRef();
 
-  const puzzles = {
-    loading: false,
-    data: {
-      puzzles: [
-        {
-          fen: "r2qkb1r/pp2nppp/3p4/2pNN1B1/2BnP3/3P4/PPP2PPP/R2bK2R w KQkq - 1 0",
-          uri: "",
-        },
-        {
-          fen: "1rb4r/pkPp3p/1b1P3n/1Q6/N3Pp2/8/P1P3PP/7K w - - 1 0",
-          uri: "",
-        },
-        {
-          fen: "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4 w k - 1 0",
-          uri: "",
-        },
-      ],
-    },
-  };
+  const {
+    puzzles,
+    error: fetchPuzzlesError,
+    loading: fetchPuzzlesLoading,
+  } = useFetchPuzzles();
 
   /*
   useEffect(() => {
@@ -119,9 +108,17 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
     // mintWrite({ args: [puzzleId - 1] });
   };
 
-  const description = `Black just played Qe2, which is a big mistake. White to play and win. I didn't find the move and ended up loosing badly. Can you find it?`;
-  const submitter = "0xasdf.eth (1721)";
-  const maxPuzzleId = !puzzles.loading ? puzzles.data.puzzles.length : 1;
+  let description = "...";
+  let submitter = truncateAddress(zeroAddress);
+  let maxPuzzleId = 0;
+  let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+  if (!fetchPuzzlesLoading && !fetchPuzzlesError) {
+    description = puzzles[puzzleId].description;
+    submitter = truncateAddress(puzzles[puzzleId].creator);
+    fen = puzzles[puzzleId].fen;
+    maxPuzzleId = puzzles.length - 1;
+  }
 
   const handleSubmit = async () => {
     // setSubmittedTx(true);
@@ -139,18 +136,19 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
           className={`${!successfulSolved ? "opacity-5" : "cursor-pointer"}`}
         />
         {mintImage ? (
-          puzzles.loading ? (
+          fetchPuzzlesLoading ? (
             <div>...loading</div>
           ) : (
-            <NFTVisual uri={puzzles.data.puzzles[puzzleId - 1].uri} />
+            <div></div>
+            // <NFTVisual uri={puzzles.data.puzzles[puzzleId - 1].uri} />
           )
-        ) : puzzles.loading ? (
+        ) : fetchPuzzlesLoading ? (
           <div>loading</div>
         ) : (
           <NextChessground
             key={attempts}
             ref={ref}
-            fen={puzzles.data.puzzles[puzzleId - 1].fen}
+            fen={fen}
             onMove={onMove}
             viewOnly={viewOnly}
           />
@@ -159,7 +157,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
       <div className="ml-20 w-1/3 flex flex-col justify-between">
         <div>
           <div className="flex flex-row items-center space-x-10">
-            {puzzleId > 1 ? (
+            {puzzleId > 0 ? (
               <Link href={`/play/${puzzleId - 1}`}>
                 <CaretLeftIcon
                   height={40}
@@ -174,7 +172,7 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
                 className="text-slate-700"
               />
             )}
-            <div className="font-bold text-xl">{`Puzzle #${puzzleId}`}</div>
+            <div className="font-bold text-xl">{`Puzzle #${puzzleId + 1}`}</div>
             {puzzleId < maxPuzzleId ? (
               <Link href={`/play/${puzzleId + 1}`}>
                 <CaretRightIcon

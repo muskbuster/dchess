@@ -1,6 +1,21 @@
-import { useQuery } from "@apollo/client";
-import { ALL_PUZZLES } from "@/utils/graphQLQueries";
+import { useQuery, gql } from "@apollo/client";
 
-export default function useSubmitSolution() {
-  const puzzles = useQuery(ALL_PUZZLES);
+export const GET_ALL_PUZZLES = gql`
+  query {
+    puzzleAddeds {
+      internalTokenId
+      fen
+      description
+      creator
+    }
+  }
+`;
+
+export default function useFetchPuzzles() {
+  const { data, loading, error } = useQuery(GET_ALL_PUZZLES);
+
+  let puzzles = [];
+  if (!loading && !error) puzzles = data.puzzleAddeds;
+
+  return { puzzles, loading, error };
 }

@@ -55,13 +55,3 @@ export const SINGLE_USER_RATING = gql`
     }
   }
 `;
-
-export const ALL_PUZZLES = gql`
-  query AllPuzzles {
-    puzzles {
-      fen
-      id
-      uri
-    }
-  }
-`;

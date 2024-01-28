@@ -1,6 +1,6 @@
-import { formatEther, keccak256, stringToBytes } from "viem";
+import { Address, formatEther, keccak256, stringToBytes } from "viem";
 
-export function truncateAddress(address: string) {
+export function truncateAddress(address: Address) {
   return (
     address.slice(0, 9) +
     "..." +
@@ -19,6 +19,3 @@ export function hashed(str: string) {
   // then hash it
   return keccak256(_bytes);
 }
-
-
-
