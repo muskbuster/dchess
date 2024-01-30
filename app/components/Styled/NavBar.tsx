@@ -2,27 +2,12 @@ import Link from "next/link";
 
 import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
-import { useAccount, useBalance } from "wagmi";
-import Ribbon from "../../public/Ribbon.svg";
-import EthIcon from "../../public/Ethereum.svg";
+import { useAccount } from "wagmi";
+import LoggedInNavBar from "./LoggedInNavBar";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();
   const { address } = useAccount();
-  const {
-    data: rawBalance,
-    isError,
-    isLoading,
-  } = useBalance({
-    address,
-  });
-
-  let userRating = "1000";
-
-  let balance = "0.0";
-  if (!isError && !isLoading) {
-    balance = Number(rawBalance?.formatted).toFixed(4);
-  }
 
   return (
     <nav className="navbar flex flex-row bg-slate-600 border-b border-white p-2 justify-between">
@@ -38,16 +23,8 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </Link>
       </div>
       <div>
-        {loggedIn ? (
-          <Link href="/profile">
-            <div className="flex">
-              <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
-                <Ribbon className="h-6 w-6" />
-                {userRating}
-                <EthIcon className="h-6 w-6 ml-2" /> {balance} ETH
-              </div>
-            </div>
-          </Link>
+        {loggedIn && address ? (
+          <LoggedInNavBar address={address} />
         ) : (
           <StyledButton wide={false} onClick={login}>
             Log in

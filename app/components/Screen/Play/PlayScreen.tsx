@@ -2,7 +2,6 @@
 import { NextChessground } from "next-chessground";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 import { useParams } from "next/navigation";
 
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
@@ -17,6 +16,10 @@ import NFTVisual from "../Profile/NFTVisual";
 import useFetchPuzzles from "@/hooks/useFetchPuzzles";
 import { canonicalFen, truncateAddress } from "@/utils/general";
 import { zeroAddress, Address } from "viem";
+import useSubmitSolution from "@/hooks/useSubmitSolution";
+import useHasAttempted from "@/hooks/useHasAttempted";
+import { ConnectedWallet } from "@privy-io/react-auth";
+import useHasSolved from "@/hooks/useHasSolved";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -40,10 +43,15 @@ const confettiProps = {
   // colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
 };
 
-const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
+const PlayScreen = ({
+  loggedIn,
+  activeWallet,
+}: {
+  loggedIn: boolean;
+  activeWallet: ConnectedWallet;
+}) => {
   const [problemStatus, setProblemStatus] = useState(ProblemStatus.Attempt);
   const [selectedMove, setSelectedMove] = useState("--");
-  const [submittedTx, setSubmittedTx] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [viewOnly, setViewOnly] = useState(false || !loggedIn);
   const [mintImage, setMintImage] = useState(false);
@@ -58,7 +66,19 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
     problemStatus.valueOf() == ProblemStatus.Success.valueOf();
   const isFail = problemStatus.valueOf() == ProblemStatus.Fail.valueOf();
 
-  const { wallet: activeWallet } = usePrivyWagmi();
+  const { data: attempted } = useHasAttempted(
+    puzzleId,
+    activeWallet?.address as Address
+  );
+  const { data: solved } = useHasSolved(
+    puzzleId,
+    activeWallet?.address as Address
+  );
+
+  useEffect(() => {
+    if (solved) setProblemStatus(ProblemStatus.Success);
+    if (attempted && !solved) setProblemStatus(ProblemStatus.Fail);
+  }, [attempted, solved]);
 
   const ref = useRef();
 
@@ -68,26 +88,18 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
     loading: fetchPuzzlesLoading,
   } = useFetchPuzzles();
 
-  /*
-  useEffect(() => {
-    // Initial load
-    if (hasSolvedPuzzle.isSuccess && hasSolvedPuzzle.data) {
-      setProblemStatus(ProblemStatus.Success);
-    } else if (hasAttemptedPuzzle.isSuccess && hasAttemptedPuzzle.data) {
-      setProblemStatus(ProblemStatus.Fail);
-    }
-    // On tx submit
-    else if (waitForTx && waitForTx.data?.logs.length == 4) {
-      setProblemStatus(ProblemStatus.Success);
-    } else if (waitForTx && waitForTx.data?.logs.length == 3) {
-      setProblemStatus(ProblemStatus.Fail);
-    }
+  const {
+    write: writeSolution,
+    refetch: refetchSolution,
+    isSuccess: isSubmitSolutionSuccess,
+  } = useSubmitSolution(puzzleId, selectedMove);
 
-    if (waitForMint.data && waitForMint.data?.logs.length == 2) {
-      setMintSuccess(true);
+  useEffect(() => {
+    if (isSubmitSolutionSuccess) {
+      // TODO: replace with getting status
+      window.location.reload();
     }
-  }, [waitForTx, setSubmittedTx, waitForMint]);
-  */
+  }, [isSubmitSolutionSuccess]);
 
   const onMove = async (chess: any) => {
     setSelectedMove(chess.history()[0]);
@@ -102,6 +114,18 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
 
   const flipImage = () => {
     if (successfulSolved) setMintImage(!mintImage);
+  };
+
+  const handleSubmit = async () => {
+    if (selectedMove === "--") return;
+
+    try {
+      await refetchSolution();
+      await writeSolution?.();
+    } catch (e) {
+      console.log(e);
+      alert("Something is broken on the app! Please try again later!");
+    }
   };
 
   const handleMint = () => {
@@ -121,13 +145,6 @@ const PlayScreen = ({ loggedIn }: { loggedIn: boolean }) => {
     fen = canonicalFen(puzzles[puzzleId].fen);
     maxPuzzleId = puzzles.length - 1;
   }
-
-  const handleSubmit = async () => {
-    // setSubmittedTx(true);
-    // write({
-    //   args: [puzzleId - 1, encodePacked(["string"], [selectedMove])],
-    // });
-  };
 
   return (
     <div className="mt-20 flex flex-row justify-center">

@@ -1,24 +1,24 @@
 import { useQuery, gql } from "@apollo/client";
-import { SINGLE_USER_RATING } from "@/utils/graphQLQueries";
+import { Address } from "viem";
 
-export const GET_ALL_PUZZLES = gql`
-  query {
-    puzzleAddeds {
-      internalTokenId
-      fen
-      description
-      creator
+export const USER_RATING = gql`
+  query FetchRatingsByUser($userAddress: Bytes) {
+    userRatingChangeds(where: { user: $userAddress }, orderBy: blockTimestamp) {
+      newUserRating
     }
   }
 `;
 
-export default function useFetchRatings(address: string) {
-  const { data, loading, error } = useQuery(SINGLE_USER_RATING, {
+export default function useFetchRatings(address: Address | undefined) {
+  const { data, loading, error } = useQuery(USER_RATING, {
     variables: { userAddress: address },
   });
 
-  let puzzles = [];
-  if (!loading && !error) puzzles = data.puzzleAddeds;
+  let rating = "1000";
+  if (!loading && !error)
+    rating =
+      data?.userRatingChangeds[data?.userRatingChangeds.length - 1]
+        ?.newUserRating;
 
-  return { puzzles, loading, error };
+  return { rating, loading, error };
 }

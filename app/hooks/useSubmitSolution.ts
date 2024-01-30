@@ -4,15 +4,12 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import DChess from "@/utils/abi/DChess.json";
-import { Address } from "viem";
+import { Address, stringToBytes, toHex } from "viem";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
-export default function useSubmitSolution(
-  puzzleId: string,
-  hashedSolution: string
-) {
-  const parsedPuzzleId = (Number(puzzleId) - 1).toString();
+export default function useSubmitSolution(puzzleId: number, solution: string) {
+  const solutionHex = toHex(stringToBytes(solution));
   const {
     config,
     error: prepareError,
@@ -22,7 +19,7 @@ export default function useSubmitSolution(
     address: CONTRACT_ADDRESS,
     abi: DChess.abi,
     functionName: "submitSolution",
-    args: [parsedPuzzleId, hashedSolution],
+    args: [puzzleId, solutionHex],
     enabled: false,
   });
 

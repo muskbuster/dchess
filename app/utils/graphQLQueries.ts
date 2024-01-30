@@ -47,11 +47,3 @@ export const RANKED_USERS = gql`
     }
   }
 `;
-
-export const SINGLE_USER_RATING = gql`
-  query MyQuery($userAddress: String!) {
-    user(id: $userAddress) {
-      rating
-    }
-  }
-`;

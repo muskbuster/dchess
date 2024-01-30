@@ -1,7 +1,6 @@
+import { useEffect } from "react";
 import { usePrivy, useWallets, ConnectedWallet } from "@privy-io/react-auth";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 import NavBar from "@/components/Styled/NavBar";
 import CreateScreen from "../Screen/Create/CreateScreen";
@@ -22,23 +21,38 @@ const WalletWrapper = ({
 
   /* Switch wallets as soon as its available */
   useEffect(() => {
+    if (!ready) return;
+
+    const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
+    if (activeWallet) {
+      (async () => await activeWallet.switchChain(chainId))();
+    }
+  }, [ready, activeWallet]);
+
+  /* Set active wallet if embedded wallet available (double-check if needed) */
+  useEffect(() => {
+    if (!ready) return;
+
     const embeddedWallet = wallets.find(
       (wallet) => wallet.walletClientType === "privy"
     ) as ConnectedWallet;
 
-    if (embeddedWallet) {
-      const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
-      (async () => await embeddedWallet.switchChain(chainId))();
+    if (embeddedWallet && !activeWallet) {
       setActiveWallet(embeddedWallet);
     }
-  }, [wallets, setActiveWallet]);
+  }, [ready, activeWallet, setActiveWallet, wallets]);
 
   const screen = (() => {
     switch (page) {
       case "Play":
-        return <PlayScreen loggedIn={authenticated} />;
+        return (
+          <PlayScreen
+            loggedIn={authenticated}
+            activeWallet={activeWallet as ConnectedWallet} // guaranteed to be there
+          />
+        );
       case "Create":
-        return <CreateScreen />;
+        return <CreateScreen activeWallet={activeWallet as ConnectedWallet} />;
       case "Stats":
         return <StatsScreen />;
       case "Profile":
@@ -52,7 +66,7 @@ const WalletWrapper = ({
     </div>
   );
 
-  return ready ? (
+  return ready && activeWallet ? (
     <div>
       <NavBar loggedIn={authenticated} />
       <div className="m-2">{screen}</div>
