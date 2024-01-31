@@ -17,6 +17,31 @@ const TEST_PRIVATE_KEY2 = process.env.TEST_PRIVATE_KEY2! as string;
 const TEST_PRIVATE_KEY3 = process.env.TEST_PRIVATE_KEY3! as string;
 const TEST_PRIVATE_KEY4 = process.env.TEST_PRIVATE_KEY4! as string;
 const TEST_PRIVATE_KEY5 = process.env.TEST_PRIVATE_KEY5! as string;
+const TEST_PRIVATE_KEY6 = process.env.TEST_PRIVATE_KEY6! as string;
+const TEST_PRIVATE_KEY7 = process.env.TEST_PRIVATE_KEY7! as string;
+const TEST_PRIVATE_KEY8 = process.env.TEST_PRIVATE_KEY8! as string;
+const TEST_PRIVATE_KEY9 = process.env.TEST_PRIVATE_KEY9! as string;
+const TEST_PRIVATE_KEY10 = process.env.TEST_PRIVATE_KEY10! as string;
+const TEST_PRIVATE_KEY11 = process.env.TEST_PRIVATE_KEY11! as string;
+const TEST_PRIVATE_KEY12 = process.env.TEST_PRIVATE_KEY12! as string;
+const TEST_PRIVATE_KEY13 = process.env.TEST_PRIVATE_KEY13! as string;
+
+const TEST_ACCOUNTS = [
+    OWNER_PRIVATE_KEY,
+    TEST_PRIVATE_KEY1,
+    TEST_PRIVATE_KEY2,
+    TEST_PRIVATE_KEY3,
+    TEST_PRIVATE_KEY4,
+    TEST_PRIVATE_KEY5,
+    TEST_PRIVATE_KEY6,
+    TEST_PRIVATE_KEY7,
+    TEST_PRIVATE_KEY8,
+    TEST_PRIVATE_KEY9,
+    TEST_PRIVATE_KEY10,
+    TEST_PRIVATE_KEY11,
+    TEST_PRIVATE_KEY12,
+    TEST_PRIVATE_KEY13,
+];
 
 const config: HardhatUserConfig = {
     solidity: {
@@ -44,14 +69,7 @@ const config: HardhatUserConfig = {
         // for testnet
         "base-sepolia": {
             url: ALCHEMY_BASE_SEPOLIA_HTTPS,
-            accounts: [
-                OWNER_PRIVATE_KEY,
-                TEST_PRIVATE_KEY1,
-                TEST_PRIVATE_KEY2,
-                TEST_PRIVATE_KEY3,
-                TEST_PRIVATE_KEY4,
-                TEST_PRIVATE_KEY5,
-            ],
+            accounts: TEST_ACCOUNTS,
             deploy: ["deploy/testnet/"],
             verify: {
                 etherscan: {
@@ -62,14 +80,7 @@ const config: HardhatUserConfig = {
         },
         "base-goerli": {
             url: ALCHEMY_BASE_GOERLI_HTTPS,
-            accounts: [
-                OWNER_PRIVATE_KEY,
-                TEST_PRIVATE_KEY1,
-                TEST_PRIVATE_KEY2,
-                TEST_PRIVATE_KEY3,
-                TEST_PRIVATE_KEY4,
-                TEST_PRIVATE_KEY5,
-            ],
+            accounts: TEST_ACCOUNTS,
             deploy: ["deploy/testnet/"],
             verify: {
                 etherscan: {

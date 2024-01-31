@@ -156,16 +156,16 @@ contract DChess is IDChess, ERC1155, Ownable {
         }
     }
 
-    function mint(uint256 internalTokenId) public payable {
-        if (msg.value < tokenMintPrice) {
-            revert NotEnoughEtherSent(msg.value, tokenMintPrice);
+    function mint(uint256 internalTokenId, uint256 count) public payable {
+        if (msg.value < tokenMintPrice * count) {
+            revert NotEnoughEtherSent(msg.value, tokenMintPrice * count);
         }
         Puzzle storage puzzle = puzzlesById[internalTokenId];
         if (!puzzle.userHasSolved[_msgSender()]) {
             revert PuzzleNotSolved(internalTokenId);
         }
 
-        _mint(_msgSender(), internalTokenId, 1, "");
+        _mint(_msgSender(), internalTokenId, count, "");
         emit TokenMinted(internalTokenId, _msgSender());
         payable(puzzle.creator).transfer(
             (msg.value * (100 - platformFee)) / 100

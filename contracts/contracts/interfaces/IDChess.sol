@@ -39,7 +39,7 @@ interface IDChess {
         address user
     ) external view returns (bool);
 
-    function mint(uint256 internalTokenId) external payable;
+    function mint(uint256 internalTokenId, uint256 count) external payable;
 
     function addPuzzle(
         string calldata fen,

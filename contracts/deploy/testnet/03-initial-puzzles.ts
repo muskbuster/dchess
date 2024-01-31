@@ -33,8 +33,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         const randomCreator =
             creatorArr[Math.floor(Math.random() * creatorArr.length)];
 
-        const nonce = await randomCreator.getNonce();
-
         try {
             const response = await dChess.connect(randomCreator).addPuzzle(
                 problem,

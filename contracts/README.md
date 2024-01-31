@@ -14,17 +14,23 @@ Then start up a forked network with all deploy scripts run by running:
 
 ### Scripts
 
-#### Generic
+#### Development
 
 -   `yarn compile` $\rightarrow$ cleans and compiles
 -   `yarn test` $\rightarrow$ deploys fixtures and runs test on hardhat network
+-   `yarn hardhat run scripts/parseProblems.ts` $\rightarrow$ parses problem sets (infrequently needed)
+
+#### Deployment
+
+To refresh deployment, simply delete the folder (for example `deployments/base-sepolia`) and deploy again
+
 -   `yarn hardhat --network <networkName> deploy` $\rightarrow$ will deploy the code to the right network
+-   `yarn hardhat --network <networkName> deploy --tags AddPuzzles` $\rightarrow$ Same as above except deploy until a particular tag is present.
 -   `yarn hardhat verify --network base-sepolia <CONTRACT_ADDRESS> ...PARAMS` to verify contracts
 
-#### Custom
+#### Post-deployment
 
--   `yarn hardhat run scripts/parseProblems.ts` $\rightarrow$ parses problem sets (in frequently needed)
--   `yarn hardhat --network <networkName> run scripts/whitelistCreators.ts` $\rightarrow$ whitelists creators found in `/data/whitelistedCreators.json`. This is used for updating the list (use this for mainnet as well)
+-   `yarn hardhat --network <networkName> run scripts/whitelistCreators.ts` $\rightarrow$ whitelists creators found in `/data/whitelistedCreators.json`. This is used for updating the list (use this for mainnet as well). Make sure that as you update the list. You also copy the data file to FE. Otherwise, it will be using the previous state.
 -   `yarn hardhat --network <networkName> run scripts/addPuzzles.ts` $\rightarrow$ randomly selects creators (that should be whitelisted seperately) and adds a collection of problems from `/data/puzzleSet.json` (can be used for mainnet but be careful about the puzzle set being used)
 -   `yarn hardhat --network <networkName> run scripts/updateMintPrice.ts` $\rightarrow$ updates the mint price to the given number in the script (double check the value in the script)
 

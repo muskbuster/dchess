@@ -218,7 +218,7 @@ describe("DChess", function () {
         it("Fails when non-solver tries", async () => {
             const mintValue = await instance.tokenMintPrice();
             await expect(
-                instance.connect(player1).mint(1, { value: mintValue }),
+                instance.connect(player1).mint(1, 1, { value: mintValue }),
             )
                 .to.be.revertedWithCustomError(instance, "PuzzleNotSolved")
                 .withArgs(1);
@@ -231,10 +231,10 @@ describe("DChess", function () {
                 instance.connect(player1).submitSolution(1, solution2Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance.connect(player1).mint(1, { value: mintValue / 2n }),
+                instance.connect(player1).mint(1, 2, { value: mintValue }),
             )
                 .to.be.revertedWithCustomError(instance, "NotEnoughEtherSent")
-                .withArgs(mintValue / 2n, mintValue);
+                .withArgs(mintValue, mintValue * 2n);
         });
 
         it("Succeeds when solver tries", async () => {
@@ -250,7 +250,7 @@ describe("DChess", function () {
                 instance.connect(player1).submitSolution(2, solution3Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance.connect(player1).mint(2, { value: mintValue }),
+                instance.connect(player1).mint(2, 1, { value: mintValue }),
             )
                 .to.emit(instance, "TokenMinted")
                 .withArgs(2, player1.address);
@@ -310,7 +310,9 @@ describe("DChess", function () {
                 instance.connect(player2).submitSolution(1, solution2Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance.connect(player2).mint(1, { value: parseEther("1") }),
+                instance
+                    .connect(player2)
+                    .mint(1, 1, { value: parseEther("1") }),
             )
                 .to.emit(instance, "TokenMinted")
                 .withArgs(1, player2.address);
@@ -332,7 +334,7 @@ describe("DChess", function () {
                 instance.connect(player3).submitSolution(2, solution3Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance.connect(player3).mint(2, { value: mintValue }),
+                instance.connect(player3).mint(2, 1, { value: mintValue }),
             )
                 .to.emit(instance, "TokenMinted")
                 .withArgs(2, player3.address);
