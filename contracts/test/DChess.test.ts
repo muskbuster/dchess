@@ -233,7 +233,10 @@ describe("DChess", function () {
             await expect(
                 instance.connect(player1).mint(1, 2, { value: mintValue }),
             )
-                .to.be.revertedWithCustomError(instance, "NotEnoughEtherSent")
+                .to.be.revertedWithCustomError(
+                    instance,
+                    "IncorrectMessageValue",
+                )
                 .withArgs(mintValue, mintValue * 2n);
         });
 

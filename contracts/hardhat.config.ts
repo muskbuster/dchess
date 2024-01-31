@@ -1,6 +1,8 @@
 import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
+import "hardhat-gas-reporter";
+
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -8,8 +10,8 @@ dotenv.config();
 const ALCHEMY_BASE_SEPOLIA_HTTPS = process.env.ALCHEMY_BASE_SEPOLIA_HTTPS;
 const ALCHEMY_BASE_GOERLI_HTTPS = process.env.ALCHEMY_BASE_GOERLI_HTTPS;
 const ALCHEMY_BASE_HTTPS = process.env.ALCHEMY_BASE_HTTPS;
-
 const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY as string;
+const REPORT_GAS = process.env.REPORT_GAS as string;
 
 const OWNER_PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY! as string;
 const TEST_PRIVATE_KEY1 = process.env.TEST_PRIVATE_KEY1! as string;
@@ -110,6 +112,9 @@ const config: HardhatUserConfig = {
                 },
             },
         ],
+    },
+    gasReporter: {
+        enabled: REPORT_GAS ? true : false,
     },
 };
 

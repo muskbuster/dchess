@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 import { SimpleChessToken } from "../typechain-types";
 import { FENToBoard } from "../utils/boardEncoder";
 import { writeFileSync } from "fs";
+import puzzleSet from "../data/puzzleSet_2024-01-24.json";
 
 let simpleChessToken: SimpleChessToken;
 
@@ -17,9 +18,18 @@ const tokenURIToHtml = (tokenURI: string): string => {
 	`;
 };
 
-const parseAndSaveTokenUri = (tokenUri: string, outName: string = "a.html") => {
+const parseAndSaveTokenUri = (tokenUri: string, outName: string) => {
     const htmlContent = tokenURIToHtml(tokenUri);
     writeFileSync(`./${outName}`, htmlContent);
+    return;
+};
+
+const parseAndSaveDescription = (tokenUri: string, outName: string) => {
+    const base64Token = tokenUri.split(",")[1];
+    const decodedBase64Token = atob(base64Token);
+    const decodedJSON = JSON.parse(decodedBase64Token);
+    const description = decodedJSON.description;
+    writeFileSync(`./${outName}`, description);
     return;
 };
 
@@ -53,5 +63,22 @@ describe.skip("Generate metadata for threeoutofnineART", () => {
         await simpleChessToken.mint(move, await ethers.provider.getSigner());
         const uri1 = await simpleChessToken.tokenURI(1);
         parseAndSaveTokenUri(uri1, "out-2.html");
+    });
+
+    it("Stress testing metadata art", async () => {
+        let count = 0;
+        for (let puzzle of puzzleSet) {
+            const problem = puzzle[0];
+            const board = FENToBoard(problem);
+            await simpleChessToken.mint(
+                board,
+                await ethers.provider.getSigner(),
+            );
+            const uri = await simpleChessToken.tokenURI(count);
+            parseAndSaveTokenUri(uri, `artifacts/art/puzzle-${count}.html`);
+            parseAndSaveDescription(uri, `artifacts/art/puzzle-${count}.json`);
+            console.log(`Processed ${count + 1} out of ${puzzleSet.length}`);
+            count++;
+        }
     });
 });

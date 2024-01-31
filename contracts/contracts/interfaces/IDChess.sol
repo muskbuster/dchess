@@ -22,7 +22,7 @@ interface IDChess {
     event UserRatingChanged(address user, uint256 newUserRating);
     event PuzzleRatingChanged(uint256 internalTokenId, uint256 newPuzzleRating);
     event TokenMinted(uint256 internalTokenId, address solver);
-    event Withdraw(address owner, uint256 amount);
+    event WithdrawAll(uint256 amount);
 
     error FENCannotBeEmpty(string s);
     error SolutionCannotBeEmpty(bytes32 b);
@@ -30,7 +30,7 @@ interface IDChess {
     error AlreadyAttempted(uint256 internalTokenId);
     error PuzzleNotSolved(uint256 internalTokenId);
     error TokenDoesNotExist(uint256 tokenId);
-    error NotEnoughEtherSent(uint256 amountSent, uint256 requiredAmount);
+    error IncorrectMessageValue(uint256 amountSent, uint256 requiredAmount);
     error InvalidMetadata(uint256 internalTokenId, uint256 metadata);
     error UserNotAuthorized(address user);
 
@@ -54,7 +54,7 @@ interface IDChess {
         bytes memory solution
     ) external returns (bool);
 
-    function withdraw() external;
+    function withdrawAll() external;
 
     function isWhitelisted(
         address user,

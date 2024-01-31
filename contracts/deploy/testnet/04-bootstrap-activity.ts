@@ -3,6 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { ethers } from "hardhat";
 
 import puzzleSet from "../../data/puzzleSet.json";
+import { isError, parseEther } from "ethers";
 
 const WRONG_ANSWER = ethers.toUtf8Bytes("a3");
 const MINT_COUNT_DECISION = [1, 1, 1, 1, 1, 1, 2, 2, 3];
@@ -15,8 +16,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         dChessDeployment.address,
     );
 
-    const [, ...players] = await hre.ethers.getSigners();
+    const [owner, ...players] = await hre.ethers.getSigners();
 
+    // first lower the price of mint (otherwise funds will get drained)
+    await dChess.setTokenMintPrice(parseEther("0.0001"));
+    const mintValue = await dChess.tokenMintPrice();
+
+    // iterate through players and attempt all puzzles (except owner)
     let playerIndex = 0;
     for (let player of players) {
         let puzzleIndex = 0;
@@ -33,7 +39,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                 await response.wait();
 
                 console.log(
-                    `player ${playerIndex} attempted puzzle ${puzzleIndex} ${isPlayerCorrect ? "correcly" : "incorrectly"}`,
+                    `player ${playerIndex} attempted puzzle ${puzzleIndex} ${isPlayerCorrect ? "correctly" : "incorrectly"}`,
                 );
 
                 // also mint NFTs if correct
@@ -48,19 +54,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                     try {
                         const response = await dChess
                             .connect(player)
-                            .mint(puzzleIndex, mintCountChoice);
+                            .mint(puzzleIndex, mintCountChoice, {
+                                value: mintValue * BigInt(mintCountChoice),
+                            });
                         await response.wait();
                         console.log(
                             `player ${playerIndex} minted puzzle ${puzzleIndex} ${mintCountChoice} times`,
                         );
                     } catch (e) {
                         console.log("minting failed");
-                        console.log(e);
+                        if (isError(e, "CALL_EXCEPTION")) {
+                            console.log(dChess.interface.parseError(e.data!));
+                        }
                     }
                 }
             } catch (e) {
                 console.log("attempting failed");
-                console.log(e);
+                if (isError(e, "CALL_EXCEPTION")) {
+                    console.log(dChess.interface.parseError(e.data!));
+                }
             }
 
             puzzleIndex++;

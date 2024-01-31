@@ -157,8 +157,11 @@ contract DChess is IDChess, ERC1155, Ownable {
     }
 
     function mint(uint256 internalTokenId, uint256 count) public payable {
-        if (msg.value < tokenMintPrice * count) {
-            revert NotEnoughEtherSent(msg.value, tokenMintPrice * count);
+        if (msg.value != tokenMintPrice * count) {
+            revert IncorrectMessageValue(msg.value, tokenMintPrice * count);
+        }
+        if (count < 1) {
+            revert IncorrectMessageValue(0, 0);
         }
         Puzzle storage puzzle = puzzlesById[internalTokenId];
         if (!puzzle.userHasSolved[_msgSender()]) {
@@ -179,10 +182,10 @@ contract DChess is IDChess, ERC1155, Ownable {
         return proof.verify(merkleRoot, keccak256(abi.encodePacked(user)));
     }
 
-    function withdraw() public onlyOwner {
+    function withdrawAll() public {
         uint256 amount = address(this).balance;
-        payable(_msgSender()).transfer(amount);
-        emit Withdraw(_msgSender(), amount);
+        payable(owner()).transfer(amount);
+        emit WithdrawAll(amount);
     }
 
     function adjustRatings(uint256 internalTokenId, bool success) private {
