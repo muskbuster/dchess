@@ -9,6 +9,8 @@ import { FaUndo } from "react-icons/fa";
 import "./CreateScreen.css";
 import useAddPuzzle from "@/hooks/useAddPuzzle";
 import { ConnectedWallet } from "@privy-io/react-auth";
+import { whitelistedCreator } from "@/utils/general";
+import { NotWhitelistedScreen } from "./NotWhitelistedScreen";
 
 enum CreateState {
   Problem,
@@ -32,6 +34,9 @@ const CreateScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
     refetch: refetchPuzzle,
     isSuccess: isSubmitPuzzleSuccess,
   } = useAddPuzzle(fen, winningMove, description, activeWallet.address);
+
+  const whitelisted =
+    activeWallet.address && whitelistedCreator(activeWallet.address);
 
   useEffect(() => {
     if (isSubmitPuzzleSuccess) {
@@ -87,12 +92,13 @@ const CreateScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
   };
 
   const placeholderDescription = `You can leave hints here or keep it mysterious. \
-For example: White to play. Mate in 3 moves!\n\n \
+For example: White to play. Mate in 3 moves!\n\n\
 Warning: misleading descriptions will lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
-
-  return (
+  return !whitelisted ? (
+    <NotWhitelistedScreen address={activeWallet.address} />
+  ) : (
     <div className="mt-20 flex flex-row justify-center">
       {createState == CreateState.Problem ? (
         <div className="w-1/3 text-white px-12 rounded-md">

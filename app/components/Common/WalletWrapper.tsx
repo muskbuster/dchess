@@ -3,10 +3,10 @@ import { usePrivy, useWallets, ConnectedWallet } from "@privy-io/react-auth";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 
 import NavBar from "@/components/Styled/NavBar";
-import CreateScreen from "../Screen/Create/CreateScreen";
-import PlayScreen from "../Screen/Play/PlayScreen";
-import StatsScreen from "../Screen/Stats/StatsScreen";
-import ProfileScreen from "../Screen/Profile/ProfileScreen";
+import CreateScreen from "@/components/Views/Create/CreateScreen";
+import PlayScreen from "@/components/Views/Play/PlayScreen";
+import StatsScreen from "@/components/Views/Stats/StatsScreen";
+import ProfileScreen from "@/components/Views/Profile/ProfileScreen";
 
 const WalletWrapper = ({
   page,

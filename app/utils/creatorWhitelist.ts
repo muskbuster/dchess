@@ -9,6 +9,8 @@ export function getProof(addr: string) {
   );
   const tree = new MerkleTree(leaves, keccak256, { sort: true });
   const index = whitelistedCreators.indexOf(addr as never);
+  if (index == -1) return [];
+
   const proof = tree.getHexProof(leaves[index]);
   return proof;
 }

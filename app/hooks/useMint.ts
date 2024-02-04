@@ -1,4 +1,3 @@
-/*
 import {
   useContractWrite,
   usePrepareContractWrite,
@@ -9,28 +8,33 @@ import { Address, parseEther } from "viem";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
-export default function useMint(puzzleId: string, valueStr: string) {
-  const parsedPuzzleId = (Number(puzzleId) - 1).toString();
+export default function useMint(
+  puzzleId: number,
+  count: number,
+  mintPrice: string
+) {
   const {
+    config,
     error: prepareError,
     isError: isPrepareError,
     refetch,
-  } = useSimulateContract({
+  } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
     abi: DChess.abi,
     functionName: "mint",
-    args: [parsedPuzzleId],
-    value: parseEther(valueStr),
+    args: [puzzleId, count],
+    enabled: false,
+    value: parseEther(mintPrice),
   });
 
-  const { data, error, isError, writeContract } = useWriteContract(config);
+  const { data, error, isError, write } = useContractWrite(config);
 
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
-    hash: data,
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
   });
 
   return {
-    writeContract,
+    write,
     refetch,
     isLoading,
     isError,
@@ -40,4 +44,3 @@ export default function useMint(puzzleId: string, valueStr: string) {
     isPrepareError,
   };
 }
-*/

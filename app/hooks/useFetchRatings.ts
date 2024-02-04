@@ -15,10 +15,11 @@ export default function useFetchRatings(address: Address | undefined) {
   });
 
   let rating = "1000";
-  if (!loading && !error)
+  if (!loading && !error) {
     rating =
       data?.userRatingChangeds[data?.userRatingChangeds.length - 1]
-        ?.newUserRating;
+        ?.newUserRating || rating;
+  }
 
   return { rating, loading, error };
 }
