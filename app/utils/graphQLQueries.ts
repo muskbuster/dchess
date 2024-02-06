@@ -26,24 +26,3 @@ export const ALL_USERS = gql`
     }
   }
 `;
-
-export const RANKED_USERS = gql`
-  query UsersByRating {
-    users(orderBy: "rating", orderDirection: "desc") {
-      id
-      rating
-      totalSolved
-      totalAttempted
-    }
-    creators: users(
-      orderBy: "totalCreated"
-      orderDirection: "desc"
-      first: 10
-      where: { totalCreated_gt: "0" }
-    ) {
-      id
-      rating
-      totalCreated
-    }
-  }
-`;

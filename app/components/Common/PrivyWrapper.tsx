@@ -5,7 +5,7 @@ import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 import { baseSepolia } from "viem/chains";
 import { configureChains } from "wagmi";
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WalletWrapper from "@/components/Common/WalletWrapper";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 

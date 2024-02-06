@@ -1,16 +1,16 @@
-import { bigIntToOnes } from "@/utils/general";
-import { RANKED_USERS } from "@/utils/graphQLQueries";
-import { useQuery } from "@apollo/client";
+import useEnsName from "@/hooks/useEnsName";
+import useFetchStats from "@/hooks/useFetchStats";
+import { ConnectedWallet } from "@privy-io/react-auth";
 
 type UserRating = {
-  id: string;
-  rating: bigint;
-  totalSolved: bigint;
+  user: string;
+  ratings: number;
+  you: boolean;
 };
 
 type CreatorRating = {
   id: string;
-  totalCreated: bigint;
+  totalCreated: number;
 };
 
 const UserRow = ({
@@ -20,11 +20,13 @@ const UserRow = ({
   userData: UserRating;
   rank: number;
 }) => {
+  const { resolvedAddress } = useEnsName(userData.user);
+
   return (
-    <tr key={userData.id}>
+    <tr className={`${userData.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
-      <td>{userData.id}</td>
-      <td>{bigIntToOnes(userData.rating)}</td>
+      <td>{resolvedAddress}</td>
+      <td>{userData.ratings}</td>
     </tr>
   );
 };
@@ -45,12 +47,17 @@ const CreatorRow = ({
   );
 };
 
-const StatsScreen = () => {
-  const result = useQuery(RANKED_USERS, {
-    variables: { userAddress: "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" },
-  });
+const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
+  const result = {
+    loading: false,
+    data: {
+      creators: [],
+    },
+  };
 
-  return result.loading ? (
+  const { userStats, isLoading } = useFetchStats(activeWallet.address);
+
+  return isLoading ? (
     <div> loading ... </div>
   ) : (
     <div role="tablist" className="tabs tabs-lifted mx-10 mt-20">
@@ -77,8 +84,8 @@ const StatsScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {result.data.users.map((user: UserRating, idx: number) => (
-                <UserRow key={user.id} userData={user} rank={idx + 1} />
+              {userStats.map((user: UserRating, idx: number) => (
+                <UserRow key={idx} userData={user} rank={idx + 1} />
               ))}
             </tbody>
           </table>
