@@ -10,16 +10,34 @@ export default function useFetchStats(userAddress: string) {
     queryFn: () => getStats(),
   });
 
-  let userStats = [];
+  let stats = {
+    players: [],
+    creators: [],
+  };
 
-  if (!isError && !isLoading) userStats = JSON.parse(data!);
-  userStats = userStats.map((u: any) => {
-    return {
-      user: u.user,
-      ratings: u.ratings,
-      you: u.user == userAddress.toLowerCase(),
-    };
-  });
+  if (!isError && !isLoading) {
+    const playerStats = JSON.parse(data!).players;
+    const creatorStats = JSON.parse(data!).creators;
 
-  return { isLoading, userStats };
+    stats.players = playerStats.map((u: any) => {
+      return {
+        user: u.user,
+        ratings: u.ratings,
+        solves: u.solves,
+        minted: u.minted,
+        you: u.user == userAddress.toLowerCase(),
+      };
+    });
+
+    stats.creators = creatorStats.map((u: any) => {
+      return {
+        user: u.user,
+        ratings: u.ratings,
+        created: u.created,
+        you: u.user == userAddress.toLowerCase(),
+      };
+    });
+  }
+
+  return { isLoading, stats };
 }

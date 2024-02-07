@@ -5,12 +5,16 @@ import { ConnectedWallet } from "@privy-io/react-auth";
 type UserRating = {
   user: string;
   ratings: number;
+  solves: number;
+  minted: number;
   you: boolean;
 };
 
 type CreatorRating = {
-  id: string;
-  totalCreated: number;
+  user: string;
+  created: number;
+  ratings: number;
+  you: boolean;
 };
 
 const UserRow = ({
@@ -27,6 +31,8 @@ const UserRow = ({
       <th>{rank}</th>
       <td>{resolvedAddress}</td>
       <td>{userData.ratings}</td>
+      <td>{userData.solves}</td>
+      <td>{userData.minted}</td>
     </tr>
   );
 };
@@ -38,11 +44,14 @@ const CreatorRow = ({
   creator: CreatorRating;
   rank: number;
 }) => {
+  const { resolvedAddress } = useEnsName(creator.user);
+
   return (
-    <tr key={creator.id}>
+    <tr className={`${creator.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
-      <td>{creator.id}</td>
-      <td>{creator.totalCreated.toString()}</td>
+      <td>{resolvedAddress}</td>
+      <td>{creator.ratings}</td>
+      <td>{creator.created}</td>
     </tr>
   );
 };
@@ -55,7 +64,7 @@ const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
     },
   };
 
-  const { userStats, isLoading } = useFetchStats(activeWallet.address);
+  const { stats, isLoading } = useFetchStats(activeWallet.address);
 
   return isLoading ? (
     <div> loading ... </div>
@@ -81,10 +90,12 @@ const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
                 <th>Rank</th>
                 <th>Player</th>
                 <th>Ratings</th>
+                <th># Solved</th>
+                <th># Minted</th>
               </tr>
             </thead>
             <tbody>
-              {userStats.map((user: UserRating, idx: number) => (
+              {stats.players.map((user: UserRating, idx: number) => (
                 <UserRow key={idx} userData={user} rank={idx + 1} />
               ))}
             </tbody>
@@ -111,18 +122,13 @@ const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
                 <th>Rank</th>
                 <th>Creator</th>
                 <th>Puzzles Created </th>
+                <th>Ratings</th>
               </tr>
             </thead>
             <tbody>
-              {result.data.creators.map(
-                (creator: CreatorRating, idx: number) => (
-                  <CreatorRow
-                    key={creator.id}
-                    creator={creator}
-                    rank={idx + 1}
-                  />
-                )
-              )}
+              {stats.creators.map((creator: CreatorRating, idx: number) => (
+                <CreatorRow key={idx} creator={creator} rank={idx + 1} />
+              ))}
             </tbody>
           </table>
         </div>

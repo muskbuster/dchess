@@ -7,7 +7,7 @@ import Confetti from "react-dom-confetti";
 import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 
-import NFTVisual from "../Profile/NFTVisual";
+import NFTVisual from "../../Common/ArtDisplay";
 import useFetchPuzzles from "@/hooks/useFetchPuzzles";
 import { canonicalFen, truncateAddress } from "@/utils/general";
 import { zeroAddress, Address } from "viem";

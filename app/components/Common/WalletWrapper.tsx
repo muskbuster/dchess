@@ -56,7 +56,7 @@ const WalletWrapper = ({
       case "Stats":
         return <StatsScreen activeWallet={activeWallet as ConnectedWallet} />;
       case "Profile":
-        return <ProfileScreen />;
+        return <ProfileScreen activeWallet={activeWallet as ConnectedWallet} />;
     }
   })();
 

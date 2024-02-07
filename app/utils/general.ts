@@ -1,4 +1,4 @@
-import { Address, formatEther, keccak256, stringToBytes } from "viem";
+import { Address, keccak256, stringToBytes } from "viem";
 import whitelistedCreators from "@/utils/whitelistedCreators.json";
 
 export function truncateAddress(address: Address) {
@@ -8,11 +8,6 @@ export function truncateAddress(address: Address) {
     address.slice(address.length - 5, address.length)
   );
 }
-
-// Convert big number to rounded number with 1 decimal place
-export const bigIntToOnes = (n: bigint) => {
-  return formatEther(n).split(".")[0];
-};
 
 export function hashed(str: string) {
   // first convert to bytes
