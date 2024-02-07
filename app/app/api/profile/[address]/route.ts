@@ -5,14 +5,17 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
 ) {
-  // await refreshBalance(params.address);
+  const userAddress = params.address;
 
   try {
+    const info = await getPlayerInfo(userAddress.slice(2));
+    const nftsOwned = await getNftsOwned(userAddress.slice(2));
+
     const profile = {
-      totalSolved: 0,
-      totalAttempted: 0,
-      ratings: 1000,
-      nftsOwned: [0, 1, 2],
+      totalSolved: info[0].solves,
+      totalAttempted: info[0].attempts,
+      ratings: info[0].ratings,
+      nftsOwned,
     };
     return NextResponse.json(JSON.stringify(profile), { status: 200 });
   } catch (e) {
@@ -24,7 +27,7 @@ export async function GET(
   }
 }
 
-async function getTopPlayers() {
+async function getPlayerInfo(userAddress: string) {
   const { rows } = await sql`WITH all_ratings AS (
     SELECT
         encode(CAST(ratings.user AS bytea), 'hex') AS user,
@@ -37,7 +40,7 @@ SELECT
     all_ratings.user,
     all_ratings.ratings,
     solved.solved_count,
-    minted.count AS minted_count
+    attempted.attempted_count
 FROM
     all_ratings
     INNER JOIN (
@@ -50,11 +53,12 @@ FROM
             solved.user) AS solved ON solved.user = all_ratings.user
     INNER JOIN (
         SELECT
-            encode(CAST(minted.solver AS bytea), 'hex') AS user, count(*)
+            encode(CAST(attempted.user AS bytea), 'hex') AS user,
+            count(*) AS attempted_count
         FROM
-            base_sepolia_token_minted_token_minted AS minted
+            base_sepolia_puzzle_attempted_puzzle_attempted AS attempted
         GROUP BY
-            minted.solver) AS minted ON minted.user = all_ratings.user
+            attempted.user) AS attempted ON attempted.user = all_ratings.user
     INNER JOIN (
         SELECT
             all_ratings.user,
@@ -65,15 +69,109 @@ FROM
             all_ratings.user) AS latest ON latest.user = all_ratings.user
 WHERE
     latest.latest_block_number = all_ratings.block_number
-ORDER BY
-    all_ratings.ratings DESC`;
+    AND all_ratings.user = ${userAddress.toLowerCase()}`;
 
   return rows.map((r) => {
     return {
-      user: "0x" + r.user,
       ratings: r.ratings,
       solves: r.solved_count,
-      minted: r.minted_count,
+      attempts: r.attempted_count,
+    };
+  });
+}
+
+async function getNftsOwned(userAddress: string) {
+  const recieved: { token_id: number; value: number }[] = await nftsRecieved(
+    userAddress
+  );
+  const sent: { token_id: number; value: number }[] = await nftsSent(
+    userAddress
+  );
+
+  const aggregateReceived = recieved.reduce(
+    (acc: { token_id: number; value: number }[], curr) => {
+      const idx = acc.findIndex(
+        (e: { token_id: number; value: number }) => e.token_id == curr.token_id
+      );
+      if (idx == -1) {
+        return acc.concat([curr]);
+      } else {
+        acc[idx].value += curr.value;
+        return acc;
+      }
+    },
+    []
+  );
+
+  const aggregate = sent.reduce(
+    (acc: { token_id: number; value: number }[], curr) => {
+      const idx = acc.findIndex(
+        (e: { token_id: number; value: number }) => e.token_id == curr.token_id
+      );
+      if (idx == -1) {
+        // should never get here
+        return acc;
+      } else {
+        acc[idx].value -= curr.value;
+        return acc;
+      }
+    },
+    aggregateReceived
+  );
+
+  return aggregate;
+}
+
+async function nftsRecieved(userAddress: string) {
+  const { rows } = await sql`WITH transfers AS (
+    SELECT
+        encode(CAST(transfers.from AS bytea), 'hex') AS
+    FROM
+,
+        encode(CAST(transfers.to AS bytea), 'hex') AS to,
+        transfers.d_chess_id AS token_id,
+        transfers.value
+    FROM
+        base_sepolia_transfer_single_transfer_single AS transfers
+)
+SELECT
+    *
+FROM
+    transfers
+WHERE
+    transfers.to = ${userAddress.toLowerCase()}`;
+
+  return rows.map((r) => {
+    return {
+      token_id: r.token_id,
+      value: r.value,
+    };
+  });
+}
+
+async function nftsSent(userAddress: string) {
+  const { rows } = await sql`WITH transfers AS (
+      SELECT
+          encode(CAST(transfers.from AS bytea), 'hex') AS
+      FROM
+  ,
+          encode(CAST(transfers.to AS bytea), 'hex') AS to,
+          transfers.d_chess_id AS token_id,
+          transfers.value
+      FROM
+          base_sepolia_transfer_single_transfer_single AS transfers
+  )
+  SELECT
+      *
+  FROM
+      transfers
+  WHERE
+      transfers.from = ${userAddress.toLowerCase()}`;
+
+  return rows.map((r) => {
+    return {
+      token_id: r.token_id,
+      value: r.value,
     };
   });
 }

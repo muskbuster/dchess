@@ -9,8 +9,12 @@ const parsetokenURI = (tokenURI: string): string => {
   const decodedBase64Token = atob(base64Token);
   const decodedJSON = JSON.parse(decodedBase64Token);
   const encodedAnimation = decodedJSON.animation_url.split(",")[1];
-  return `<div style="transform: scale(0.25); transform-origin: 0px 0px; width: 250px; height: 250px;">
-  ${atob(encodedAnimation)}</div>`;
+  return `
+  <body style="margin: 0px">
+	  <div style="transform: scale(0.3); transform-origin: 0px 0px; width: 300px; height: 300px;">
+      ${atob(encodedAnimation)}
+    </div>
+	</body>`;
 };
 
 export default function useFetchArt(puzzleId: number) {

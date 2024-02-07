@@ -23,6 +23,7 @@ export default function useFetchProfile(userAddress: string) {
   if (!isError && !isLoading && data) {
     profile = JSON.parse(data!);
   }
+  console.log(profile);
 
   return { isLoading, profile };
 }

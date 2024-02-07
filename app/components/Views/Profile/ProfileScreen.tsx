@@ -20,7 +20,7 @@ const ProfileStats = ({
   return (
     <div>
       <div>Rating: {profile.ratings}</div>
-      <div>Solves: {profile.totalSolved}</div>
+      <div>Solved: {profile.totalSolved}</div>
       <div>Created: {profile.totalAttempted}</div>
     </div>
   );
@@ -42,15 +42,15 @@ const ProfileScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
   };
 
   return authenticated ? (
-    <div className="flex flex-row w-full justify-around mt-10">
-      <div className="flex flex-col space-y-5 w-1/3">
+    <div className="flex flex-row w-full justify-center mt-10">
+      <div className="flex flex-col space-y-5 w-1/4">
         <div className="text-2xl mb-5"> Account</div>
         <ProfileStats profile={profile} />
         <AddressBar address={activeWallet.address as string} />
         <StyledButton onClick={handleExport}>Export wallet</StyledButton>
         <StyledButton onClick={handleLogout}>Log out</StyledButton>
       </div>
-      <div className="flex flex-col space-y-5 w-1/3">
+      <div className="flex flex-col space-y-5 w-1/2">
         <div className="text-2xl mb-5"> NFTs Owned</div>
         <Gallery ids={profile.nftsOwned} />
       </div>
