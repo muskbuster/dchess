@@ -8,7 +8,7 @@ async function getProfile(userAddress: string) {
 
 export default function useFetchProfile(userAddress: string) {
   const { isError, isLoading, data, error } = useQuery<string>({
-    queryKey: ["get-stats"],
+    queryKey: ["get-profile"],
     queryFn: () => getProfile(userAddress),
   });
 
@@ -23,7 +23,6 @@ export default function useFetchProfile(userAddress: string) {
   if (!isError && !isLoading && data) {
     profile = JSON.parse(data!);
   }
-  console.log(profile);
 
   return { isLoading, profile };
 }

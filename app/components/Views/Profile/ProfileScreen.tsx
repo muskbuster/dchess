@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectedWallet, usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 
 import { StyledButton } from "@/components/Styled/Button";
@@ -21,16 +21,22 @@ const ProfileStats = ({
     <div>
       <div>Rating: {profile.ratings}</div>
       <div>Solved: {profile.totalSolved}</div>
-      <div>Created: {profile.totalAttempted}</div>
+      <div>Attempted: {profile.totalAttempted}</div>
     </div>
   );
 };
 
-const ProfileScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
-  const { authenticated, logout, exportWallet } = usePrivy();
+const ProfileScreen = ({
+  loggedIn,
+  address,
+}: {
+  loggedIn: boolean;
+  address: string;
+}) => {
+  const { logout, exportWallet } = usePrivy();
   const router = useRouter();
 
-  const { profile, isLoading } = useFetchProfile(activeWallet.address);
+  const { profile } = useFetchProfile(address);
 
   const handleLogout = () => {
     logout();
@@ -41,12 +47,12 @@ const ProfileScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
     exportWallet();
   };
 
-  return authenticated ? (
+  return loggedIn ? (
     <div className="flex flex-row w-full justify-center mt-10">
       <div className="flex flex-col space-y-5 w-1/4">
         <div className="text-2xl mb-5"> Account</div>
         <ProfileStats profile={profile} />
-        <AddressBar address={activeWallet.address as string} />
+        <AddressBar address={address} />
         <StyledButton onClick={handleExport}>Export wallet</StyledButton>
         <StyledButton onClick={handleLogout}>Log out</StyledButton>
       </div>

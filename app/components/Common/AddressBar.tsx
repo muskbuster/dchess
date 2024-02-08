@@ -3,7 +3,7 @@ import { CopyIcon } from "@radix-ui/react-icons";
 import base from "@/public/base.svg";
 import { Manrope } from "next/font/google";
 import { useState } from "react";
-import { isAddress } from "viem";
+import { Address, isAddress } from "viem";
 import Image from "next/image";
 import { truncateAddress } from "@/utils/general";
 
@@ -18,7 +18,7 @@ const AddressBar = ({
   large?: boolean;
   iconSize?: number;
 }) => {
-  const truncatedAddress = truncateAddress(address);
+  const truncatedAddress = truncateAddress(address as Address);
 
   return (
     <div className="flex flex-row rounded pb-2">

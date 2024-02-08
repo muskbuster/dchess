@@ -1,6 +1,7 @@
 import useEnsName from "@/hooks/useEnsName";
 import useFetchStats from "@/hooks/useFetchStats";
 import { ConnectedWallet } from "@privy-io/react-auth";
+import Link from "next/link";
 
 type UserRating = {
   user: string;
@@ -29,7 +30,9 @@ const UserRow = ({
   return (
     <tr className={`${userData.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
-      <td>{resolvedAddress}</td>
+      <td>
+        <Link href={`/profile/${userData.user}`}>{resolvedAddress}</Link>
+      </td>
       <td>{userData.ratings}</td>
       <td>{userData.solves}</td>
       <td>{userData.minted}</td>
@@ -49,7 +52,9 @@ const CreatorRow = ({
   return (
     <tr className={`${creator.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
-      <td>{resolvedAddress}</td>
+      <td>
+        <Link href={`/profile/${creator.user}`}>{resolvedAddress}</Link>
+      </td>
       <td>{creator.ratings}</td>
       <td>{creator.created}</td>
     </tr>

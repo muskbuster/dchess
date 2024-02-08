@@ -23,7 +23,7 @@ const LoggedInNavBar = ({ address }: { address: Address }) => {
   }
 
   return (
-    <Link href="/profile">
+    <Link href={`/profile/${address}`}>
       <div className="flex">
         <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
           <Ribbon className="h-6 w-6" />

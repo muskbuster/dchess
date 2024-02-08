@@ -12,7 +12,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   return (
     <nav className="navbar flex flex-row bg-slate-600 border-b border-white p-2 justify-between">
       <div className="flex flex-row space-x-2">
-        <Link href="/play/1">
+        <Link href="/play/0">
           <StyledButton wide={false}>Play</StyledButton>
         </Link>
         <Link href="/create">
