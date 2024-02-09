@@ -7,7 +7,7 @@ import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProo
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Elo} from "./lib/Elo.sol";
-import {threeoutofnineART} from "./lib/threeoutofnineART.sol";
+import {ThreeOutOfNineART} from "./lib/ThreeOutOfNineART.sol";
 
 import {IDChess} from "./interfaces/IDChess.sol";
 
@@ -79,7 +79,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         uint256 internalTokenId
     ) public view override returns (string memory) {
         return
-            threeoutofnineART.getMetadata(
+            ThreeOutOfNineART.getMetadata(
                 internalTokenId,
                 puzzlesById[internalTokenId].metadata
             );
@@ -106,7 +106,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         }
 
         // Call to ensure that getMetadata is valid
-        threeoutofnineART.getMetadata(internalTokenCounter, metadata);
+        ThreeOutOfNineART.getMetadata(internalTokenCounter, metadata);
 
         uint256 internalTokenId = internalTokenCounter;
         Puzzle storage puzzle = puzzlesById[internalTokenId];

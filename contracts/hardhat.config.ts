@@ -54,6 +54,7 @@ const config: HardhatUserConfig = {
                     optimizer: {
                         enabled: true,
                     },
+                    viaIR: true,
                 },
             },
         ],
@@ -61,6 +62,7 @@ const config: HardhatUserConfig = {
     networks: {
         hardhat: {
             deploy: ["deploy/local/"],
+            allowUnlimitedContractSize: true,
         },
         // for mainnet
         "base-mainnet": {

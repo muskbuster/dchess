@@ -4,7 +4,7 @@ import {PRBMathUD60x18} from "prb-math/contracts/PRBMathUD60x18.sol";
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import {threeoutofnineART} from "./lib/threeoutofnineART.sol";
+import {ThreeOutOfNineART} from "./lib/ThreeOutOfNineART.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Elo} from "./lib/Elo.sol";
 
@@ -32,7 +32,7 @@ contract SimpleChessToken is ERC721, Ownable {
         uint256 _tokenId
     ) public view override returns (string memory) {
         require(_tokenId <= totalSupply, "Token not found");
-        return threeoutofnineART.getMetadata(_tokenId, positions[_tokenId]);
+        return ThreeOutOfNineART.getMetadata(_tokenId, positions[_tokenId]);
     }
 
     function setUserRating(address user, uint256 rating) external onlyOwner {

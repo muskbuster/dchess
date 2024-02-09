@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Base64} from "./Base64.sol";
+import {RetroImage} from "./RetroImage.sol";
 
 /// @title A library that generates HTML art based on a modified version of fiveoutofnine
 /// @author RnkSngh / 0xasdf / fiveoutofnine
@@ -148,525 +149,559 @@ import {Base64} from "./Base64.sol";
 ///  |     * the fourth 24 bits represent the top face's color,                                   |
 ///  |     * and the last 24 bits represent the bits' color.                                      |
 ///  | [^4]: Bit border is omitted when dimension is 12 x 12.                                     |
-library threeoutofnineART {
-	using Strings for uint256;
+library ThreeOutOfNineART {
+    using Strings for uint256;
 
-	string internal constant SVG_STYLES =
-		"--n:calc((394px - (var(--b) - 1)*var(--c))/var(--b));--o"
-		":calc(106px + var(--n));--p:calc(var(--a)/2)}section{height:var(--a);width:var(--a);backgr"
-		"ound:var(--e);position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}.c{height:0;"
-		"width:0;position:absolute;transition:0.25s}.c:hover{transform:translate(0px,-64px);transit"
-		"ion:0.25s}.c>*{height:var(--n);width:var(--n);border-bottom:4px solid black;border-right:4"
-		"px solid black;border-left:1px solid black;border-top:1px solid black;transform-origin:0 0"
-		";position:relative;box-sizing:border-box}.c>*:nth-child(1){width:var(--d);background-color"
-		":var(--f);transform:rotate(90deg)skewX(-30deg)scaleY(0.864)}.c>*:nth-child(2){height:var(-"
-		"-d);bottom:var(--n);background-color:var(--g);transform:rotate(-30deg)skewX(-30deg)scaleY("
-		"0.864)}#h{background-color:var(--h)}#i{background-color:var(--i)}.c>*:nth-child(3){bottom:"
-		"calc(var(--d) + var(--n));background-color:var(--h);display:grid;grid-template-columns:rep"
-		"eat(";
-	bytes32 internal constant HEXADECIMAL_DIGITS = "0123456789ABCDEF";
-	bytes32 internal constant FILE_NAMES = "abcdef";
+    string internal constant SVG_STYLES =
+        "--n:calc((394px - (var(--b) - 1)*var(--c))/var(--b));--o"
+        ":calc(106px + var(--n));--p:calc(var(--a)/2)}section{height:var(--a);width:var(--a);backgr"
+        "ound:var(--e);position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden}.c{height:0;"
+        "width:0;position:absolute;transition:0.25s}.c:hover{transform:translate(0px,-64px);transit"
+        "ion:0.25s}.c>*{height:var(--n);width:var(--n);border-bottom:4px solid black;border-right:4"
+        "px solid black;border-left:1px solid black;border-top:1px solid black;transform-origin:0 0"
+        ";position:relative;box-sizing:border-box}.c>*:nth-child(1){width:var(--d);background-color"
+        ":var(--f);transform:rotate(90deg)skewX(-30deg)scaleY(0.864)}.c>*:nth-child(2){height:var(-"
+        "-d);bottom:var(--n);background-color:var(--g);transform:rotate(-30deg)skewX(-30deg)scaleY("
+        "0.864)}#h{background-color:var(--h)}#i{background-color:var(--i)}.c>*:nth-child(3){bottom:"
+        "calc(var(--d) + var(--n));background-color:var(--h);display:grid;grid-template-columns:rep"
+        "eat(";
+    bytes32 internal constant HEXADECIMAL_DIGITS = "0123456789ABCDEF";
+    bytes32 internal constant FILE_NAMES = "abcdef";
 
-	/// @notice Takes in data for a given fiveoutofnine NFT and outputs its metadata in JSON form.
-	/// Refer to {fiveoutofnineART} for details.
-	/// @dev The output is base 64-encoded.
-	/// @param _internalId A bitpacked uint256 where the first 128 bits are the game ID, and the
-	/// last 128 bits are the move ID within the game.
-	/// @param _board Information about the board.
-	/// @return Base 64-encoded JSON of metadata generated from `_internalId` and `_move`.
-	function getMetadata(
-		uint256 _internalId,
-		uint256 _board
-	) internal pure returns (string memory) {
-		string memory description;
-		string memory image;
-		string memory attributes;
+    /// @notice Takes in data for a given fiveoutofnine NFT and outputs its metadata in JSON form.
+    /// Refer to {fiveoutofnineART} for details.
+    /// @dev The output is base 64-encoded.
+    /// @param _internalId A bitpacked uint256 where the first 128 bits are the game ID, and the
+    /// last 128 bits are the move ID within the game.
+    /// @param _board Information about the board.
+    /// @return Base 64-encoded JSON of metadata generated from `_internalId` and `_move`.
+    function getMetadata(
+        uint256 _internalId,
+        uint256 _board
+    ) internal pure returns (string memory) {
+        string memory description;
+        string memory animation;
+        string memory attributes;
+        string memory image;
 
-		{
-			uint256 numSquares = 8;
+        {
+            uint256 numSquares = 8;
 
-			uint256 seed = uint256(keccak256(abi.encodePacked(_internalId)));
+            uint256 seed = uint256(keccak256(abi.encodePacked(_internalId)));
 
-			(image, attributes) = getImage(_board, numSquares, seed);
-		}
+            (animation, attributes) = getAnimation(_board, numSquares, seed);
+        }
 
-		description = string(abi.encodePacked("---\\n\\n", drawMove(_board)));
+        image = RetroImage.getImage();
 
-		return
-			string(
-				abi.encodePacked(
-					"data:application/json;base64,",
-					Base64.encode(
-						abi.encodePacked(
-							'{"name":"Game #',
-							Strings.toString(_internalId >> 0x80),
-							", Move #",
-							Strings.toString(uint128(_internalId)),
-							'",'
-							'"description":"',
-							description,
-							'","animation_url":"data:text/html;base64,',
-							image,
-							'","attributes":[',
-							attributes,
-							"]}"
-						)
-					)
-				)
-			);
-	}
+        description = string(abi.encodePacked("---\\n\\n", drawMove(_board)));
 
-	/// @notice Generates the HTML image and its attributes for a given board/seed according to the
-	/// table described in {fiveoutofnineART}.
-	/// @dev The output of the image is base 64-encoded.
-	/// @param _board The board after the player's and engine's move are played.
-	/// @param _numSquares The dimension of the board.
-	/// @param _seed A hash of the game ID.
-	/// @return Base 64-encoded image (in HTML) and its attributes.
-	function getImage(
-		uint256 _board,
-		uint256 _numSquares,
-		uint256 _seed
-	) internal pure returns (string memory, string memory) {
-		string memory attributes = string(
-			abi.encodePacked(
-				'{"trait_type":"Dimension","value":"',
-				_numSquares.toString(),
-				unicode" × ",
-				_numSquares.toString(),
-				'"}'
-			)
-		);
-		string memory styles = string(
-			abi.encodePacked(
-				"<style>:root{--a:1000px;--b:",
-				_numSquares.toString(),
-				";--c:"
-			)
-		);
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        abi.encodePacked(
+                            '{"name":"Puzzle #',
+                            Strings.toString(uint128(_internalId)),
+                            '",'
+                            '"description":"',
+                            description,
+                            '","animation_url":"data:text/html;base64,',
+                            animation,
+                            '","image":"',
+                            image,
+                            '","attributes":[',
+                            attributes,
+                            "]}"
+                        )
+                    )
+                )
+            );
+    }
 
-		{
-			string memory gapAttribute;
-			string memory gapValue = "0";
-			if (_numSquares != 1) {
-				if (_seed & 0xF < 4) (gapAttribute, gapValue) = ("None", "0");
-				else if (_seed & 0xF < 13) (gapAttribute, gapValue) = ("Narrow", "2");
-				else if (_seed & 0xF < 15) (gapAttribute, gapValue) = ("Wide", "12");
-				else (gapAttribute, gapValue) = ("Ultrawide", "24");
+    /// @notice Generates the HTML image and its attributes for a given board/seed according to the
+    /// table described in {fiveoutofnineART}.
+    /// @dev The output of the image is base 64-encoded.
+    /// @param _board The board after the player's and engine's move are played.
+    /// @param _numSquares The dimension of the board.
+    /// @param _seed A hash of the game ID.
+    /// @return Base 64-encoded image (in HTML) and its attributes.
+    function getAnimation(
+        uint256 _board,
+        uint256 _numSquares,
+        uint256 _seed
+    ) internal pure returns (string memory, string memory) {
+        string memory attributes = string(
+            abi.encodePacked(
+                '{"trait_type":"Dimension","value":"',
+                _numSquares.toString(),
+                unicode" × ",
+                _numSquares.toString(),
+                '"}'
+            )
+        );
+        string memory styles = string(
+            abi.encodePacked(
+                "<style>:root{--a:1000px;--b:",
+                _numSquares.toString(),
+                ";--c:"
+            )
+        );
 
-				attributes = string(
-					abi.encodePacked(
-						attributes,
-						',{"trait_type":"Gap","value":"',
-						gapAttribute,
-						'"}'
-					)
-				);
-			}
-			styles = string(abi.encodePacked(styles, gapValue, "px;--d:"));
-		}
-		_seed >>= 4;
+        {
+            string memory gapAttribute;
+            string memory gapValue = "0";
+            if (_numSquares != 1) {
+                if (_seed & 0xF < 4) (gapAttribute, gapValue) = ("None", "0");
+                else if (_seed & 0xF < 13)
+                    (gapAttribute, gapValue) = ("Narrow", "2");
+                else if (_seed & 0xF < 15)
+                    (gapAttribute, gapValue) = ("Wide", "12");
+                else (gapAttribute, gapValue) = ("Ultrawide", "24");
 
-		{
-			string memory heightAttribute;
-			string memory heightValue;
-			if (_seed & 0x3F < 1) (heightAttribute, heightValue) = ("Plane", "8");
-			else if (_seed & 0x3F < 11)
-				(heightAttribute, heightValue) = ("1/4", "98");
-			else if (_seed & 0x3F < 21)
-				(heightAttribute, heightValue) = ("1/2", "197");
-			else if (_seed & 0x3F < 51)
-				(heightAttribute, heightValue) = ("Cube", "394");
-			else (heightAttribute, heightValue) = ("Infinite", "1000");
+                attributes = string(
+                    abi.encodePacked(
+                        attributes,
+                        ',{"trait_type":"Gap","value":"',
+                        gapAttribute,
+                        '"}'
+                    )
+                );
+            }
+            styles = string(abi.encodePacked(styles, gapValue, "px;--d:"));
+        }
+        _seed >>= 4;
 
-			attributes = string(
-				abi.encodePacked(
-					attributes,
-					',{"trait_type":"Height","value":"',
-					heightAttribute,
-					'"}'
-				)
-			);
-			styles = string(abi.encodePacked(styles, heightValue, "px;"));
-		}
-		_seed >>= 6;
+        {
+            string memory heightAttribute;
+            string memory heightValue;
+            if (_seed & 0x3F < 1)
+                (heightAttribute, heightValue) = ("Plane", "8");
+            else if (_seed & 0x3F < 11)
+                (heightAttribute, heightValue) = ("1/4", "98");
+            else if (_seed & 0x3F < 21)
+                (heightAttribute, heightValue) = ("1/2", "197");
+            else if (_seed & 0x3F < 51)
+                (heightAttribute, heightValue) = ("Cube", "394");
+            else (heightAttribute, heightValue) = ("Infinite", "1000");
 
-		{
-			string memory tempAttribute;
-			uint256 colorTheme;
-			if (_seed & 0x1F < 25) {
-				colorTheme = (_seed >> 5) & 0xFFFFFF;
-				attributes = string(
-					abi.encodePacked(
-						attributes,
-						',{"trait_type":"Base Color","value":',
-						colorTheme.toString(),
-						"}"
-					)
-				);
-				if (_seed & 0x1F < 7) {
-					tempAttribute = "Uniform";
-					colorTheme =
-						(colorTheme << 0x60) |
-						(colorTheme << 0x48) |
-						(colorTheme << 0x30) |
-						(colorTheme << 0x18) |
-						complementColor(colorTheme);
-				} else if (_seed & 0x1F < 14) {
-					tempAttribute = "Shades";
-					colorTheme =
-						(darkenColor(colorTheme, 3) << 0x60) |
-						(darkenColor(colorTheme, 1) << 0x48) |
-						(darkenColor(colorTheme, 2) << 0x30) |
-						(colorTheme << 0x18) |
-						complementColor(colorTheme);
-				} else if (_seed & 0x1F < 21) {
-					tempAttribute = "Tints";
-					colorTheme =
-						(brightenColor(colorTheme, 3) << 0x60) |
-						(brightenColor(colorTheme, 1) << 0x48) |
-						(brightenColor(colorTheme, 2) << 0x30) |
-						(colorTheme << 0x18) |
-						complementColor(colorTheme);
-				} else if (_seed & 0x1F < 24) {
-					tempAttribute = "Eclipse";
-					colorTheme =
-						(colorTheme << 0x60) |
-						(0xFFFFFF << 0x48) |
-						(colorTheme << 0x18) |
-						complementColor(colorTheme);
-				} else {
-					tempAttribute = "Void";
-					colorTheme =
-						(complementColor(colorTheme) << 0x60) |
-						(colorTheme << 0x18) |
-						complementColor(colorTheme);
-				}
-			} else {
-				tempAttribute = "Curated";
-				_seed >>= 5;
+            attributes = string(
+                abi.encodePacked(
+                    attributes,
+                    ',{"trait_type":"Height","value":"',
+                    heightAttribute,
+                    '"}'
+                )
+            );
+            styles = string(abi.encodePacked(styles, heightValue, "px;"));
+        }
+        _seed >>= 6;
 
-				attributes = string(
-					abi.encodePacked(
-						attributes,
-						',{"trait_type":"Color Theme","value":"',
-						[
-							"Nord",
-							"B/W",
-							"Candycorn",
-							"RGB",
-							"VSCode",
-							"Neon",
-							"Jungle",
-							"Corn"
-						][_seed & 7],
-						'"}'
-					)
-				);
+        {
+            string memory tempAttribute;
+            uint256 colorTheme;
+            if (_seed & 0x1F < 25) {
+                colorTheme = (_seed >> 5) & 0xFFFFFF;
+                attributes = string(
+                    abi.encodePacked(
+                        attributes,
+                        ',{"trait_type":"Base Color","value":',
+                        colorTheme.toString(),
+                        "}"
+                    )
+                );
+                if (_seed & 0x1F < 7) {
+                    tempAttribute = "Uniform";
+                    colorTheme =
+                        (colorTheme << 0x60) |
+                        (colorTheme << 0x48) |
+                        (colorTheme << 0x30) |
+                        (colorTheme << 0x18) |
+                        complementColor(colorTheme);
+                } else if (_seed & 0x1F < 14) {
+                    tempAttribute = "Shades";
+                    colorTheme =
+                        (darkenColor(colorTheme, 3) << 0x60) |
+                        (darkenColor(colorTheme, 1) << 0x48) |
+                        (darkenColor(colorTheme, 2) << 0x30) |
+                        (colorTheme << 0x18) |
+                        complementColor(colorTheme);
+                } else if (_seed & 0x1F < 21) {
+                    tempAttribute = "Tints";
+                    colorTheme =
+                        (brightenColor(colorTheme, 3) << 0x60) |
+                        (brightenColor(colorTheme, 1) << 0x48) |
+                        (brightenColor(colorTheme, 2) << 0x30) |
+                        (colorTheme << 0x18) |
+                        complementColor(colorTheme);
+                } else if (_seed & 0x1F < 24) {
+                    tempAttribute = "Eclipse";
+                    colorTheme =
+                        (colorTheme << 0x60) |
+                        (0xFFFFFF << 0x48) |
+                        (colorTheme << 0x18) |
+                        complementColor(colorTheme);
+                } else {
+                    tempAttribute = "Void";
+                    colorTheme =
+                        (complementColor(colorTheme) << 0x60) |
+                        (colorTheme << 0x18) |
+                        complementColor(colorTheme);
+                }
+            } else {
+                tempAttribute = "Curated";
+                _seed >>= 5;
 
-				colorTheme = [
-					0x8FBCBBEBCB8BD087705E81ACB48EAD000000FFFFFFFFFFFFFFFFFF000000,
-					0x0D3B66F4D35EEE964BFAF0CAF95738FFFF0000FF000000FFFF0000FFFF00,
-					0x1E1E1E569CD6D2D1A2BA7FB54DC4AC00FFFFFFFF000000FF00FF00FF00FF,
-					0xBE3400015045020D22EABAACBE3400F9C233705860211A28346830F9C233
-				][(_seed & 7) >> 1];
-				colorTheme = _seed & 1 == 0
-					? colorTheme >> 0x78
-					: colorTheme & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-			}
-			attributes = string(
-				abi.encodePacked(
-					attributes,
-					',{"trait_type":"Color Generation","value":"',
-					tempAttribute,
-					'"}'
-				)
-			);
-			styles = string(
-				abi.encodePacked(
-					styles,
-					"--e:",
-					toColorHexString(colorTheme >> 0x60),
-					";--f:",
-					toColorHexString((colorTheme >> 0x48) & 0xFFFFFF),
-					";--g:",
-					toColorHexString((colorTheme >> 0x30) & 0xFFFFFF),
-					";--h:",
-					toColorHexString((colorTheme >> 0x18) & 0xFFFFFF),
-					";--i:",
-					toColorHexString(colorTheme & 0xFFFFFF),
-					";"
-				)
-			);
-		}
+                attributes = string(
+                    abi.encodePacked(
+                        attributes,
+                        ',{"trait_type":"Color Theme","value":"',
+                        [
+                            "Nord",
+                            "B/W",
+                            "Candycorn",
+                            "RGB",
+                            "VSCode",
+                            "Neon",
+                            "Jungle",
+                            "Corn"
+                        ][_seed & 7],
+                        '"}'
+                    )
+                );
 
-		{
-			string memory tempAttribute;
-			styles = string(
-				abi.encodePacked(
-					styles,
-					SVG_STYLES,
-					Strings.toString(16 / _numSquares),
-					",1fr);grid-template-rows:repeat(",
-					Strings.toString(16 / _numSquares),
-					",1fr);transform:rotate(210deg)skew(-30deg)scaleY(0.864)}"
-				)
-			);
-			if (_numSquares != 16) {
-				tempAttribute = "False";
-				attributes = string(
-					abi.encodePacked(
-						attributes,
-						',{"trait_type":"Bit Border","value":"',
-						tempAttribute,
-						'"}'
-					)
-				);
-			}
-		}
+                colorTheme = [
+                    0x8FBCBBEBCB8BD087705E81ACB48EAD000000FFFFFFFFFFFFFFFFFF000000,
+                    0x0D3B66F4D35EEE964BFAF0CAF95738FFFF0000FF000000FFFF0000FFFF00,
+                    0x1E1E1E569CD6D2D1A2BA7FB54DC4AC00FFFFFFFF000000FF00FF00FF00FF,
+                    0xBE3400015045020D22EABAACBE3400F9C233705860211A28346830F9C233
+                ][(_seed & 7) >> 1];
+                colorTheme = _seed & 1 == 0
+                    ? colorTheme >> 0x78
+                    : colorTheme & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+            }
+            attributes = string(
+                abi.encodePacked(
+                    attributes,
+                    ',{"trait_type":"Color Generation","value":"',
+                    tempAttribute,
+                    '"}'
+                )
+            );
+            styles = string(
+                abi.encodePacked(
+                    styles,
+                    "--e:",
+                    toColorHexString(colorTheme >> 0x60),
+                    ";--f:",
+                    toColorHexString((colorTheme >> 0x48) & 0xFFFFFF),
+                    ";--g:",
+                    toColorHexString((colorTheme >> 0x30) & 0xFFFFFF),
+                    ";--h:",
+                    toColorHexString((colorTheme >> 0x18) & 0xFFFFFF),
+                    ";--i:",
+                    toColorHexString(colorTheme & 0xFFFFFF),
+                    ";"
+                )
+            );
+        }
 
-		unchecked {
-			for (uint256 i; i < 31; ++i) {
-				styles = string(
-					abi.encodePacked(
-						styles,
-						".r",
-						i.toString(),
-						"{top:calc(var(--o) + ",
-						i.toString(),
-						"*(var(--n)/2 + var(--c)))}"
-						".c",
-						i.toString(),
-						"{left:calc(var(--p) ",
-						i < 15 ? "-" : "+",
-						" 0.866*",
-						i < 15 ? (15 - i).toString() : (i - 15).toString(),
-						"*(var(--n) + var(--c)))}"
-					)
-				);
-			}
+        {
+            string memory tempAttribute;
+            styles = string(
+                abi.encodePacked(
+                    styles,
+                    SVG_STYLES,
+                    Strings.toString(16 / _numSquares),
+                    ",1fr);grid-template-rows:repeat(",
+                    Strings.toString(16 / _numSquares),
+                    ",1fr);transform:rotate(210deg)skew(-30deg)scaleY(0.864)}"
+                )
+            );
+            if (_numSquares != 16) {
+                tempAttribute = "False";
+                attributes = string(
+                    abi.encodePacked(
+                        attributes,
+                        ',{"trait_type":"Bit Border","value":"',
+                        tempAttribute,
+                        '"}'
+                    )
+                );
+            }
+        }
 
-			// iterates diagonally starting from the back
-			string memory image;
-			for (uint256 row; row < (_numSquares << 1) - 1; ++row) {
-				uint256 tempCol = row <= _numSquares - 1
-					? 15 - row
-					: 15 - ((_numSquares << 1) - 2 - row);
-				for (
-					uint256 col = tempCol;
-					col <=
-					(
-						row <= _numSquares - 1
-							? tempCol + (row << 1)
-							: tempCol + (((_numSquares << 1) - 2 - row) << 1)
-					);
-					col = col + 2
-				) {
-					image = string(
-						abi.encodePacked(
-							image,
-							getPillarHtml(_board, 16 / _numSquares, row, col)
-						)
-					);
-				}
-			}
+        unchecked {
+            for (uint256 i; i < 31; ++i) {
+                styles = string(
+                    abi.encodePacked(
+                        styles,
+                        ".r",
+                        i.toString(),
+                        "{top:calc(var(--o) + ",
+                        i.toString(),
+                        "*(var(--n)/2 + var(--c)))}"
+                        ".c",
+                        i.toString(),
+                        "{left:calc(var(--p) ",
+                        i < 15 ? "-" : "+",
+                        " 0.866*",
+                        i < 15 ? (15 - i).toString() : (i - 15).toString(),
+                        "*(var(--n) + var(--c)))}"
+                    )
+                );
+            }
 
-			return (
-				Base64.encode(
-					abi.encodePacked(styles, "</style><section>", image, "</section>")
-				),
-				attributes
-			);
-		}
-	}
+            // iterates diagonally starting from the back
+            string memory image;
+            for (uint256 row; row < (_numSquares << 1) - 1; ++row) {
+                uint256 tempCol = row <= _numSquares - 1
+                    ? 15 - row
+                    : 15 - ((_numSquares << 1) - 2 - row);
+                for (
+                    uint256 col = tempCol;
+                    col <=
+                    (
+                        row <= _numSquares - 1
+                            ? tempCol + (row << 1)
+                            : tempCol + (((_numSquares << 1) - 2 - row) << 1)
+                    );
+                    col = col + 2
+                ) {
+                    image = string(
+                        abi.encodePacked(
+                            image,
+                            getPillarHtml(_board, 16 / _numSquares, row, col)
+                        )
+                    );
+                }
+            }
 
-	/// @notice Returns the HTML for a particular pillar within the image.
-	/// @param _board The board after the player's and engine's move are played.
-	/// @param _dim The dimension of the bits within a pillar.
-	/// @param _row The row index of the pillar.
-	/// @param _col The column index of the pillar.
-	/// @return The HTML for the pillar described by the parameters.
-	function getPillarHtml(
-		uint256 _board,
-		uint256 _dim,
-		uint256 _row,
-		uint256 _col
-	) internal pure returns (string memory) {
-		string memory pillar = string(
-			abi.encodePacked(
-				'<div class="c r',
-				_row.toString(),
-				" c",
-				_col.toString(),
-				'"><div></div><div></div><div>'
-			)
-		);
+            string memory script;
+            script = string(
+                abi.encodePacked(
+                    '<script type="text/javascript">',
+                    "w=window;w.addEventListener('DOMContentLoaded',()=>{n=document.querySelector('section').style;",
+                    "n.transformOrigin='top left';a=()=>n.transform='scale('+w.innerWidth/1000+')';a();w.onresize=a});",
+                    "</script>"
+                )
+            );
 
-		uint256 x;
-		uint256 y;
-		uint256 colOffset;
-		uint256 rowOffset;
-		unchecked {
-			for (
-				uint256 subRow = _row * _dim + ((_dim - 1) << 1);
-				subRow >= _row * _dim + (_dim - 1);
-				--subRow
-			) {
-				rowOffset = 0;
-				uint256 tempSubCol = _col <= 15
-					? 15 - _dim * (15 - _col) + colOffset
-					: 15 + _dim * (_col - 15) + colOffset;
-				for (
-					uint256 subCol = tempSubCol;
-					subCol >= tempSubCol + 1 - _dim;
-					--subCol
-				) {
-					x = 15 - ((15 + subCol - (subRow - rowOffset)) >> 1);
-					y = 22 - ((subCol + subRow - rowOffset) >> 1);
+            return (
+                Base64.encode(
+                    abi.encodePacked(
+                        script,
+                        styles,
+                        "</style><section>",
+                        image,
+                        "</section>"
+                    )
+                ),
+                attributes
+            );
+        }
+    }
 
-					// (board >> (transformedPosition * 4)) >> [1,3,0,2]
-					pillar = string(
-						abi.encodePacked(
-							pillar,
-							'<div id="',
-							((_board >> ((8 * (y >> 1) + (x >> 1)) << 2)) >>
-								(((0xD8 >> ((x & 1) << 2)) >> ((y & 1) << 1)) & 3)) &
-								1 ==
-								0
-								? "h"
-								: "i",
-							'"></div>'
-						)
-					);
-					rowOffset++;
-					if (subCol == 0) break;
-				}
-				colOffset++;
-				if (subRow == 0) break;
-			}
-		}
+    /// @notice Returns the HTML for a particular pillar within the image.
+    /// @param _board The board after the player's and engine's move are played.
+    /// @param _dim The dimension of the bits within a pillar.
+    /// @param _row The row index of the pillar.
+    /// @param _col The column index of the pillar.
+    /// @return The HTML for the pillar described by the parameters.
+    function getPillarHtml(
+        uint256 _board,
+        uint256 _dim,
+        uint256 _row,
+        uint256 _col
+    ) internal pure returns (string memory) {
+        string memory pillar = string(
+            abi.encodePacked(
+                '<div class="c r',
+                _row.toString(),
+                " c",
+                _col.toString(),
+                '"><div></div><div></div><div>'
+            )
+        );
 
-		return string(abi.encodePacked(pillar, "</div></div>"));
-	}
+        uint256 x;
+        uint256 y;
+        uint256 colOffset;
+        uint256 rowOffset;
+        unchecked {
+            for (
+                uint256 subRow = _row * _dim + ((_dim - 1) << 1);
+                subRow >= _row * _dim + (_dim - 1);
+                --subRow
+            ) {
+                rowOffset = 0;
+                uint256 tempSubCol = _col <= 15
+                    ? 15 - _dim * (15 - _col) + colOffset
+                    : 15 + _dim * (_col - 15) + colOffset;
+                for (
+                    uint256 subCol = tempSubCol;
+                    subCol >= tempSubCol + 1 - _dim;
+                    --subCol
+                ) {
+                    x = 15 - ((15 + subCol - (subRow - rowOffset)) >> 1);
+                    y = 22 - ((subCol + subRow - rowOffset) >> 1);
 
-	/// @notice Computes the complement of 24-bit colors.
-	/// @param _color A 24-bit color.
-	/// @return The complement of `_color`.
-	function complementColor(uint256 _color) internal pure returns (uint256) {
-		unchecked {
-			return 0xFFFFFF - _color;
-		}
-	}
+                    // (board >> (transformedPosition * 4)) >> [1,3,0,2]
+                    pillar = string(
+                        abi.encodePacked(
+                            pillar,
+                            '<div id="',
+                            ((_board >> ((8 * (y >> 1) + (x >> 1)) << 2)) >>
+                                (((0xD8 >> ((x & 1) << 2)) >> ((y & 1) << 1)) &
+                                    3)) &
+                                1 ==
+                                0
+                                ? "h"
+                                : "i",
+                            '"></div>'
+                        )
+                    );
+                    rowOffset++;
+                    if (subCol == 0) break;
+                }
+                colOffset++;
+                if (subRow == 0) break;
+            }
+        }
 
-	/// @notice Darkens 24-bit colors.
-	/// @param _color A 24-bit color.
-	/// @param _num The number of shades to darken by.
-	/// @return `_color` darkened `_num` times.
-	function darkenColor(
-		uint256 _color,
-		uint256 _num
-	) internal pure returns (uint256) {
-		return
-			(((_color >> 0x10) >> _num) << 0x10) |
-			((((_color >> 8) & 0xFF) >> _num) << 8) |
-			((_color & 0xFF) >> _num);
-	}
+        return string(abi.encodePacked(pillar, "</div></div>"));
+    }
 
-	/// @notice Brightens 24-bit colors.
-	/// @param _color A 24-bit color.
-	/// @param _num The number of tints to brighten by.
-	/// @return `_color` brightened `_num` times.
-	function brightenColor(
-		uint256 _color,
-		uint256 _num
-	) internal pure returns (uint256) {
-		unchecked {
-			return
-				((0xFF - ((0xFF - (_color >> 0x10)) >> _num)) << 0x10) |
-				((0xFF - ((0xFF - ((_color >> 8) & 0xFF)) >> _num)) << 8) |
-				(0xFF - ((0xFF - (_color & 0xFF)) >> _num));
-		}
-	}
+    /// @notice Computes the complement of 24-bit colors.
+    /// @param _color A 24-bit color.
+    /// @return The complement of `_color`.
+    function complementColor(uint256 _color) internal pure returns (uint256) {
+        unchecked {
+            return 0xFFFFFF - _color;
+        }
+    }
 
-	/// @notice Returns the color hex string of a 24-bit color.
-	/// @param _integer A 24-bit color.
-	/// @return The color hex string of `_integer`.
-	function toColorHexString(
-		uint256 _integer
-	) internal pure returns (string memory) {
-		return
-			string(
-				abi.encodePacked(
-					"#",
-					HEXADECIMAL_DIGITS[(_integer >> 0x14) & 0xF],
-					HEXADECIMAL_DIGITS[(_integer >> 0x10) & 0xF],
-					HEXADECIMAL_DIGITS[(_integer >> 0xC) & 0xF],
-					HEXADECIMAL_DIGITS[(_integer >> 8) & 0xF],
-					HEXADECIMAL_DIGITS[(_integer >> 4) & 0xF],
-					HEXADECIMAL_DIGITS[_integer & 0xF]
-				)
-			);
-	}
+    /// @notice Darkens 24-bit colors.
+    /// @param _color A 24-bit color.
+    /// @param _num The number of shades to darken by.
+    /// @return `_color` darkened `_num` times.
+    function darkenColor(
+        uint256 _color,
+        uint256 _num
+    ) internal pure returns (uint256) {
+        return
+            (((_color >> 0x10) >> _num) << 0x10) |
+            ((((_color >> 8) & 0xFF) >> _num) << 8) |
+            ((_color & 0xFF) >> _num);
+    }
 
-	/// @notice Draws out a move being played out on a board position as a string with unicode
-	/// characters to represent pieces. Files and rows are labeled with standard algebraic
-	/// notation. For example:
-	/// ```
-	/// 6 ♜ ♝ ♛ ♚ ♝ ♜
-	/// 5 ♟ ♟ ♟ ♟ ♟ ♟
-	/// 4 · · · · · ·
-	/// 3 · · ♙ · · ·
-	/// 2 ♙ ♙ * ♙ ♙ ♙
-	/// 1 ♖ ♘ ♕ ♔ ♘ ♖
-	///  a b c d e f
-	/// ```
-	/// * indicates the square the piece moved from.
-	/// @param _board The board the move is played on.
-	/// @return The string showing the move played out on the board.
-	function drawMove(uint256 _board) internal pure returns (string memory) {
-		string memory boardString = "```\\n";
+    /// @notice Brightens 24-bit colors.
+    /// @param _color A 24-bit color.
+    /// @param _num The number of tints to brighten by.
+    /// @return `_color` brightened `_num` times.
+    function brightenColor(
+        uint256 _color,
+        uint256 _num
+    ) internal pure returns (uint256) {
+        unchecked {
+            return
+                ((0xFF - ((0xFF - (_color >> 0x10)) >> _num)) << 0x10) |
+                ((0xFF - ((0xFF - ((_color >> 8) & 0xFF)) >> _num)) << 8) |
+                (0xFF - ((0xFF - (_color & 0xFF)) >> _num));
+        }
+    }
 
-		for (uint256 index = 63; index != 0; index--) {
-			uint256 indexToDraw = index;
-			boardString = string(
-				abi.encodePacked(
-					boardString,
-					indexToDraw & 7 == 7
-						? string(
-							abi.encodePacked(Strings.toString((indexToDraw >> 3) + 1), " ")
-						)
-						: "",
-					getPieceChar((_board >> (indexToDraw << 2)) & 0xF),
-					indexToDraw & 7 == 0 && indexToDraw != 0 ? "\\n" : indexToDraw != 0
-						? " "
-						: ""
-				)
-			);
-		}
+    /// @notice Returns the color hex string of a 24-bit color.
+    /// @param _integer A 24-bit color.
+    /// @return The color hex string of `_integer`.
+    function toColorHexString(
+        uint256 _integer
+    ) internal pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    "#",
+                    HEXADECIMAL_DIGITS[(_integer >> 0x14) & 0xF],
+                    HEXADECIMAL_DIGITS[(_integer >> 0x10) & 0xF],
+                    HEXADECIMAL_DIGITS[(_integer >> 0xC) & 0xF],
+                    HEXADECIMAL_DIGITS[(_integer >> 8) & 0xF],
+                    HEXADECIMAL_DIGITS[(_integer >> 4) & 0xF],
+                    HEXADECIMAL_DIGITS[_integer & 0xF]
+                )
+            );
+    }
 
-		boardString = string(
-			abi.encodePacked(boardString, "\\n  a b c d e f g h\\n```")
-		);
+    /// @notice Draws out a move being played out on a board position as a string with unicode
+    /// characters to represent pieces. Files and rows are labeled with standard algebraic
+    /// notation. For example:
+    /// ```
+    /// 6 ♜ ♝ ♛ ♚ ♝ ♜
+    /// 5 ♟ ♟ ♟ ♟ ♟ ♟
+    /// 4 · · · · · ·
+    /// 3 · · ♙ · · ·
+    /// 2 ♙ ♙ * ♙ ♙ ♙
+    /// 1 ♖ ♘ ♕ ♔ ♘ ♖
+    ///  a b c d e f
+    /// ```
+    /// * indicates the square the piece moved from.
+    /// @param _board The board the move is played on.
+    /// @return The string showing the move played out on the board.
+    function drawMove(uint256 _board) internal pure returns (string memory) {
+        string memory boardString = "```\\n";
 
-		return boardString;
-	}
+        for (uint256 index = 63; index != 0; index--) {
+            uint256 indexToDraw = index;
+            boardString = string(
+                abi.encodePacked(
+                    boardString,
+                    indexToDraw & 7 == 7
+                        ? string(
+                            abi.encodePacked(
+                                Strings.toString((indexToDraw >> 3) + 1),
+                                " "
+                            )
+                        )
+                        : "",
+                    getPieceChar((_board >> (indexToDraw << 2)) & 0xF),
+                    indexToDraw & 7 == 0 && indexToDraw != 0
+                        ? "\\n"
+                        : indexToDraw != 0
+                        ? " "
+                        : ""
+                )
+            );
+        }
 
-	/// @notice Maps pieces to its corresponding unicode character.
-	/// @param _piece A piece.
-	/// @return The unicode character corresponding to `_piece`. It returns ``.'' otherwise.
-	function getPieceChar(uint256 _piece) internal pure returns (string memory) {
-		if (_piece == 1) return unicode"♟";
-		if (_piece == 2) return unicode"♝";
-		if (_piece == 3) return unicode"♜";
-		if (_piece == 4) return unicode"♞";
-		if (_piece == 5) return unicode"♛";
-		if (_piece == 6) return unicode"♚";
-		if (_piece == 9) return unicode"♙";
-		if (_piece == 0xA) return unicode"♗";
-		if (_piece == 0xB) return unicode"♖";
-		if (_piece == 0xC) return unicode"♘";
-		if (_piece == 0xD) return unicode"♕";
-		if (_piece == 0xE) return unicode"♔";
-		return unicode"·";
-	}
+        boardString = string(
+            abi.encodePacked(
+                boardString,
+                getPieceChar(_board & 0xF),
+                "\\n  a b c d e f g h\\n```"
+            )
+        );
+
+        return boardString;
+    }
+
+    /// @notice Maps pieces to its corresponding unicode character.
+    /// @param _piece A piece.
+    /// @return The unicode character corresponding to `_piece`. It returns ``.'' otherwise.
+    function getPieceChar(
+        uint256 _piece
+    ) internal pure returns (string memory) {
+        if (_piece == 1) return unicode"♟";
+        if (_piece == 2) return unicode"♝";
+        if (_piece == 3) return unicode"♜";
+        if (_piece == 4) return unicode"♞";
+        if (_piece == 5) return unicode"♛";
+        if (_piece == 6) return unicode"♚";
+        if (_piece == 9) return unicode"♙";
+        if (_piece == 0xA) return unicode"♗";
+        if (_piece == 0xB) return unicode"♖";
+        if (_piece == 0xC) return unicode"♘";
+        if (_piece == 0xD) return unicode"♕";
+        if (_piece == 0xE) return unicode"♔";
+        return unicode"·";
+    }
 }

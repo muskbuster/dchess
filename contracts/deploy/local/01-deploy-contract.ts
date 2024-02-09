@@ -14,6 +14,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(
         `DChess deployed to ${dChess.address} with owner as ${deployer}`,
     );
+
+    await deployments.deploy("SimpleChessToken", {
+        from: deployer,
+        args: ["TestChess", "CHESS"],
+    });
+
+    const simpleChessToken = await deployments.get("SimpleChessToken");
+    console.log(
+        `SimpleChessToken deployed to ${simpleChessToken.address} with owner as ${deployer}`,
+    );
 };
 
 func.tags = ["Deploy"];
