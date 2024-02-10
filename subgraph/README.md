@@ -13,7 +13,7 @@ DChess currently leverages both. At the current moment, no data transformation i
 
 ### Tools
 
-- The Graph (https://thegraph.com/studio/)
+- Graph CLI (https://thegraph.com/studio/)
 - Goldsky Pipelines (https://app.goldsky.com/dashboard/pipelines)
 - Vercel Store (https://vercel.com/alpha-labs/~/stores)
 
@@ -31,4 +31,28 @@ yarn global add @graphprotocol/graph-cli
 graph init --studio dchess
 ```
 
-This will go through the process
+This will go through the process and initialize a scaffolding
+
+3. Go to the source and build it
+
+```
+graph codegen && graph build
+```
+
+4. Deploy it on Goldsky
+
+```
+goldsky subgraph deploy dchess/0.0.1
+```
+
+This will give you a subgraph API that you can use
+
+5. Now you are ready to create a pipeline. First create a fresh postgres database on Vercel (if you haven't yet). Then create the pipeline.
+
+```
+goldsky pipeline create dchess-vercel
+```
+
+This is it. Now data is ready to be served from the database.
+
+6. Navigate over to vercel and copy paste the secrets to your app

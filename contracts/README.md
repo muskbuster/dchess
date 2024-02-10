@@ -33,6 +33,7 @@ To refresh deployment, simply delete the folder (for example `deployments/base-s
 -   `yarn hardhat --network <networkName> run scripts/whitelistCreators.ts` $\rightarrow$ whitelists creators found in `/data/whitelistedCreators.json`. This is used for updating the list (use this for mainnet as well). Make sure that as you update the list. You also copy the data file to FE. Otherwise, it will be using the previous state.
 -   `yarn hardhat --network <networkName> run scripts/addPuzzles.ts` $\rightarrow$ randomly selects creators (that should be whitelisted seperately) and adds a collection of problems from `/data/puzzleSet.json` (can be used for mainnet but be careful about the puzzle set being used)
 -   `yarn hardhat --network <networkName> run scripts/updateMintPrice.ts` $\rightarrow$ updates the mint price to the given number in the script (double check the value in the script)
+-   `yarn hardhat --network <networkName> run scripts/updateArt.ts` $\rightarrow$ updates Art
 
 ## Features
 

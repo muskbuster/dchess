@@ -1,6 +1,8 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { readFileSync } from "fs";
+
+const ImageUrl =
+    "https://maroon-petite-shrew-493.mypinata.cloud/ipfs/QmbG4pjnDQyWeT5ZU822DGJGr1afKwViPYNKFi9pwo4QwA";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { deployments } = hre;
@@ -20,8 +22,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         "ThreeOutOfNineART",
         threeOutOfNineARTDeployment.address,
     );
-    const svg = readFileSync("./data/retro.svg");
-    await threeOutOfNineART.setImage(svg.toString());
+    await threeOutOfNineART.setImageUrl(ImageUrl);
     console.log("Updated SVG art");
 
     await deployments.deploy("DChess", {

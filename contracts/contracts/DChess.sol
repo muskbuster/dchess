@@ -23,8 +23,7 @@ contract DChess is IDChess, ERC1155, Ownable {
     uint256 public kFactor;
     uint256 public platformFee; // Percent of token price that goes to the platform (the rest goes to creator)
     bytes32 public merkleRoot; // used for checking if a user is a creator
-
-    IThreeOutOfNineART art; // art is stored separately
+    address public artAddr; // location of where art is stored
 
     struct Puzzle {
         string fen;
@@ -42,13 +41,17 @@ contract DChess is IDChess, ERC1155, Ownable {
 
     constructor(
         address initialOwner,
-        address artAddr
+        address _artAddr
     ) Ownable(initialOwner) ERC1155("") {
         tokenMintPrice = 0.002 ether;
         kFactor = 50;
         platformFee = 40;
         merkleRoot = 0x0000000000000000000000000000000000000000000000000000000000000000;
-        art = IThreeOutOfNineART(artAddr);
+        artAddr = _artAddr;
+    }
+
+    function setArt(address _artAddr) public onlyOwner {
+        artAddr = _artAddr;
     }
 
     function setTokenMintPrice(uint256 _price) public onlyOwner {
@@ -85,7 +88,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         uint256 internalTokenId
     ) public view override returns (string memory) {
         return
-            art.getMetadata(
+            IThreeOutOfNineART(artAddr).getMetadata(
                 internalTokenId,
                 puzzlesById[internalTokenId].metadata
             );

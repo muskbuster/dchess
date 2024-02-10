@@ -169,12 +169,12 @@ contract ThreeOutOfNineART is IThreeOutOfNineART, Ownable {
     bytes32 internal constant HEXADECIMAL_DIGITS = "0123456789ABCDEF";
     bytes32 internal constant FILE_NAMES = "abcdef";
 
-    string public image;
+    string public imageUrl;
 
     constructor(address initialOwner) Ownable(initialOwner) {}
 
-    function setImage(string memory _image) public onlyOwner {
-        image = _image;
+    function setImageUrl(string memory _imageUrl) public onlyOwner {
+        imageUrl = _imageUrl;
     }
 
     /// @notice Takes in data for a given fiveoutofnine NFT and outputs its metadata in JSON form.
@@ -216,10 +216,7 @@ contract ThreeOutOfNineART is IThreeOutOfNineART, Ownable {
                             '","animation_url":"data:text/html;base64,',
                             animation,
                             '","image":"',
-                            abi.encodePacked(
-                                "data:image/svg+xml;base64,",
-                                Base64.encode(abi.encodePacked(image))
-                            ),
+                            imageUrl,
                             '","attributes":[',
                             attributes,
                             "]}"

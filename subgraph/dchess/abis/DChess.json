@@ -2,7 +2,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "initialOwner", "type": "address" },
-      { "internalType": "address", "name": "artAddr", "type": "address" }
+      { "internalType": "address", "name": "_artAddr", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -460,6 +460,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "artAddr",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "uint256", "name": "id", "type": "uint256" }
@@ -603,6 +610,15 @@
       { "internalType": "bool", "name": "approved", "type": "bool" }
     ],
     "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_artAddr", "type": "address" }
+    ],
+    "name": "setArt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
