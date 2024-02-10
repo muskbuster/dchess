@@ -7,8 +7,8 @@ import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProo
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Elo} from "./lib/Elo.sol";
-import {ThreeOutOfNineART} from "./lib/ThreeOutOfNineART.sol";
 
+import {IThreeOutOfNineART} from "./interfaces/IThreeOutOfNineART.sol";
 import {IDChess} from "./interfaces/IDChess.sol";
 
 // import "hardhat/console.sol";
@@ -24,6 +24,8 @@ contract DChess is IDChess, ERC1155, Ownable {
     uint256 public platformFee; // Percent of token price that goes to the platform (the rest goes to creator)
     bytes32 public merkleRoot; // used for checking if a user is a creator
 
+    IThreeOutOfNineART art; // art is stored separately
+
     struct Puzzle {
         string fen;
         bytes32 solution; // Hash of the solution
@@ -38,11 +40,15 @@ contract DChess is IDChess, ERC1155, Ownable {
     mapping(uint256 => Puzzle) public puzzlesById;
     mapping(address => uint256) public userRatings;
 
-    constructor(address initialOwner) Ownable(initialOwner) ERC1155("") {
+    constructor(
+        address initialOwner,
+        address artAddr
+    ) Ownable(initialOwner) ERC1155("") {
         tokenMintPrice = 0.002 ether;
         kFactor = 50;
         platformFee = 40;
         merkleRoot = 0x0000000000000000000000000000000000000000000000000000000000000000;
+        art = IThreeOutOfNineART(artAddr);
     }
 
     function setTokenMintPrice(uint256 _price) public onlyOwner {
@@ -79,7 +85,7 @@ contract DChess is IDChess, ERC1155, Ownable {
         uint256 internalTokenId
     ) public view override returns (string memory) {
         return
-            ThreeOutOfNineART.getMetadata(
+            art.getMetadata(
                 internalTokenId,
                 puzzlesById[internalTokenId].metadata
             );
@@ -104,9 +110,6 @@ contract DChess is IDChess, ERC1155, Ownable {
         if (metadata == 0) {
             revert InvalidMetadata(internalTokenCounter, metadata);
         }
-
-        // Call to ensure that getMetadata is valid
-        ThreeOutOfNineART.getMetadata(internalTokenCounter, metadata);
 
         uint256 internalTokenId = internalTokenCounter;
         Puzzle storage puzzle = puzzlesById[internalTokenId];

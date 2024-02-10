@@ -2,9 +2,10 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IThreeOutOfNineART} from "./interfaces/IThreeOutOfNineART.sol";
 
-import {Base64} from "./Base64.sol";
-import {RetroImage} from "./RetroImage.sol";
+import {Base64} from "./lib/Base64.sol";
 
 /// @title A library that generates HTML art based on a modified version of fiveoutofnine
 /// @author RnkSngh / 0xasdf / fiveoutofnine
@@ -149,7 +150,7 @@ import {RetroImage} from "./RetroImage.sol";
 ///  |     * the fourth 24 bits represent the top face's color,                                   |
 ///  |     * and the last 24 bits represent the bits' color.                                      |
 ///  | [^4]: Bit border is omitted when dimension is 12 x 12.                                     |
-library ThreeOutOfNineART {
+contract ThreeOutOfNineART is IThreeOutOfNineART, Ownable {
     using Strings for uint256;
 
     string internal constant SVG_STYLES =
@@ -168,6 +169,14 @@ library ThreeOutOfNineART {
     bytes32 internal constant HEXADECIMAL_DIGITS = "0123456789ABCDEF";
     bytes32 internal constant FILE_NAMES = "abcdef";
 
+    string public image;
+
+    constructor(address initialOwner) Ownable(initialOwner) {}
+
+    function setImage(string memory _image) public onlyOwner {
+        image = _image;
+    }
+
     /// @notice Takes in data for a given fiveoutofnine NFT and outputs its metadata in JSON form.
     /// Refer to {fiveoutofnineART} for details.
     /// @dev The output is base 64-encoded.
@@ -178,11 +187,10 @@ library ThreeOutOfNineART {
     function getMetadata(
         uint256 _internalId,
         uint256 _board
-    ) internal pure returns (string memory) {
+    ) external view returns (string memory) {
         string memory description;
         string memory animation;
         string memory attributes;
-        string memory image;
 
         {
             uint256 numSquares = 8;
@@ -191,8 +199,6 @@ library ThreeOutOfNineART {
 
             (animation, attributes) = getAnimation(_board, numSquares, seed);
         }
-
-        image = RetroImage.getImage();
 
         description = string(abi.encodePacked("---\\n\\n", drawMove(_board)));
 
@@ -210,7 +216,10 @@ library ThreeOutOfNineART {
                             '","animation_url":"data:text/html;base64,',
                             animation,
                             '","image":"',
-                            image,
+                            abi.encodePacked(
+                                "data:image/svg+xml;base64,",
+                                Base64.encode(abi.encodePacked(image))
+                            ),
                             '","attributes":[',
                             attributes,
                             "]}"
@@ -454,7 +463,7 @@ library ThreeOutOfNineART {
             }
 
             // iterates diagonally starting from the back
-            string memory image;
+            string memory animation;
             for (uint256 row; row < (_numSquares << 1) - 1; ++row) {
                 uint256 tempCol = row <= _numSquares - 1
                     ? 15 - row
@@ -469,9 +478,9 @@ library ThreeOutOfNineART {
                     );
                     col = col + 2
                 ) {
-                    image = string(
+                    animation = string(
                         abi.encodePacked(
-                            image,
+                            animation,
                             getPillarHtml(_board, 16 / _numSquares, row, col)
                         )
                     );
@@ -494,7 +503,7 @@ library ThreeOutOfNineART {
                         script,
                         styles,
                         "</style><section>",
-                        image,
+                        animation,
                         "</section>"
                     )
                 ),

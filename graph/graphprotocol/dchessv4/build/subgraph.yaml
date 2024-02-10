@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: DChess
@@ -28,7 +28,7 @@ dataSources:
         - WithdrawAll
       abis:
         - name: DChess
-          file: ./abis/DChess.json
+          file: DChess/abis/DChess.json
       eventHandlers:
         - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
@@ -54,4 +54,4 @@ dataSources:
           handler: handleUserRatingChanged
         - event: WithdrawAll(uint256)
           handler: handleWithdrawAll
-      file: ./src/d-chess.ts
+      file: DChess/DChess.wasm

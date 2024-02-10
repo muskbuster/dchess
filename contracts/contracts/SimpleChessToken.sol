@@ -4,9 +4,10 @@ import {PRBMathUD60x18} from "prb-math/contracts/PRBMathUD60x18.sol";
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import {ThreeOutOfNineART} from "./lib/ThreeOutOfNineART.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Elo} from "./lib/Elo.sol";
+
+import {IThreeOutOfNineART} from "./interfaces/IThreeOutOfNineART.sol";
 
 contract SimpleChessToken is ERC721, Ownable {
     using Strings for uint256;
@@ -17,11 +18,15 @@ contract SimpleChessToken is ERC721, Ownable {
 
     uint256 totalSupply;
     uint256 kFactor = 50;
+    IThreeOutOfNineART art;
 
     constructor(
         string memory name,
-        string memory symbol
-    ) ERC721(name, symbol) Ownable(msg.sender) {}
+        string memory symbol,
+        address artAddr
+    ) ERC721(name, symbol) Ownable(msg.sender) {
+        art = IThreeOutOfNineART(artAddr);
+    }
 
     function mint(uint256 position, address to) external {
         positions[totalSupply] = position;
@@ -32,7 +37,7 @@ contract SimpleChessToken is ERC721, Ownable {
         uint256 _tokenId
     ) public view override returns (string memory) {
         require(_tokenId <= totalSupply, "Token not found");
-        return ThreeOutOfNineART.getMetadata(_tokenId, positions[_tokenId]);
+        return art.getMetadata(_tokenId, positions[_tokenId]);
     }
 
     function setUserRating(address user, uint256 rating) external onlyOwner {

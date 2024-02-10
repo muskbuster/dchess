@@ -6,9 +6,9 @@ dataSources:
     name: DChess
     network: base-sepolia
     source:
-      address: "0x6832066777529854710eb008E014a0FEe07E997d"
+      address: "0x97bC171F5CAA24781324423b4e562e2CbccE5988"
       abi: DChess
-      startBlock: 5480432
+      startBlock: 5909321
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
