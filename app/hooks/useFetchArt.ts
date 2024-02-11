@@ -11,7 +11,7 @@ const parsetokenURI = (tokenURI: string): string => {
   const encodedAnimation = decodedJSON.animation_url.split(",")[1];
   return `
   <body style="margin: 0px">
-	  <div style="transform: scale(0.3); transform-origin: 0px 0px; width: 300px; height: 300px;">
+	  <div>
       ${atob(encodedAnimation)}
     </div>
 	</body>`;

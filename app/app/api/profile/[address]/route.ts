@@ -12,9 +12,9 @@ export async function GET(
     const nftsOwned = await getNftsOwned(userAddress.slice(2));
 
     const profile = {
-      totalSolved: info[0].solves,
-      totalAttempted: info[0].attempts,
-      ratings: info[0].ratings,
+      totalSolved: info.length > 0 ? info[0].solves : 0,
+      totalAttempted: info.length > 0 ? info[0].attempts : 0,
+      ratings: info.length > 0 ? info[0].ratings : 1000,
       nftsOwned,
     };
     return NextResponse.json(JSON.stringify(profile), { status: 200 });
