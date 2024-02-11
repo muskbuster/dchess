@@ -4,10 +4,11 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import DChess from "@/utils/abi/DChess.json";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 import { hashed } from "@/utils/general";
 import { FENToBoard } from "@/utils/boardEncoder";
 import { getProof } from "@/utils/creatorWhitelist";
+import { ConnectedWallet } from "@privy-io/react-auth";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
@@ -15,8 +16,9 @@ export default function useAddPuzzle(
   fen: string,
   solution: string,
   description: string,
-  userAddress: string
+  activeWallet: ConnectedWallet | undefined
 ) {
+  const userAddress = activeWallet ? activeWallet.address : zeroAddress;
   const solutionHashed = hashed(solution);
   const boardPosition = FENToBoard(fen);
   const proof = getProof(userAddress);

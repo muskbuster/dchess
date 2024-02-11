@@ -2,6 +2,7 @@ import useEnsName from "@/hooks/useEnsName";
 import useFetchStats from "@/hooks/useFetchStats";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
+import { zeroAddress } from "viem";
 
 type UserRating = {
   user: string;
@@ -61,7 +62,11 @@ const CreatorRow = ({
   );
 };
 
-const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
+const StatsScreen = ({
+  activeWallet,
+}: {
+  activeWallet: ConnectedWallet | undefined;
+}) => {
   const result = {
     loading: false,
     data: {
@@ -69,7 +74,9 @@ const StatsScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
     },
   };
 
-  const { stats, isLoading } = useFetchStats(activeWallet.address);
+  const { stats, isLoading } = useFetchStats(
+    activeWallet ? activeWallet.address : zeroAddress
+  );
 
   return isLoading ? (
     <div> loading ... </div>

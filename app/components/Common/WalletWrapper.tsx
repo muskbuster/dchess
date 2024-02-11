@@ -46,15 +46,12 @@ const WalletWrapper = ({
     switch (page) {
       case "Play":
         return (
-          <PlayScreen
-            loggedIn={authenticated}
-            activeWallet={activeWallet as ConnectedWallet} // guaranteed to be there
-          />
+          <PlayScreen loggedIn={authenticated} activeWallet={activeWallet} />
         );
       case "Create":
-        return <CreateScreen activeWallet={activeWallet as ConnectedWallet} />;
+        return <CreateScreen activeWallet={activeWallet} />;
       case "Stats":
-        return <StatsScreen activeWallet={activeWallet as ConnectedWallet} />;
+        return <StatsScreen activeWallet={activeWallet} />;
       case "Profile":
         return (
           <ProfileScreen loggedIn={authenticated} address={args.address} />
@@ -68,7 +65,7 @@ const WalletWrapper = ({
     </div>
   );
 
-  return ready && activeWallet ? (
+  return ready ? (
     <div>
       <NavBar loggedIn={authenticated} />
       <div className="m-2">{screen}</div>

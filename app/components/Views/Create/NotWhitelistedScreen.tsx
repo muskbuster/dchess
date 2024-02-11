@@ -1,10 +1,13 @@
 import { truncateAddress } from "@/utils/general";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
 
 export const NotWhitelistedScreen = ({ address }: { address: string }) => {
-  const copy = `Address ${truncateAddress(
-    address as Address
-  )} is not whitelisted as a creator`;
+  const copy =
+    zeroAddress != address
+      ? `Address ${truncateAddress(
+          address as Address
+        )} is not whitelisted as a creator`
+      : "";
   const copy2 = `We are selectively onboarding \
 at the moment so we can filter for quality. If you believe you'd be a useful member to the \
 community. Please fill out the request below and we will get back to you soon!`;

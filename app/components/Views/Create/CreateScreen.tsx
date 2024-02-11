@@ -11,13 +11,18 @@ import useAddPuzzle from "@/hooks/useAddPuzzle";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import { whitelistedCreator } from "@/utils/general";
 import { NotWhitelistedScreen } from "./NotWhitelistedScreen";
+import { zeroAddress } from "viem";
 
 enum CreateState {
   Problem,
   Solution,
 }
 
-const CreateScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
+const CreateScreen = ({
+  activeWallet,
+}: {
+  activeWallet: ConnectedWallet | undefined;
+}) => {
   const emptyFen = "8/8/8/8/8/8/8/8 w - - 0 1";
 
   const [description, setDescription] = useState("");
@@ -33,10 +38,10 @@ const CreateScreen = ({ activeWallet }: { activeWallet: ConnectedWallet }) => {
     write: writePuzzle,
     refetch: refetchPuzzle,
     isSuccess: isSubmitPuzzleSuccess,
-  } = useAddPuzzle(fen, winningMove, description, activeWallet.address);
+  } = useAddPuzzle(fen, winningMove, description, activeWallet);
 
   const whitelisted =
-    activeWallet.address && whitelistedCreator(activeWallet.address);
+    !!activeWallet && whitelistedCreator(activeWallet.address);
 
   useEffect(() => {
     if (isSubmitPuzzleSuccess) {
@@ -97,7 +102,9 @@ Warning: misleading descriptions will lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return !whitelisted ? (
-    <NotWhitelistedScreen address={activeWallet.address} />
+    <NotWhitelistedScreen
+      address={activeWallet ? activeWallet.address : zeroAddress}
+    />
   ) : (
     <div className="mt-20 flex flex-row justify-center">
       {createState == CreateState.Problem ? (

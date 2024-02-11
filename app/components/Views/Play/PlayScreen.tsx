@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { CaretLeftIcon, CaretRightIcon } from "@radix-ui/react-icons";
@@ -45,7 +45,7 @@ const PlayScreen = ({
   activeWallet,
 }: {
   loggedIn: boolean;
-  activeWallet: ConnectedWallet;
+  activeWallet: ConnectedWallet | undefined;
 }) => {
   const [problemStatus, setProblemStatus] = useState(ProblemStatus.Attempt);
   const [selectedMove, setSelectedMove] = useState("--");
@@ -62,14 +62,8 @@ const PlayScreen = ({
     problemStatus.valueOf() == ProblemStatus.Success.valueOf();
   const isFail = problemStatus.valueOf() == ProblemStatus.Fail.valueOf();
 
-  const { data: attempted } = useHasAttempted(
-    puzzleId,
-    activeWallet?.address as Address
-  );
-  const { data: solved } = useHasSolved(
-    puzzleId,
-    activeWallet?.address as Address
-  );
+  const { data: attempted } = useHasAttempted(puzzleId, activeWallet);
+  const { data: solved } = useHasSolved(puzzleId, activeWallet);
 
   useEffect(() => {
     if (solved) setProblemStatus(ProblemStatus.Success);
