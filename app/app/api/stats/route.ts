@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
+import { unstable_noStore as noStore } from "next/cache";
 
-export async function GET(
-  request: NextRequest
-  //   { params }: { params: { address: string } }
-) {
-  // await refreshBalance(params.address);
-
+export async function GET(request: NextRequest) {
+  // https://github.com/orgs/vercel/discussions/4696
+  noStore();
   try {
     const players = await getTopPlayers();
     const creators = await getTopCreators();

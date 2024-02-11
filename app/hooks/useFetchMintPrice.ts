@@ -4,7 +4,7 @@ import { formatEther } from "viem";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
-export default function useFetchMintPrice() {
+export default function useFetchMintPrice(mintCount: number) {
   const { data, isLoading, isError } = useContractRead({
     abi: DChess.abi,
     address: CONTRACT_ADDRESS,
@@ -12,7 +12,8 @@ export default function useFetchMintPrice() {
   });
 
   let mintPrice = "0.000";
-  if (!isError && !isLoading) mintPrice = formatEther(data as bigint);
+  if (!isError && !isLoading)
+    mintPrice = formatEther((data as bigint) * BigInt(mintCount));
 
   return { mintPrice, isLoading, isError };
 }

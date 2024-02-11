@@ -80,6 +80,8 @@ const PlayScreen = ({
     write: writeSolution,
     refetch: refetchSolution,
     isSuccess: isSubmitSolutionSuccess,
+    isError,
+    error,
   } = useSubmitSolution(puzzleId, selectedMove);
 
   useEffect(() => {
@@ -108,7 +110,6 @@ const PlayScreen = ({
     if (selectedMove === "--") return;
 
     try {
-      await refetchSolution();
       await writeSolution?.();
     } catch (e) {
       console.log(e);

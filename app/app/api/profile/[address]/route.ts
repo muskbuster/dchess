@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { address: string } }
 ) {
+  // https://github.com/orgs/vercel/discussions/4696
+  noStore();
   const userAddress = params.address;
 
   try {

@@ -23,7 +23,6 @@ export default function useMint(
     abi: DChess.abi,
     functionName: "mint",
     args: [puzzleId, count],
-    enabled: false,
     value: parseEther(mintPrice),
   });
 

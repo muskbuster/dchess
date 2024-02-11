@@ -20,7 +20,6 @@ export default function useSubmitSolution(puzzleId: number, solution: string) {
     abi: DChess.abi,
     functionName: "submitSolution",
     args: [puzzleId, solutionHex],
-    enabled: false,
   });
 
   const { data, error, isError, write } = useContractWrite(config);

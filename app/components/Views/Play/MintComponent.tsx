@@ -9,7 +9,7 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
   const [mintCount, setMintCount] = useState(1);
   const [mintSuccess, setMintSuccess] = useState(false);
 
-  const { mintPrice } = useFetchMintPrice();
+  const { mintPrice } = useFetchMintPrice(mintCount);
   const { write, refetch, isSuccess } = useMint(puzzleId, mintCount, mintPrice);
 
   const handleMint = async () => {
