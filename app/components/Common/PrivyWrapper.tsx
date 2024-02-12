@@ -8,6 +8,7 @@ import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WalletWrapper from "@/components/Common/WalletWrapper";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { timeout } from "@/utils/general";
 
 const configureChainsConfig = configureChains(
   [baseSepolia],
@@ -37,6 +38,7 @@ const PrivyWrapper = ({
 }) => {
   const handleLogin = async (user: User) => {
     console.log("User logged in: ", user);
+    await timeout(2000); // hack to ensure wallet is created
     window.location.reload();
   };
 
@@ -44,10 +46,13 @@ const PrivyWrapper = ({
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}
       config={{
-        loginMethods: ["wallet", "sms", "google"],
+        loginMethods: ["sms", "wallet"],
         appearance: {
           theme: "dark",
           accentColor: "#676FFF",
+        },
+        embeddedWallets: {
+          createOnLogin: "users-without-wallets",
         },
       }}
       onSuccess={handleLogin}

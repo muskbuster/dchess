@@ -26,3 +26,7 @@ export function canonicalFen(fen: string) {
 export function whitelistedCreator(userAddress: string) {
   return whitelistedCreators.indexOf(userAddress) !== -1;
 }
+
+export function timeout(delay: number) {
+  return new Promise((res) => setTimeout(res, delay));
+}

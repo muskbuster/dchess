@@ -37,10 +37,15 @@ const WalletWrapper = ({
       (wallet) => wallet.walletClientType === "privy"
     ) as ConnectedWallet;
 
+    // easier debugging
+    console.log("user ready? ", ready);
+    console.log("user authenticated? ", authenticated);
+    console.log("wallets available: ", wallets);
+
     if (embeddedWallet && !activeWallet) {
       setActiveWallet(embeddedWallet);
     }
-  }, [ready, activeWallet, setActiveWallet, wallets]);
+  }, [ready, activeWallet, setActiveWallet, wallets, authenticated]);
 
   const screen = (() => {
     switch (page) {
@@ -68,7 +73,7 @@ const WalletWrapper = ({
   return ready ? (
     <div>
       <NavBar loggedIn={authenticated} />
-      <div className="m-2">{screen}</div>
+      <div className="m-2 mt-36">{screen}</div>
     </div>
   ) : (
     LoadingScreen

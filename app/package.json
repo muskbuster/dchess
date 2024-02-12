@@ -18,6 +18,7 @@
     "chess.js": "^1.0.0-beta.7",
     "graphql": "^16.8.1",
     "merkletreejs": "^0.3.11",
+    "minidenticons": "^4.2.0",
     "next": "14.0.4",
     "next-chessground": "^0.13.9",
     "react": "^18",
