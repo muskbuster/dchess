@@ -132,7 +132,7 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="mt-20 flex flex-row justify-center space-x-5 items-center">
+    <div className="flex flex-row justify-center space-x-5 items-center">
       <BoardAreaComponent
         flipImage={flipImage}
         successfulSolved={successfulSolved}

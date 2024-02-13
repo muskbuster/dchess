@@ -78,10 +78,8 @@ const StatsScreen = ({
     activeWallet ? activeWallet.address : zeroAddress
   );
 
-  return isLoading ? (
-    <div> loading ... </div>
-  ) : (
-    <div role="tablist" className="tabs tabs-lifted mx-10 mt-20">
+  return (
+    <div role="tablist" className="tabs tabs-lifted mx-10">
       <input
         type="radio"
         name="my_tabs_2"

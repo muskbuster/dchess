@@ -31,7 +31,7 @@ const ProfileScreen = ({
   const { profile } = useFetchProfile(address);
 
   return loggedIn ? (
-    <div className="flex flex-row w-full justify-center mt-10">
+    <div className="flex flex-row w-full justify-center">
       <div className="flex flex-col space-y-5 w-1/4">
         <div className="text-2xl mb-5"> Account</div>
         <ProfileStats profile={profile} />
