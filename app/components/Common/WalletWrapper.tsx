@@ -7,6 +7,7 @@ import CreateScreen from "@/components/Views/Create/CreateScreen";
 import PlayScreen from "@/components/Views/Play/PlayScreen";
 import StatsScreen from "@/components/Views/Stats/StatsScreen";
 import ProfileScreen from "@/components/Views/Profile/ProfileScreen";
+import { Footer } from "../Styled/Footer";
 
 const WalletWrapper = ({
   page,
@@ -71,9 +72,10 @@ const WalletWrapper = ({
   );
 
   return ready ? (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <NavBar loggedIn={authenticated} />
-      <div className="m-2 mt-36">{screen}</div>
+      <div className="m-2 mt-36 mb-36 grow">{screen}</div>
+      <Footer />
     </div>
   ) : (
     LoadingScreen
