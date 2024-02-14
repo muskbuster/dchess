@@ -51,7 +51,6 @@ const PlayScreen = ({
   const [selectedMove, setSelectedMove] = useState("--");
   const [attempts, setAttempts] = useState(0);
   const [viewOnly, setViewOnly] = useState(false || !loggedIn);
-  const [showMintImage, setShowMintImage] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
 
   const puzzleIdParams = useParams().id as string;
@@ -102,10 +101,6 @@ const PlayScreen = ({
     setViewOnly(false);
   };
 
-  const flipImage = () => {
-    if (successfulSolved) setShowMintImage(!showMintImage);
-  };
-
   const handleSubmit = async () => {
     if (selectedMove === "--") return;
 
@@ -134,9 +129,7 @@ const PlayScreen = ({
   return (
     <div className="flex flex-row justify-center space-x-5 items-center">
       <BoardAreaComponent
-        flipImage={flipImage}
         successfulSolved={successfulSolved}
-        showMintImage={showMintImage}
         fetchPuzzlesLoading={fetchPuzzlesLoading}
         attempts={attempts}
         fen={fen}

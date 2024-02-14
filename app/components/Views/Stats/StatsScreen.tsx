@@ -1,4 +1,6 @@
+import useETHConversion from "@/hooks/useETHConversion";
 import useEnsName from "@/hooks/useEnsName";
+import useFetchMintPrice from "@/hooks/useFetchMintPrice";
 import useFetchStats from "@/hooks/useFetchStats";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
@@ -16,6 +18,7 @@ type CreatorRating = {
   user: string;
   created: number;
   ratings: number;
+  minted: number;
   you: boolean;
 };
 
@@ -44,11 +47,18 @@ const UserRow = ({
 const CreatorRow = ({
   creator,
   rank,
+  mintPrice,
+  conversion,
 }: {
   creator: CreatorRating;
   rank: number;
+  mintPrice: string;
+  conversion: number;
 }) => {
   const { resolvedAddress } = useEnsName(creator.user);
+  const earned = `$ ${(creator.minted * Number(mintPrice) * conversion).toFixed(
+    2
+  )}`;
 
   return (
     <tr className={`${creator.you ? "text-red-500" : ""}`}>
@@ -56,7 +66,7 @@ const CreatorRow = ({
       <td>
         <Link href={`/profile/${creator.user}`}>{resolvedAddress}</Link>
       </td>
-      <td>{creator.ratings}</td>
+      <td>{earned}</td>
       <td>{creator.created}</td>
     </tr>
   );
@@ -77,6 +87,9 @@ const StatsScreen = ({
   const { stats, isLoading } = useFetchStats(
     activeWallet ? activeWallet.address : zeroAddress
   );
+
+  const { mintPrice } = useFetchMintPrice(1);
+  const { ethusd } = useETHConversion();
 
   return (
     <div role="tablist" className="tabs tabs-lifted mx-10">
@@ -131,13 +144,19 @@ const StatsScreen = ({
               <tr>
                 <th>Rank</th>
                 <th>Creator</th>
-                <th>Puzzles Created </th>
-                <th>Ratings</th>
+                <th>Earned (in USD) </th>
+                <th># Puzzles Created </th>
               </tr>
             </thead>
             <tbody>
               {stats.creators.map((creator: CreatorRating, idx: number) => (
-                <CreatorRow key={idx} creator={creator} rank={idx + 1} />
+                <CreatorRow
+                  key={idx}
+                  creator={creator}
+                  rank={idx + 1}
+                  mintPrice={mintPrice}
+                  conversion={ethusd}
+                />
               ))}
             </tbody>
           </table>

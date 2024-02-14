@@ -4,6 +4,7 @@ import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
 import LoggedInBar from "./LoggedInBar";
+import { zeroAddress } from "viem";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();
@@ -24,8 +25,8 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           </Link>
         </div>
         <div>
-          {loggedIn && address ? (
-            <LoggedInBar address={address} />
+          {loggedIn ? (
+            <LoggedInBar address={address || zeroAddress} />
           ) : (
             <StyledButton wide={false} onClick={login}>
               Log in

@@ -34,6 +34,7 @@ export default function useFetchStats(userAddress: string) {
         user: u.user,
         ratings: u.ratings,
         created: u.created,
+        minted: u.mint_count,
         you: u.user == userAddress.toLowerCase(),
       };
     });

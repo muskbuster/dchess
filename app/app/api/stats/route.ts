@@ -90,7 +90,8 @@ async function getTopCreators() {
 SELECT
     all_ratings.user,
     all_ratings.ratings,
-    creators.count
+    creators.count,
+    total_minted.count AS minted_count
 FROM
     all_ratings
     INNER JOIN (
@@ -111,6 +112,22 @@ FROM
         GROUP BY
             all_ratings.user
     ) AS latest ON latest.user = all_ratings.user
+    INNER JOIN (
+        SELECT
+            creators.user,
+            count(*)
+        FROM
+            base_sepolia_token_minted_token_minted AS minted
+            INNER JOIN (
+                SELECT
+                    encode(CAST(added.creator AS bytea), 'hex') AS user,
+                    internal_token_id
+                FROM
+                    base_sepolia_puzzle_added_puzzle_added AS added
+            ) AS creators ON creators.internal_token_id = minted.internal_token_id
+        GROUP BY
+            creators.user
+    ) AS total_minted ON total_minted.user = all_ratings.user
 WHERE
     latest.latest_block_number = all_ratings.block_number
 ORDER BY
@@ -121,6 +138,7 @@ ORDER BY
       user: "0x" + r.user,
       ratings: r.ratings,
       created: r.count,
+      mint_count: r.minted_count,
     };
   });
 }

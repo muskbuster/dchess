@@ -4,18 +4,14 @@ import { useRef } from "react";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 
 export const BoardAreaComponent = ({
-  flipImage,
   successfulSolved,
-  showMintImage,
   fetchPuzzlesLoading,
   attempts,
   fen,
   onMove,
   viewOnly,
 }: {
-  flipImage: any;
   successfulSolved: any;
-  showMintImage: any;
   fetchPuzzlesLoading: any;
   attempts: any;
   fen: any;
@@ -26,27 +22,13 @@ export const BoardAreaComponent = ({
 
   return (
     <div className="w-1/3 flex flex-col items-center space-y-5">
-      <FaArrowRotateLeft
-        size={30}
-        onClick={flipImage}
-        className={`${!successfulSolved ? "opacity-5" : "cursor-pointer"}`}
+      <NextChessground
+        key={attempts}
+        ref={ref}
+        fen={fen}
+        onMove={onMove}
+        viewOnly={viewOnly}
       />
-      {showMintImage ? (
-        fetchPuzzlesLoading ? (
-          <div>...loading</div>
-        ) : (
-          <div></div>
-          // <NFTVisual uri={puzzles.data.puzzles[puzzleId - 1].uri} />
-        )
-      ) : (
-        <NextChessground
-          key={attempts}
-          ref={ref}
-          fen={fen}
-          onMove={onMove}
-          viewOnly={viewOnly}
-        />
-      )}
     </div>
   );
 };
