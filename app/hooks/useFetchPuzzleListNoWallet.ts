@@ -8,10 +8,10 @@ async function getPuzzleList(userAddress: string) {
   )) as string;
 }
 
-export default function useFetchPuzzleList(activeWallet: ConnectedWallet) {
-  const address = activeWallet?.address;
+export default function useFetchPuzzleListNoWallet() {
+  const address = zeroAddress;
   const { isError, isLoading, data, error } = useQuery<string>({
-    queryKey: ["get-puzzle-list"],
+    queryKey: ["get-puzzle-list-no-wallet"],
     queryFn: () => getPuzzleList(address),
   });
 
@@ -25,8 +25,6 @@ export default function useFetchPuzzleList(activeWallet: ConnectedWallet) {
         success_rate: Math.floor(
           (Number(p.solved) / Number(p.attempted)) * 100
         ),
-        solved: p.user_solved == "TRUE",
-        failed: p.user_solved == "FALSE" && p.user_attempted == "TRUE",
       };
     });
   }
