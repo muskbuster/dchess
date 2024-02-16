@@ -17,6 +17,7 @@ import { ConnectedWallet } from "@privy-io/react-auth";
 import useHasSolved from "@/hooks/useHasSolved";
 import { MintComponent } from "./MintComponent";
 import { BoardAreaComponent } from "./BoardAreaComponent";
+import { DrawerComponent } from "./DrawerComponent";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -127,7 +128,8 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="flex flex-row justify-center space-x-5 items-center">
+    <div className="flex flex-row justify-center space-x-5 items-center ml-64">
+      <DrawerComponent activeWallet={activeWallet} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
         fetchPuzzlesLoading={fetchPuzzlesLoading}
