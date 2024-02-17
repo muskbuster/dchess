@@ -26,13 +26,11 @@ export default function useAddPuzzle(
     config,
     error: prepareError,
     isError: isPrepareError,
-    refetch,
   } = usePrepareContractWrite({
     address: CONTRACT_ADDRESS,
     abi: DChess.abi,
     functionName: "addPuzzle",
     args: [fen, solutionHashed, boardPosition, description, proof],
-    enabled: false,
   });
 
   const { data, error, isError, write } = useContractWrite(config);
@@ -43,7 +41,6 @@ export default function useAddPuzzle(
 
   return {
     write,
-    refetch,
     isLoading,
     isError,
     error,

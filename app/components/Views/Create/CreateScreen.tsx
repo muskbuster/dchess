@@ -12,6 +12,7 @@ import { ConnectedWallet } from "@privy-io/react-auth";
 import { whitelistedCreator } from "@/utils/general";
 import { NotWhitelistedScreen } from "./NotWhitelistedScreen";
 import { zeroAddress } from "viem";
+import useStockfishVerification from "@/hooks/useStockfishVerification";
 
 enum CreateState {
   Problem,
@@ -31,14 +32,21 @@ const CreateScreen = ({
   const [winningMove, setWinningMove] = useState("--");
   const [viewOnly, setViewOnly] = useState(false);
   const [validGame, setValidGame] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [stockfishVerifying, setStockfishVerifying] = useState(false);
+
+  const { write: writePuzzle, isSuccess: isSubmitPuzzleSuccess } = useAddPuzzle(
+    fen,
+    winningMove,
+    description,
+    activeWallet
+  );
 
   const {
-    write: writePuzzle,
-    refetch: refetchPuzzle,
-    isSuccess: isSubmitPuzzleSuccess,
-  } = useAddPuzzle(fen, winningMove, description, activeWallet);
+    refetch: verifyStockfish,
+    isStockfishVerificationSuccess,
+    isStockfishVerificationFailed,
+  } = useStockfishVerification(fen, winningMove);
 
   const whitelisted =
     !!activeWallet && whitelistedCreator(activeWallet.address);
@@ -50,6 +58,17 @@ const CreateScreen = ({
       window.location.reload();
     }
   }, [isSubmitPuzzleSuccess]);
+
+  useEffect(() => {
+    if (winningMove == "--") {
+      setStockfishVerifying(false);
+      return;
+    }
+
+    setStockfishVerifying(true);
+    // trigger verification
+    verifyStockfish();
+  }, [winningMove, verifyStockfish]);
 
   const ref = useRef();
 
@@ -65,13 +84,7 @@ const CreateScreen = ({
 
   async function handleSubmit() {
     if (createState == CreateState.Solution) {
-      try {
-        await refetchPuzzle();
-        await writePuzzle?.();
-      } catch (e) {
-        console.log(e);
-        alert("Something is broken on the app! Please try again later!");
-      }
+      if (isStockfishVerificationSuccess) writePuzzle?.();
     }
   }
 
@@ -98,7 +111,7 @@ const CreateScreen = ({
 
   const placeholderDescription = `You can leave hints here or keep it mysterious. \
 For example: White to play. Mate in 3 moves!\n\n\
-Warning: misleading descriptions will lead to a ban!`;
+Warning: misleading descriptions can lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return !whitelisted ? (
@@ -106,7 +119,7 @@ Warning: misleading descriptions will lead to a ban!`;
       address={activeWallet ? activeWallet.address : zeroAddress}
     />
   ) : (
-    <div className="mt-20 flex flex-row justify-center">
+    <div className="flex flex-row justify-center">
       {createState == CreateState.Problem ? (
         <div className="w-1/3 text-white px-12 rounded-md">
           <NextEditor ref={ref} onSelect={handleSelect} />
@@ -155,20 +168,23 @@ Warning: misleading descriptions will lead to a ban!`;
         ) : (
           <StyledButton
             className="w-32 mt-10"
-            disabled={winningMove == "--"}
+            disabled={winningMove == "--" || !isStockfishVerificationSuccess}
             onClick={handleSubmit}
           >
             Submit
           </StyledButton>
         )}
-
-        {submitSuccess ? (
-          <div className="text-sm font-light">
-            Puzzle successfully submitted !{" "}
-          </div>
-        ) : (
-          <></>
-        )}
+        <div className="text-sm font-light mt-2">
+          {winningMove != "--"
+            ? isStockfishVerificationSuccess
+              ? "Solution verified by Stockfish!"
+              : isStockfishVerificationFailed
+              ? "Solution is not correct according to Stockfish, try a different move!"
+              : stockfishVerifying
+              ? "Solution is being verified by Stockfish!"
+              : ""
+            : ""}
+        </div>
       </div>
     </div>
   );

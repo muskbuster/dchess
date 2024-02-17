@@ -17,11 +17,11 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           <Link href="/play/0">
             <StyledButton wide={false}>Play</StyledButton>
           </Link>
+          <Link href="/stats">
+            <StyledButton wide={false}>Score</StyledButton>
+          </Link>
           <Link href="/create">
             <StyledButton wide={false}>Create</StyledButton>
-          </Link>
-          <Link href="/stats">
-            <StyledButton wide={false}>Leaderboard</StyledButton>
           </Link>
         </div>
         <div>
