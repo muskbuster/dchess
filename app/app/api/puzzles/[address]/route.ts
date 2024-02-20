@@ -35,16 +35,16 @@ async function getPuzzles(userAddress: string) {
                     added.internal_token_id as puzzle_id,
                     count(*) as attempted 
                 FROM
-                    base_sepolia_puzzle_added_puzzle_added added 
+                    base_puzzle_added_puzzle_added added 
                     FULL JOIN
-                        base_sepolia_puzzle_attempted_puzzle_attempted attempted 
+                        base_puzzle_attempted_puzzle_attempted attempted 
                         ON attempted.internal_token_id = added.internal_token_id 
                 GROUP BY
                     added.internal_token_id 
             )
             AS tbl 
             FULL JOIN
-                base_sepolia_puzzle_solved_puzzle_solved solved 
+                base_puzzle_solved_puzzle_solved solved 
                 ON solved.internal_token_id = tbl.puzzle_id 
         GROUP BY
             tbl.puzzle_id,
@@ -57,7 +57,7 @@ async function getPuzzles(userAddress: string) {
             encode(CAST(solved.user AS bytea), 'hex') AS user,
             internal_token_id 
         FROM
-            base_sepolia_puzzle_solved_puzzle_solved AS solved 
+            base_puzzle_solved_puzzle_solved AS solved 
     )
     ,
     attempters AS 
@@ -66,7 +66,7 @@ async function getPuzzles(userAddress: string) {
             encode(CAST(attempted.user AS bytea), 'hex') AS user,
             internal_token_id 
         FROM
-            base_sepolia_puzzle_attempted_puzzle_attempted AS attempted 
+            base_puzzle_attempted_puzzle_attempted AS attempted 
     )
     SELECT
         *,

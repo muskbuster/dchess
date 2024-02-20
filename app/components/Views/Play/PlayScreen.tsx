@@ -118,7 +118,7 @@ const PlayScreen = ({
   let maxPuzzleId = 0;
   let fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-  if (!fetchPuzzlesLoading && !fetchPuzzlesError) {
+  if (!fetchPuzzlesLoading && !fetchPuzzlesError && puzzles.length > 0) {
     description = puzzles[puzzleId].description;
     submitter = truncateAddress(puzzles[puzzleId].creator);
     // BUG: Chessground doesn't accept 0 as a valid full-move number

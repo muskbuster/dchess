@@ -37,7 +37,7 @@ async function getPlayerInfo(userAddress: string) {
         new_user_rating AS ratings,
         block_number
     FROM
-        base_sepolia_user_rating_changed_user_rating_changed AS ratings
+        base_user_rating_changed_user_rating_changed AS ratings
 )
 SELECT
     all_ratings.user,
@@ -51,7 +51,7 @@ FROM
             encode(CAST(solved.user AS bytea), 'hex') AS user,
             count(*) AS solved_count
         FROM
-            base_sepolia_puzzle_solved_puzzle_solved AS solved
+            base_puzzle_solved_puzzle_solved AS solved
         GROUP BY
             solved.user) AS solved ON solved.user = all_ratings.user
     INNER JOIN (
@@ -59,7 +59,7 @@ FROM
             encode(CAST(attempted.user AS bytea), 'hex') AS user,
             count(*) AS attempted_count
         FROM
-            base_sepolia_puzzle_attempted_puzzle_attempted AS attempted
+            base_puzzle_attempted_puzzle_attempted AS attempted
         GROUP BY
             attempted.user) AS attempted ON attempted.user = all_ratings.user
     INNER JOIN (
@@ -135,7 +135,7 @@ async function nftsRecieved(userAddress: string) {
         transfers.d_chess_id AS token_id,
         transfers.value
     FROM
-        base_sepolia_transfer_single_transfer_single AS transfers
+        base_transfer_single_transfer_single AS transfers
 )
 SELECT
     *
@@ -162,7 +162,7 @@ async function nftsSent(userAddress: string) {
           transfers.d_chess_id AS token_id,
           transfers.value
       FROM
-          base_sepolia_transfer_single_transfer_single AS transfers
+          base_transfer_single_transfer_single AS transfers
   )
   SELECT
       *

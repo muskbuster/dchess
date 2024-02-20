@@ -30,7 +30,7 @@ async function getTopPlayers() {
         new_user_rating AS ratings,
         block_number
     FROM
-        base_sepolia_user_rating_changed_user_rating_changed AS ratings
+        base_user_rating_changed_user_rating_changed AS ratings
 )
 SELECT
     all_ratings.user,
@@ -44,14 +44,14 @@ FROM
             encode(CAST(solved.user AS bytea), 'hex') AS user,
             count(*) AS solved_count
         FROM
-            base_sepolia_puzzle_solved_puzzle_solved AS solved
+            base_puzzle_solved_puzzle_solved AS solved
         GROUP BY
             solved.user) AS solved ON solved.user = all_ratings.user
     INNER JOIN (
         SELECT
             encode(CAST(minted.solver AS bytea), 'hex') AS user, count(*)
         FROM
-            base_sepolia_token_minted_token_minted AS minted
+            base_token_minted_token_minted AS minted
         GROUP BY
             minted.solver) AS minted ON minted.user = all_ratings.user
     INNER JOIN (
@@ -84,7 +84,7 @@ async function getTopCreators() {
         new_user_rating AS ratings,
         block_number
     FROM
-        base_sepolia_user_rating_changed_user_rating_changed AS ratings
+        base_user_rating_changed_user_rating_changed AS ratings
 )
 
 SELECT
@@ -99,7 +99,7 @@ FROM
             encode(CAST(puzzles.creator AS bytea), 'hex') AS creator,
             count(*)
         FROM
-            base_sepolia_puzzle_added_puzzle_added AS puzzles
+            base_puzzle_added_puzzle_added AS puzzles
         GROUP BY
             puzzles.creator
     ) AS creators ON creators.creator = all_ratings.user
@@ -117,13 +117,13 @@ FROM
             creators.user,
             count(*)
         FROM
-            base_sepolia_token_minted_token_minted AS minted
+            base_token_minted_token_minted AS minted
             INNER JOIN (
                 SELECT
                     encode(CAST(added.creator AS bytea), 'hex') AS user,
                     internal_token_id
                 FROM
-                    base_sepolia_puzzle_added_puzzle_added AS added
+                    base_puzzle_added_puzzle_added AS added
             ) AS creators ON creators.internal_token_id = minted.internal_token_id
         GROUP BY
             creators.user
