@@ -1,5 +1,4 @@
 import { Address, keccak256, stringToBytes } from "viem";
-import whitelistedCreators from "@/utils/whitelistedCreators.json";
 
 export function truncateAddress(address: Address) {
   return (
@@ -21,10 +20,6 @@ export function canonicalFen(fen: string) {
   fenArr[5] = "1";
 
   return fenArr.join(" ");
-}
-
-export function whitelistedCreator(userAddress: string) {
-  return whitelistedCreators.indexOf(userAddress) !== -1;
 }
 
 export function timeout(delay: number) {

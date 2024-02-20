@@ -9,8 +9,6 @@ import { FaUndo } from "react-icons/fa";
 import "./CreateScreen.css";
 import useAddPuzzle from "@/hooks/useAddPuzzle";
 import { ConnectedWallet } from "@privy-io/react-auth";
-import { whitelistedCreator } from "@/utils/general";
-import { NotWhitelistedScreen } from "./NotWhitelistedScreen";
 import { zeroAddress } from "viem";
 import useStockfishVerification from "@/hooks/useStockfishVerification";
 
@@ -47,9 +45,6 @@ const CreateScreen = ({
     isStockfishVerificationSuccess,
     isStockfishVerificationFailed,
   } = useStockfishVerification(fen, winningMove);
-
-  const whitelisted =
-    !!activeWallet && whitelistedCreator(activeWallet.address);
 
   useEffect(() => {
     if (isSubmitPuzzleSuccess) {
@@ -114,11 +109,7 @@ For example: White to play. Mate in 3 moves!\n\n\
 Warning: misleading descriptions can lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
-  return !whitelisted ? (
-    <NotWhitelistedScreen
-      address={activeWallet ? activeWallet.address : zeroAddress}
-    />
-  ) : (
+  return (
     <div className="flex flex-row justify-center">
       {createState == CreateState.Problem ? (
         <div className="w-1/3 text-white px-12 rounded-md">
