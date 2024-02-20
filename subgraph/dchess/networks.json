@@ -1,8 +1,0 @@
-{
-  "base-sepolia": {
-    "DChess": {
-      "address": "0xC2e1b2568AB0ceceFC777B059d3511cdC8322c6e",
-      "startBlock": 5918698
-    }
-  }
-}

@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 import {Elo} from "./lib/Elo.sol";
@@ -14,15 +13,12 @@ import {IDChess} from "./interfaces/IDChess.sol";
 // import "hardhat/console.sol";
 
 contract DChess is IDChess, ERC1155, Ownable {
-    using MerkleProof for bytes32[];
-
     uint256 constant DEFAULT_RATING = 1000;
 
     uint256 public internalTokenCounter;
     uint256 public tokenMintPrice; // Token price of minting an NFT for a solved puzzle
     uint256 public kFactor;
     uint256 public platformFee; // Percent of token price that goes to the platform (the rest goes to creator)
-    bytes32 public merkleRoot; // used for checking if a user is a creator
     address public artAddr; // location of where art is stored
 
     struct Puzzle {
@@ -46,7 +42,6 @@ contract DChess is IDChess, ERC1155, Ownable {
         tokenMintPrice = 0.002 ether;
         kFactor = 50;
         platformFee = 40;
-        merkleRoot = 0x0000000000000000000000000000000000000000000000000000000000000000;
         artAddr = _artAddr;
     }
 
@@ -64,10 +59,6 @@ contract DChess is IDChess, ERC1155, Ownable {
 
     function setPlatformFee(uint256 _fee) public onlyOwner {
         platformFee = _fee;
-    }
-
-    function setMerkleRoot(bytes32 _merkleRoot) public onlyOwner {
-        merkleRoot = _merkleRoot;
     }
 
     function userHasSolvedPuzzle(
@@ -98,12 +89,8 @@ contract DChess is IDChess, ERC1155, Ownable {
         string calldata fen,
         bytes32 solution,
         uint256 metadata,
-        string calldata description,
-        bytes32[] calldata proof
+        string calldata description
     ) public {
-        if (!isWhitelisted(_msgSender(), proof)) {
-            revert UserNotAuthorized(_msgSender());
-        }
         if (bytes(fen).length == 0) {
             revert FENCannotBeEmpty(fen);
         }
@@ -179,13 +166,6 @@ contract DChess is IDChess, ERC1155, Ownable {
         payable(puzzle.creator).transfer(
             (msg.value * (100 - platformFee)) / 100
         );
-    }
-
-    function isWhitelisted(
-        address user,
-        bytes32[] calldata proof
-    ) public view returns (bool) {
-        return proof.verify(merkleRoot, keccak256(abi.encodePacked(user)));
     }
 
     function withdrawAll() public {

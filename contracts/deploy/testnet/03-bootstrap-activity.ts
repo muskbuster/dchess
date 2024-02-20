@@ -2,11 +2,11 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { ethers } from "hardhat";
 
-import puzzleSet from "../../data/puzzleSet.json";
+import puzzleSet from "../../data/testnetPuzzleSet.json";
 import { isError, parseEther } from "ethers";
 
 const WRONG_ANSWER = ethers.toUtf8Bytes("a3");
-const MINT_COUNT_DECISION = [1, 1, 1, 1, 1, 1, 2, 2, 3];
+const MINT_COUNT_DECISION = [0, 1, 2, 3, 5, 8];
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { deployments } = hre;
@@ -50,6 +50,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
                                 Math.random() * MINT_COUNT_DECISION.length,
                             )
                         ];
+
+                    if (mintCountChoice == 0) continue;
 
                     try {
                         const response = await dChess

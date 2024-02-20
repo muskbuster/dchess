@@ -65,7 +65,7 @@ const config: HardhatUserConfig = {
             allowUnlimitedContractSize: true,
         },
         // for mainnet
-        "base-mainnet": {
+        base: {
             url: ALCHEMY_BASE_HTTPS,
             accounts: [OWNER_PRIVATE_KEY],
             deploy: ["deploy/mainnet/"],
@@ -75,23 +75,6 @@ const config: HardhatUserConfig = {
             url: ALCHEMY_BASE_SEPOLIA_HTTPS,
             accounts: TEST_ACCOUNTS,
             deploy: ["deploy/testnet/"],
-            verify: {
-                etherscan: {
-                    apiKey: BASESCAN_API_KEY,
-                    apiUrl: "https://api-sepolia.basescan.org/api",
-                },
-            },
-        },
-        "base-goerli": {
-            url: ALCHEMY_BASE_GOERLI_HTTPS,
-            accounts: TEST_ACCOUNTS,
-            deploy: ["deploy/testnet/"],
-            verify: {
-                etherscan: {
-                    apiKey: BASESCAN_API_KEY,
-                    apiUrl: "https://api-goerli.basescan.org/api",
-                },
-            },
         },
         localhost: {
             url: "http://localhost:8545",
@@ -103,6 +86,7 @@ const config: HardhatUserConfig = {
     etherscan: {
         apiKey: {
             "base-sepolia": BASESCAN_API_KEY,
+            base: BASESCAN_API_KEY,
         },
         customChains: [
             {

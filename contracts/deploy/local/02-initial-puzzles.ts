@@ -2,7 +2,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { FENToBoard } from "../../utils/boardEncoder";
 import { ethers } from "hardhat";
-import { getProof } from "../../utils/whitelistingHelper";
 
 import testPuzzleSet from "../../data/testPuzzleSet.json";
 
@@ -20,8 +19,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         dChessDeployment.address,
     );
 
-    const [owner, creator1, creator2, creator3] = await hre.ethers.getSigners();
-    const creatorArr = [creator1, creator2];
+    const [owner, player1, player2, player3] = await hre.ethers.getSigners();
+    const players = [player1, player2, player3];
 
     await Promise.all(
         testPuzzleSet.map(async (puzzle) => {
@@ -33,18 +32,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             const solutionHashed = hashed(solution);
 
             const randomCreator =
-                creatorArr[Math.floor(Math.random() * creatorArr.length)];
+                players[Math.floor(Math.random() * players.length)];
 
-            await dChess.connect(randomCreator).addPuzzle(
-                problem,
-                solutionHashed,
-                boardPosition,
-                description,
-                getProof(
-                    creatorArr.map((c) => c.address),
-                    randomCreator.address,
-                ),
-            );
+            await dChess
+                .connect(randomCreator)
+                .addPuzzle(problem, solutionHashed, boardPosition, description);
         }),
     );
 
@@ -54,5 +46,5 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 func.tags = ["AddPuzzles"];
-func.dependencies = ["SetupCreators"];
+func.dependencies = ["Deploy"];
 export default func;

@@ -25,7 +25,6 @@ Then start up a forked network with all deploy scripts run by running:
 To refresh deployment, simply delete the folder (for example `deployments/base-sepolia`) and deploy again
 
 -   `yarn hardhat --network <networkName> deploy` $\rightarrow$ will deploy the code to the right network
--   `yarn hardhat --network <networkName> deploy --tags AddPuzzles` $\rightarrow$ Same as above except deploy until a particular tag is present.
 -   `yarn hardhat verify --network base-sepolia <CONTRACT_ADDRESS> ...PARAMS` to verify contracts
 
 #### Post-deployment

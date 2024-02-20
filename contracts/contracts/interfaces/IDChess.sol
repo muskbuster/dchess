@@ -32,7 +32,6 @@ interface IDChess {
     error TokenDoesNotExist(uint256 tokenId);
     error IncorrectMessageValue(uint256 amountSent, uint256 requiredAmount);
     error InvalidMetadata(uint256 internalTokenId, uint256 metadata);
-    error UserNotAuthorized(address user);
 
     function userHasSolvedPuzzle(
         uint256 internalTokenId,
@@ -45,8 +44,7 @@ interface IDChess {
         string calldata fen,
         bytes32 solutionHash,
         uint256 position,
-        string calldata description,
-        bytes32[] calldata proof
+        string calldata description
     ) external;
 
     function submitSolution(
@@ -55,9 +53,4 @@ interface IDChess {
     ) external returns (bool);
 
     function withdrawAll() external;
-
-    function isWhitelisted(
-        address user,
-        bytes32[] calldata proof
-    ) external view returns (bool);
 }

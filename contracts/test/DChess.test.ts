@@ -6,8 +6,6 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { FENToBoard } from "../utils/boardEncoder";
 import { parseEther } from "ethers";
 
-import { getMerkleRoot, getProof } from "../utils/whitelistingHelper";
-
 function hashed(str: string) {
     return ethers.keccak256(ethers.toUtf8Bytes(str));
 }
@@ -22,11 +20,6 @@ describe("DChess", function () {
     let player1: HardhatEthersSigner;
     let player2: HardhatEthersSigner;
     let player3: HardhatEthersSigner;
-    let creator1: HardhatEthersSigner;
-    let creator2: HardhatEthersSigner;
-    let creator3: HardhatEthersSigner;
-    let rest: Array<HardhatEthersSigner>;
-    let whitelistedCreators: string[];
 
     const setup = async () => {
         await deployments.fixture(["AddPuzzles"]);
@@ -43,9 +36,7 @@ describe("DChess", function () {
 
     before(async function () {
         await setup();
-        [owner, creator1, creator2, creator3, player1, player2, player3] =
-            await ethers.getSigners();
-        whitelistedCreators = [creator1.address, creator2.address];
+        [owner, player1, player2, player3] = await ethers.getSigners();
         expect(await instance.internalTokenCounter()).to.equal(PUZZLE_COUNT);
     });
 
@@ -76,38 +67,12 @@ describe("DChess", function () {
         const metadata = FENToBoard(problem);
         const description = "White to play and something";
 
-        it("Fails when creator not whitelisted", async function () {
-            const proof = getProof(
-                whitelistedCreators.concat([creator3.address]),
-                creator3.address,
-            );
-            await expect(
-                instance
-                    .connect(creator3)
-                    .addPuzzle(problem, solution, metadata, description, proof),
-            )
-                .to.be.revertedWithCustomError(instance, "UserNotAuthorized")
-                .withArgs(creator3.address);
-        });
-
-        it("Fails when wrong proof given", async function () {
-            const proof: string[] = [];
-            await expect(
-                instance
-                    .connect(creator2)
-                    .addPuzzle(problem, solution, metadata, description, proof),
-            )
-                .to.be.revertedWithCustomError(instance, "UserNotAuthorized")
-                .withArgs(creator2.address);
-        });
-
-        it("Succeeds when whitelisted creator given correct proof", async function () {
+        it("Succeeds", async function () {
             const currentCount = await instance.internalTokenCounter();
-            const proof = getProof(whitelistedCreators, creator2.address);
             await expect(
                 instance
-                    .connect(creator2)
-                    .addPuzzle(problem, solution, metadata, description, proof),
+                    .connect(player2)
+                    .addPuzzle(problem, solution, metadata, description),
             )
                 .to.emit(instance, "PuzzleAdded")
                 .withArgs(
@@ -115,7 +80,7 @@ describe("DChess", function () {
                     problem,
                     solution,
                     metadata,
-                    creator2.address,
+                    player2.address,
                     description,
                 );
 
@@ -126,30 +91,7 @@ describe("DChess", function () {
             expect(puzzle.fen).to.equal(problem);
             expect(puzzle.solution).to.equal(solution);
             expect(puzzle.rating).to.equal(DEFAULT_RATING);
-            expect(puzzle.creator).to.equal(creator2.address);
-        });
-
-        it("Succeeds when updating merkle root with new creator", async function () {
-            const newWhitelist = whitelistedCreators.concat([creator3.address]);
-            const newMerkleRoot = getMerkleRoot(newWhitelist);
-            expect(await instance.setMerkleRoot(newMerkleRoot)).to.not.be
-                .reverted;
-
-            const proof = getProof(newWhitelist, creator3.address);
-            await expect(
-                instance
-                    .connect(creator3)
-                    .addPuzzle(problem, solution, metadata, description, proof),
-            )
-                .to.emit(instance, "PuzzleAdded")
-                .withArgs(
-                    4,
-                    problem,
-                    solution,
-                    metadata,
-                    creator3.address,
-                    description,
-                );
+            expect(puzzle.creator).to.equal(player2.address);
         });
     });
 
@@ -244,19 +186,22 @@ describe("DChess", function () {
             const platformFee = await instance.platformFee();
             const mintValue = await instance.tokenMintPrice();
             const puzzleCreatorAddress = (await instance.puzzlesById(2))[4];
-            const creator = [creator1, creator2, creator3].find(
+            const creator = [player1, player2, player3].find(
                 (c) => c.address == puzzleCreatorAddress,
+            ) as HardhatEthersSigner;
+            const player = [player1, player2, player3].find(
+                (c) => c.address != puzzleCreatorAddress,
             ) as HardhatEthersSigner;
             const oldBalance = await ethers.provider.getBalance(creator);
 
             await expect(
-                instance.connect(player1).submitSolution(2, solution3Bytes),
+                instance.connect(player).submitSolution(2, solution3Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance.connect(player1).mint(2, 1, { value: mintValue }),
+                instance.connect(player).mint(2, 1, { value: mintValue }),
             )
                 .to.emit(instance, "TokenMinted")
-                .withArgs(2, player1.address);
+                .withArgs(2, player.address);
 
             expect(await ethers.provider.getBalance(creator)).to.equal(
                 ((100n - platformFee) * mintValue) / 100n + oldBalance,
@@ -266,43 +211,39 @@ describe("DChess", function () {
 
     describe("Managing DChess", async () => {
         it("Fails when malicious actor tries to change protocol", async () => {
-            await expect(instance.connect(creator1).setTokenMintPrice(0))
+            await expect(instance.connect(player1).setTokenMintPrice(0))
                 .to.be.revertedWithCustomError(
                     instance,
                     "OwnableUnauthorizedAccount",
                 )
-                .withArgs(creator1.address);
-            await expect(instance.connect(creator1).setKFactor(0))
+                .withArgs(player1.address);
+            await expect(instance.connect(player1).setKFactor(0))
                 .to.be.revertedWithCustomError(
                     instance,
                     "OwnableUnauthorizedAccount",
                 )
-                .withArgs(creator1.address);
-            await expect(instance.connect(creator1).setPlatformFee(0))
+                .withArgs(player1.address);
+            await expect(instance.connect(player1).setPlatformFee(0))
                 .to.be.revertedWithCustomError(
                     instance,
                     "OwnableUnauthorizedAccount",
                 )
-                .withArgs(creator1.address);
-            const newWhitelist = whitelistedCreators.concat([player1.address]);
-            const newMerkleRoot = getMerkleRoot(newWhitelist);
-            await expect(
-                instance.connect(creator1).setMerkleRoot(newMerkleRoot),
-            )
-                .to.be.revertedWithCustomError(
-                    instance,
-                    "OwnableUnauthorizedAccount",
-                )
-                .withArgs(creator1.address);
+                .withArgs(player1.address);
         });
 
         it("Succeeds when owner changes protocol parameters", async () => {
             const puzzleCreatorAddress = (await instance.puzzlesById(1))[4];
-            const creator = [creator1, creator2, creator3].find(
+            const creator = [player1, player2, player3].find(
                 (c) => c.address == puzzleCreatorAddress,
             ) as HardhatEthersSigner;
+            const player = [player1, player2, player3].find(
+                (c) => c.address != puzzleCreatorAddress,
+            ) as HardhatEthersSigner;
             const creatorBalance = await ethers.provider.getBalance(creator);
-            const playerRatings = await instance.userRatings(player2);
+            const playerRatings =
+                (await instance.userRatings(player)) == 0n
+                    ? 1000
+                    : await instance.userRatings(player);
 
             await expect(await instance.setTokenMintPrice(parseEther("1"))).to
                 .not.be.reverted;
@@ -310,20 +251,18 @@ describe("DChess", function () {
             await expect(await instance.setPlatformFee(0)).to.not.be.reverted;
 
             await expect(
-                instance.connect(player2).submitSolution(1, solution2Bytes),
+                instance.connect(player).submitSolution(1, solution2Bytes),
             ).to.emit(instance, "PuzzleSolved");
             await expect(
-                instance
-                    .connect(player2)
-                    .mint(1, 1, { value: parseEther("1") }),
+                instance.connect(player).mint(1, 1, { value: parseEther("1") }),
             )
                 .to.emit(instance, "TokenMinted")
-                .withArgs(1, player2.address);
+                .withArgs(1, player.address);
 
             expect(await ethers.provider.getBalance(creator)).to.equal(
                 parseEther("1") + creatorBalance,
             );
-            expect(await instance.userRatings(player2)).to.be.equal(
+            expect(await instance.userRatings(player)).to.be.equal(
                 playerRatings,
             );
         });
