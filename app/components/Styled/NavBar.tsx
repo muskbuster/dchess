@@ -27,7 +27,6 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
             Open Drawer
             <label htmlFor="my-drawer" className="absolute inset-0 flex items-center justify-center cursor-pointer"></label>
           </StyledButton>
-
         </div>
         <div>
           {loggedIn ? (
