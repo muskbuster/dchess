@@ -6,7 +6,7 @@ import Link from "next/link";
 const DrawerComponentNoWallet = () => {
   const { puzzles } = useFetchPuzzleListNoWallet();
   return (
-    <div className="fixed top-0 left-0 w-80 bg-slate-500 h-screen pt-20">
+    <div className="w-80 bg-slate-500 h-screen pt-20 overflow-y-scroll">
       <div className="w-full">
         <table className="table-fixed w-full">
           <tbody>
@@ -35,7 +35,7 @@ const DrawerComponentWallet = ({
 }) => {
   const { puzzles } = useFetchPuzzleList(activeWallet);
   return (
-    <div className="fixed top-0 left-0 w-80 bg-slate-500 h-screen pt-20">
+    <div className="w-80 bg-slate-500 h-screen pt-20 overflow-y-scroll">
       <div className="w-full">
         <table className="table-fixed w-full">
           <tbody>
