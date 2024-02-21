@@ -8,7 +8,7 @@ const DrawerComponentNoWallet = () => {
   return (
     <div className="w-80 bg-slate-500 h-screen pt-20 overflow-y-scroll">
       <div className="w-full">
-        <table className="table-fixed w-full">
+        <table className="table-fixed w-full mb-10">
           <tbody>
             {puzzles.map((p: any, idx: number) => (
               <tr key={idx}>
@@ -37,7 +37,7 @@ const DrawerComponentWallet = ({
   return (
     <div className="w-80 bg-slate-500 h-screen pt-20 overflow-y-scroll">
       <div className="w-full">
-        <table className="table-fixed w-full">
+        <table className="table-fixed w-full mb-10">
           <tbody>
             {puzzles.map((p: any, idx: number) => (
               <tr key={idx}>
@@ -64,9 +64,13 @@ export const DrawerComponent = ({
 }: {
   activeWallet: ConnectedWallet | undefined;
 }) => {
-  return activeWallet ? (
-    <DrawerComponentWallet activeWallet={activeWallet} />
-  ) : (
-    <DrawerComponentNoWallet />
-  );
+  return (
+    <div className="drawer z-10">
+      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-side">
+        <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        {activeWallet ? <DrawerComponentWallet activeWallet={activeWallet} /> : <DrawerComponentNoWallet />}
+      </div>
+    </div>
+  )
 };

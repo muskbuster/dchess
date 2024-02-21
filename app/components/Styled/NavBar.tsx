@@ -23,6 +23,11 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           <Link href="/create">
             <StyledButton wide={false}>Create</StyledButton>
           </Link>
+          <StyledButton wide={false} className={"relative"}>
+            Open Drawer
+            <label htmlFor="my-drawer" className="absolute inset-0 flex items-center justify-center cursor-pointer"></label>
+          </StyledButton>
+
         </div>
         <div>
           {loggedIn ? (

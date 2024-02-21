@@ -128,73 +128,75 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="flex flex-row justify-center space-x-5 items-center ml-64">
+    <>
       <DrawerComponent activeWallet={activeWallet} />
-      <BoardAreaComponent
-        successfulSolved={successfulSolved}
-        fetchPuzzlesLoading={fetchPuzzlesLoading}
-        attempts={attempts}
-        fen={fen}
-        onMove={onMove}
-        viewOnly={viewOnly}
-      />
-      <div className="w-1/3 flex flex-col items-center">
-        <div className="flex flex-row items-center space-x-10">
-          {puzzleId > 0 ? (
-            <Link href={`/play/${puzzleId - 1}`}>
-              <CaretLeftIcon
-                height={40}
-                width={40}
-                className="text-white active:text-slate-400"
-              />
-            </Link>
-          ) : (
-            <CaretLeftIcon height={40} width={40} className="text-slate-700" />
-          )}
-          <div className="font-bold text-xl">{`Puzzle #${puzzleId + 1}`}</div>
-          {puzzleId < maxPuzzleId ? (
-            <Link href={`/play/${puzzleId + 1}`}>
-              <CaretRightIcon
-                height={40}
-                width={40}
-                className="text-white active:text-slate-400"
-              />
-            </Link>
-          ) : (
-            <CaretRightIcon height={40} width={40} className="text-slate-700" />
-          )}
-        </div>
-        <div className="my-5">{description}</div>
-        <div className="font-extralight">{`submitted by ${submitter}`}</div>
-        {successfulSolved ? (
-          <div className="mt-10 font-extrabold text-green-500">solved!</div>
-        ) : isFail ? (
-          <div className="mt-10 font-extrabold text-red-500">wrong!</div>
-        ) : (
-          <></>
-        )}
-        {isAttempt ? (
-          <div className="mb-20">
-            <div className="flex flex-row space-x-2 items-start">
-              <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
-              <FaUndo size={15} onClick={undoMove} />
-            </div>
-            <StyledButton
-              className="max-w-32"
-              wide={false}
-              disabled={selectedMove === "--" || !loggedIn}
-              onClick={handleSubmit}
-            >
-              Submit
-            </StyledButton>
-            <Confetti active={isExploding} config={confettiProps} />
+      <div className="flex flex-row justify-center space-x-5 items-center ml-64">
+        <BoardAreaComponent
+          successfulSolved={successfulSolved}
+          fetchPuzzlesLoading={fetchPuzzlesLoading}
+          attempts={attempts}
+          fen={fen}
+          onMove={onMove}
+          viewOnly={viewOnly}
+        />
+        <div className="w-1/3 flex flex-col items-center">
+          <div className="flex flex-row items-center space-x-10">
+            {puzzleId > 0 ? (
+              <Link href={`/play/${puzzleId - 1}`}>
+                <CaretLeftIcon
+                  height={40}
+                  width={40}
+                  className="text-white active:text-slate-400"
+                />
+              </Link>
+            ) : (
+              <CaretLeftIcon height={40} width={40} className="text-slate-700" />
+            )}
+            <div className="font-bold text-xl">{`Puzzle #${puzzleId + 1}`}</div>
+            {puzzleId < maxPuzzleId ? (
+              <Link href={`/play/${puzzleId + 1}`}>
+                <CaretRightIcon
+                  height={40}
+                  width={40}
+                  className="text-white active:text-slate-400"
+                />
+              </Link>
+            ) : (
+              <CaretRightIcon height={40} width={40} className="text-slate-700" />
+            )}
           </div>
-        ) : (
-          <></>
-        )}
-        {successfulSolved ? <MintComponent puzzleId={puzzleId} /> : <></>}
+          <div className="my-5">{description}</div>
+          <div className="font-extralight">{`submitted by ${submitter}`}</div>
+          {successfulSolved ? (
+            <div className="mt-10 font-extrabold text-green-500">solved!</div>
+          ) : isFail ? (
+            <div className="mt-10 font-extrabold text-red-500">wrong!</div>
+          ) : (
+            <></>
+          )}
+          {isAttempt ? (
+            <div className="mb-20">
+              <div className="flex flex-row space-x-2 items-start">
+                <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
+                <FaUndo size={15} onClick={undoMove} />
+              </div>
+              <StyledButton
+                className="max-w-32"
+                wide={false}
+                disabled={selectedMove === "--" || !loggedIn}
+                onClick={handleSubmit}
+              >
+                Submit
+              </StyledButton>
+              <Confetti active={isExploding} config={confettiProps} />
+            </div>
+          ) : (
+            <></>
+          )}
+          {successfulSolved ? <MintComponent puzzleId={puzzleId} /> : <></>}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
