@@ -1,11 +1,12 @@
 import { ConnectedWallet } from "@privy-io/react-auth";
 import { useQuery } from "@tanstack/react-query";
-import { zeroAddress } from "viem";
 
 async function getPuzzleList(userAddress: string) {
-  return (await fetch(`/api/puzzles/${userAddress}`).then((res) =>
-    res.json()
-  )) as string;
+  const response = await fetch(`/api/puzzles/${userAddress}`);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
 }
 
 export default function useFetchPuzzleList(activeWallet: ConnectedWallet) {
@@ -16,7 +17,7 @@ export default function useFetchPuzzleList(activeWallet: ConnectedWallet) {
   });
 
   let puzzles = [];
-  if (isError) console.log(error);
+  if (isError) console.log("ERORORERE", error);
 
   if (!isError && !isLoading) {
     puzzles = JSON.parse(data!).map((p: any) => {

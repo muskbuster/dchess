@@ -3,9 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 const ETHERSCAN_API_KEY = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
 
 async function getPrices() {
-  return await fetch(
+  const response = await fetch(
     `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${ETHERSCAN_API_KEY}`
-  ).then((res) => res.json());
+  );
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
 }
 
 export default function useETHConversion() {
