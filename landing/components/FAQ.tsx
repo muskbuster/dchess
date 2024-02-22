@@ -1,5 +1,5 @@
-import React from "react";
-
+import React from "react";      
+//comment
 export const FAQ = () => {
   const q1 = `What is Virtuoso Club?`;
   const a1_1 = `Over the last two decades or so, platforms \
