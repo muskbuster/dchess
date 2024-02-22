@@ -10,6 +10,32 @@ import ProfileScreen from "@/components/Views/Profile/ProfileScreen";
 import { Footer } from "../Styled/Footer";
 import { UserInfoProvider } from "@/contexts/UserInfoContext";
 
+const PleaseLogInAlert = () => {
+  return (
+    <div className="w-full flex items-center justify-center">
+      <div
+        role="alert"
+        className="alert absolute top-14 z-50 h-fit w-fit flex flex-row items-center justify-center pr-10"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          className="stroke-info shrink-0 w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span>Please connect wallet!</span>
+      </div>
+    </div>
+  );
+};
+
 const WalletWrapper = ({
   page,
   args,
@@ -76,7 +102,10 @@ const WalletWrapper = ({
     <UserInfoProvider>
       <div className="flex flex-col min-h-screen">
         <NavBar loggedIn={authenticated} />
-        <div className="m-2 mt-36 mb-36 grow">{screen}</div>
+        <div className="grow">
+          {!authenticated && <PleaseLogInAlert />}
+          <div className="m-2 mt-36 mb-36">{screen}</div>
+        </div>
         <Footer />
       </div>
     </UserInfoProvider>
