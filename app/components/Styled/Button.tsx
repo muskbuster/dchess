@@ -25,7 +25,7 @@ export const StyledButton = ({
     <button
       className={`btn ${
         wide ? "btn-wide" : ""
-      } text-black text-lg disabled:bg-yellow-200 disabled:text-gray-500
+      } text-black text-lg disabled:bg-yellow-200 disabled:text-gray-500 
       ${className} ${fontStyle.className}`}
       disabled
     >
@@ -56,7 +56,7 @@ export const StyledButton = ({
       onClick={onClick}
       className={`btn ${
         wide ? "btn-wide" : ""
-      } bg-yellow-300 active:bg-yellow-700 text-black text-lg
+      } bg-yellow-300 active:bg-yellow-700 text-black text-lg sm:w-fit w-[100%]
        ${className} ${
         fontStyle.className
       } disabled:bg-yellow-200 disabled:text-gray-500`}

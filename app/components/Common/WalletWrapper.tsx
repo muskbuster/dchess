@@ -76,7 +76,7 @@ const WalletWrapper = ({
     <UserInfoProvider>
       <div className="flex flex-col min-h-screen">
         <NavBar loggedIn={authenticated} />
-        <div className="m-2 mt-36 mb-36 grow">{screen}</div>
+        <div className="m-2 md:mt-36 mt-[100px] mb-[30px] md:mb-36 grow">{screen}</div>
         <Footer />
       </div>
     </UserInfoProvider>
