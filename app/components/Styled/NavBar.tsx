@@ -26,7 +26,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
             <LoggedInBar />
           ) : (
             <StyledButton wide={false} onClick={login}>
-              Log in
+              Connect Wallet
             </StyledButton>
           )}
         </div>
