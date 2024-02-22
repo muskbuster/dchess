@@ -7,7 +7,6 @@ import Confetti from "react-dom-confetti";
 import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 
-import NFTVisual from "../../Common/ArtDisplay";
 import useFetchPuzzles from "@/hooks/useFetchPuzzles";
 import { canonicalFen, truncateAddress } from "@/utils/general";
 import { zeroAddress, Address } from "viem";
@@ -156,7 +155,7 @@ const PlayScreen = ({
 
   return (
     <div className="flex flex-row justify-center space-x-5 items-center ml-64">
-      <DrawerComponent activeWallet={activeWallet} />
+      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
         fetchPuzzlesLoading={fetchPuzzlesLoading}
