@@ -1,5 +1,5 @@
-import React from "react";      
-//comment
+import React from "react";
+
 export const FAQ = () => {
   const q1 = `What is Virtuoso Club?`;
   const a1_1 = `Over the last two decades or so, platforms \
@@ -25,8 +25,8 @@ This allows you as a player to build your reputation \
 which will go on to live forever.`;
 
   return (
-    <div className="flex flex-col mt-10">
-      <div className="mt-10">
+    <div className="flex flex-col lg:mt-10 mt-0">
+      <div className="md:mt-10 mt-6">
         <h2 className={`mb-3 text-2xl font-semibold`}>{q1}</h2>
         <div className={`max-w-[750px] text-sm opacity-60`}>
           <p>{a1_1}</p>
