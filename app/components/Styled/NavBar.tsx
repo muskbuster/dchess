@@ -2,13 +2,10 @@ import Link from "next/link";
 
 import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
-import { useAccount } from "wagmi";
 import LoggedInBar from "./LoggedInBar";
-import { zeroAddress } from "viem";
 
 const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const { login } = usePrivy();
-  const { address } = useAccount();
 
   return (
     <nav className="navbar bg-slate-600 fixed w-full z-20 top-0 start-0">
@@ -26,7 +23,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </div>
         <div>
           {loggedIn ? (
-            <LoggedInBar address={address || zeroAddress} />
+            <LoggedInBar />
           ) : (
             <StyledButton wide={false} onClick={login}>
               Log in

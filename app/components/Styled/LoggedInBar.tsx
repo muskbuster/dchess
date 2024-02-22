@@ -1,17 +1,19 @@
 import Link from "next/link";
 import { minidenticon } from "minidenticons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useBalance } from "wagmi";
 import Ribbon from "../../public/Ribbon.svg";
 import EthIcon from "../../public/Ethereum.svg";
 import useFetchRatings from "@/hooks/useFetchRatings";
-import { Address } from "viem";
+import { Address, zeroAddress } from "viem";
+import { useAccount } from "wagmi";
 import Image from "next/image";
 import AddressBar from "@/components/Common/AddressBar";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { StyledButton } from "@/components/Styled/Button";
+import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
 
 const MinidenticonImg = ({ randomizer }: { randomizer: string }) => {
   const svgURI = useMemo(
@@ -23,7 +25,8 @@ const MinidenticonImg = ({ randomizer }: { randomizer: string }) => {
   return <Image src={svgURI} alt={randomizer} width="40" height="40" />;
 };
 
-const LoggedInBar = ({ address }: { address: Address }) => {
+const LoggedInBar = () => {
+  const { address } = useAccount();
   const {
     data: rawBalance,
     isError,
@@ -32,13 +35,32 @@ const LoggedInBar = ({ address }: { address: Address }) => {
     address,
   });
   const [openDropdown, setOpenDropdown] = useState(false);
+  const dispatch = useUserInfoDispatch();
+  useEffect(() => {
+    dispatch({
+      type: "UPDATE_ADDRESS",
+      payload: {
+        address: address,
+      },
+    });
+  }, [address, dispatch]);
+
+  const userInfo = useUserInfo();
 
   const { rating: userRating } = useFetchRatings(address);
+  useEffect(() => {
+    dispatch({
+      type: "UPDATE_RATING",
+      payload: {
+        rating: userRating,
+      },
+    });
+  }, [userRating, dispatch]);
 
   const { logout, exportWallet } = usePrivy();
   const router = useRouter();
 
-  let balance = "0.0";
+  let balance = "0.0000";
   if (!isError && !isLoading) {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
@@ -66,11 +88,11 @@ const LoggedInBar = ({ address }: { address: Address }) => {
         className="flex cursor-pointer bg-gray-100 rounded-full active:ring-4 active:ring-gray-300 duration-300"
         onClick={() => setOpenDropdown(!openDropdown)}
       >
-        <MinidenticonImg randomizer={address} />
+        <MinidenticonImg randomizer={userInfo?.address || zeroAddress} />
         {openDropdown && (
           <div className="absolute top-16 right-1 w-72 bg-slate-600 rounded-lg m-2 flex flex-col items-start px-4">
             <div className="border-b w-full mt-3 mb-2">
-              <AddressBar address={address} />
+              <AddressBar address={userInfo!.address} />
             </div>
             <Link href={`/profile/${address}`}>
               <div className="w-full my-2">
