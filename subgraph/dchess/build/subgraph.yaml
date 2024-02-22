@@ -1,0 +1,57 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DChess
+    network: base
+    source:
+      address: "0xB6BAADF5D79a56957C3c9b0600818B2fF581b5A6"
+      abi: DChess
+      startBlock: 10789068
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ApprovalForAll
+        - OwnershipTransferred
+        - PuzzleAdded
+        - PuzzleAttempted
+        - PuzzleRatingChanged
+        - PuzzleSolved
+        - TokenMinted
+        - TransferBatch
+        - TransferSingle
+        - URI
+        - UserRatingChanged
+        - WithdrawAll
+      abis:
+        - name: DChess
+          file: DChess/abis/DChess.json
+      eventHandlers:
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PuzzleAdded(uint256,string,bytes32,uint256,address,string)
+          handler: handlePuzzleAdded
+        - event: PuzzleAttempted(uint256,address,bytes)
+          handler: handlePuzzleAttempted
+        - event: PuzzleRatingChanged(uint256,uint256)
+          handler: handlePuzzleRatingChanged
+        - event: PuzzleSolved(uint256,address)
+          handler: handlePuzzleSolved
+        - event: TokenMinted(uint256,address)
+          handler: handleTokenMinted
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: URI(string,indexed uint256)
+          handler: handleURI
+        - event: UserRatingChanged(address,uint256)
+          handler: handleUserRatingChanged
+        - event: WithdrawAll(uint256)
+          handler: handleWithdrawAll
+      file: DChess/DChess.wasm

@@ -1,0 +1,159 @@
+sources:
+  - type: subgraphEntity
+    entity:
+      name: approval_for_all
+    referenceName: base.approval_for_all
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: ownership_transferred
+    referenceName: base.ownership_transferred
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: puzzle_added
+    referenceName: base.puzzle_added
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: puzzle_attempted
+    referenceName: base.puzzle_attempted
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: puzzle_rating_changed
+    referenceName: base.puzzle_rating_changed
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: puzzle_solved
+    referenceName: base.puzzle_solved
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: token_minted
+    referenceName: base.token_minted
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: transfer_batch
+    referenceName: base.transfer_batch
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: transfer_single
+    referenceName: base.transfer_single
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: uri
+    referenceName: base.uri
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: user_rating_changed
+    referenceName: base.user_rating_changed
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+  - type: subgraphEntity
+    entity:
+      name: withdraw_all
+    referenceName: base.withdraw_all
+    deployments:
+      - id: QmQFvNjPUgBtYpSrjqVMNA68oisjWgSXu3FqewkpZ6GVfv
+transforms: []
+sinks:
+  - type: postgres
+    table: base_approval_for_all_approval_for_all
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.approval_for_all"
+    referenceName: postgres_base.approval_for_all
+    sourceStreamName: base.approval_for_all
+  - type: postgres
+    table: base_ownership_transferred_ownership_transferred
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.ownership_transferred"
+    referenceName: postgres_base.ownership_transferred
+    sourceStreamName: base.ownership_transferred
+  - type: postgres
+    table: base_puzzle_added_puzzle_added
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.puzzle_added"
+    referenceName: postgres_base.puzzle_added
+    sourceStreamName: base.puzzle_added
+  - type: postgres
+    table: base_puzzle_attempted_puzzle_attempted
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.puzzle_attempted"
+    referenceName: postgres_base.puzzle_attempted
+    sourceStreamName: base.puzzle_attempted
+  - type: postgres
+    table: base_puzzle_rating_changed_puzzle_rating_changed
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.puzzle_rating_changed"
+    referenceName: postgres_base.puzzle_rating_changed
+    sourceStreamName: base.puzzle_rating_changed
+  - type: postgres
+    table: base_puzzle_solved_puzzle_solved
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.puzzle_solved"
+    referenceName: postgres_base.puzzle_solved
+    sourceStreamName: base.puzzle_solved
+  - type: postgres
+    table: base_token_minted_token_minted
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.token_minted"
+    referenceName: postgres_base.token_minted
+    sourceStreamName: base.token_minted
+  - type: postgres
+    table: base_transfer_batch_transfer_batch
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.transfer_batch"
+    referenceName: postgres_base.transfer_batch
+    sourceStreamName: base.transfer_batch
+  - type: postgres
+    table: base_transfer_single_transfer_single
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.transfer_single"
+    referenceName: postgres_base.transfer_single
+    sourceStreamName: base.transfer_single
+  - type: postgres
+    table: base_uri_uri
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.uri"
+    referenceName: postgres_base.uri
+    sourceStreamName: base.uri
+  - type: postgres
+    table: base_user_rating_changed_user_rating_changed
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.user_rating_changed"
+    referenceName: postgres_base.user_rating_changed
+    sourceStreamName: base.user_rating_changed
+  - type: postgres
+    table: base_withdraw_all_withdraw_all
+    schema: public
+    secretName: JDBC_SECRET_CLSTPO8830
+    description: "Postgres sink for subgraph entity: base.withdraw_all"
+    referenceName: postgres_base.withdraw_all
+    sourceStreamName: base.withdraw_all
