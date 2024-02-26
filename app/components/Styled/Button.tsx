@@ -1,8 +1,10 @@
 import { ReactNode } from "react";
 
-import { Ubuntu, Poppins } from "next/font/google";
+import { Ubuntu, Pixelify_Sans } from "next/font/google";
 
 const fontStyle = Ubuntu({ weight: "400", subsets: ["latin"] });
+const pixelifyRegular = Pixelify_Sans({ weight: "400", subsets: ["latin"] });
+const pixelifyBold = Pixelify_Sans({ weight: "700", subsets: ["latin"] });
 
 interface Props {
   children: ReactNode;
@@ -52,17 +54,20 @@ export const StyledButton = ({
   return waiting ? (
     waitingButton
   ) : (
-    <button
-      onClick={onClick}
-      className={`btn ${
-        wide ? "btn-wide" : ""
-      } bg-yellow-300 active:bg-yellow-700 text-black text-lg
-       ${className} ${
-        fontStyle.className
-      } disabled:bg-yellow-200 disabled:text-gray-500`}
-      disabled={disabled}
-    >
-      {children}
-    </button>
+    <div className="relative">
+      <button
+        onClick={onClick}
+        className={`${
+          wide ? "btn-wide" : ""
+        } p-3 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black
+          ${className} ${
+            pixelifyBold.className
+        } disabled:bg-yellow-200 disabled:text-gray-500`}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+      <div className="absolute bg-[#E6FA04] rounded-[12px] top-0.5 left-0.5 -right-0.5 -bottom-0.5 -z-[1]"></div>
+    </div>
   );
 };

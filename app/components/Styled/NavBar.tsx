@@ -15,64 +15,66 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const router = useRouter();
 
   return (
-    <nav className="navbar bg-slate-600 fixed w-full z-20 top-0 start-0">
-      <div className="flex flex-row justify-between w-full">
-        <div className="flex flex-row space-x-2">
-          <StyledButton wide={false} onClick={() => router.push("/play/0")}>
-            Play
-          </StyledButton>
-          <div
-            className={`${
-              !loggedIn || !getOnLeaderboard ? "tooltip tooltip-bottom" : ""
-            }`}
-            data-tip={`${
-              !loggedIn
-                ? "Wallet not connected!"
-                : !getOnLeaderboard
-                ? "Acquire at least 1 token"
-                : ""
-            }`}
-          >
-            <StyledButton
-              wide={false}
-              disabled={!loggedIn || !getOnLeaderboard}
-              onClick={() => router.push("/stats")}
-            >
-              Score
+    <div className="bg-[#E6FA04CF]">
+      <nav className="navbar bg-[#010712] fixed w-full z-20 top-0 start-0 py-5 border-b-2 border-[#E6FA04CF]">
+        <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-row space-x-2">
+            <StyledButton wide={false} onClick={() => router.push("/play/0")}>
+              Play
             </StyledButton>
+            <div
+              className={`${
+                !loggedIn || !getOnLeaderboard ? "tooltip tooltip-bottom" : ""
+              }`}
+              data-tip={`${
+                !loggedIn
+                  ? "Wallet not connected!"
+                  : !getOnLeaderboard
+                  ? "Acquire at least 1 token"
+                  : ""
+              }`}
+            >
+              <StyledButton
+                wide={false}
+                disabled={!loggedIn || !getOnLeaderboard}
+                onClick={() => router.push("/stats")}
+              >
+                Score
+              </StyledButton>
+            </div>
+            <div
+              className={`${
+                !loggedIn || !getOnLeaderboard ? "tooltip tooltip-bottom" : ""
+              }`}
+              data-tip={`${
+                !loggedIn
+                  ? "Wallet not connected!"
+                  : !puzzleCreate
+                  ? "Acquire at least 5 token"
+                  : ""
+              }`}
+            >
+              <StyledButton
+                wide={false}
+                disabled={!loggedIn || !puzzleCreate}
+                onClick={() => router.push("/create")}
+              >
+                Create
+              </StyledButton>
+            </div>
           </div>
-          <div
-            className={`${
-              !loggedIn || !getOnLeaderboard ? "tooltip tooltip-bottom" : ""
-            }`}
-            data-tip={`${
-              !loggedIn
-                ? "Wallet not connected!"
-                : !puzzleCreate
-                ? "Acquire at least 5 token"
-                : ""
-            }`}
-          >
-            <StyledButton
-              wide={false}
-              disabled={!loggedIn || !puzzleCreate}
-              onClick={() => router.push("/create")}
-            >
-              Create
-            </StyledButton>
+          <div>
+            {loggedIn ? (
+              <LoggedInBar />
+            ) : (
+              <StyledButton wide={false} onClick={login}>
+                Connect Wallet
+              </StyledButton>
+            )}
           </div>
         </div>
-        <div>
-          {loggedIn ? (
-            <LoggedInBar />
-          ) : (
-            <StyledButton wide={false} onClick={login}>
-              Connect Wallet
-            </StyledButton>
-          )}
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
 
