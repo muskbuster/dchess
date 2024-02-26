@@ -92,7 +92,7 @@ const LoggedInBar = () => {
         {openDropdown && (
           <div className="absolute top-16 right-1 w-72 bg-slate-600 rounded-lg m-2 flex flex-col items-start px-4">
             <div className="border-b w-full mt-3 mb-2">
-              <AddressBar address={userInfo!.address} />
+              <AddressBar address={userInfo?.address || zeroAddress} />
             </div>
             <Link href={`/profile/${address}`}>
               <div className="w-full my-2">
