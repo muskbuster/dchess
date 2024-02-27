@@ -3,8 +3,6 @@ import { ReactNode } from "react";
 import { Ubuntu, Pixelify_Sans } from "next/font/google";
 
 const fontStyle = Ubuntu({ weight: "400", subsets: ["latin"] });
-const pixelifyRegular = Pixelify_Sans({ weight: "400", subsets: ["latin"] });
-const pixelifyBold = Pixelify_Sans({ weight: "700", subsets: ["latin"] });
 
 interface Props {
   children: ReactNode;
@@ -57,12 +55,7 @@ export const StyledButton = ({
     <div className="relative">
       <button
         onClick={onClick}
-        className={`${
-          wide ? "btn-wide" : ""
-        } p-3 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black
-          ${className} ${
-            pixelifyBold.className
-        } disabled:bg-yellow-200 disabled:text-gray-500`}
+        className={`${wide ? "btn-wide" : ""} p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black ${className} pixeloid-sans-bold text-base disabled:bg-yellow-200 disabled:text-gray-500`}
         disabled={disabled}
       >
         {children}
