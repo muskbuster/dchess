@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex flex-col min-h-screen bg-[#0D3B66]">
         <Navbar />
-        <div className="m-2 pt-44 pb-36 pl-36 grow text-white font-mono">
+        <div className="m-2  pr-7 pl-7 pt-[30px] pb-10 lg:pt-44 md:pt-38 lg:pb-36 md:pb-10 sm:pb-10 lg:pl-36 lg:pr-36 md:pl-7 md:pr-7 sm:pl-7 sm:pr-7 grow text-white font-mono">
           {children}
         </div>
         <Footer />
