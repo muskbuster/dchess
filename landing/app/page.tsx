@@ -1,7 +1,6 @@
 import Image from "next/image";
 import logo from "@/public/logo.png";
 import { FAQ } from "@/components/FAQ";
-import { readFileSync } from "fs";
 
 export default function Home() {
   return (
