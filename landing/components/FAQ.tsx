@@ -9,7 +9,7 @@ export const FAQ = () => {
 User profiles with players' history and ratings \
 exist within the permissioned walled gardens -- resulting in disparate reputation systems \
 that can not be easily translated.`;
-  const a2_2 = `No single platform should solely be responsible for the continued sustenance of \
+  const a2_2 = `No single platform should solely be responsible for the upkeep of \
 the game. A recent example of this is Chess.com's controversial \
 decision of banning Hans Niemann and accusing him of cheating without \
 providing sufficient proof which created a stir among the chess community.`;
