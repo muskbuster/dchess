@@ -154,7 +154,7 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="flex flex-row justify-center space-x-5 items-center ml-64">
+    <div className="md:flex md:flex-col sm:flex sm:flex-col lg:flex lg:flex-row lg:space-x-5  space-x-0 items-center md:ml-64  ml-0 justify-center">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
@@ -164,7 +164,7 @@ const PlayScreen = ({
         onMove={onMove}
         viewOnly={viewOnly}
       />
-      <div className="w-1/3 flex flex-col items-center">
+      <div className="w-[100%] md:w-[33.333333%] flex flex-col items-center">
         <div className="flex flex-row items-center space-x-10">
           {puzzleId > 0 ? (
             <Link href={`/play/${puzzleId - 1}`}>
@@ -200,7 +200,7 @@ const PlayScreen = ({
           <></>
         )}
         {isAttempt ? (
-          <div className="mb-20">
+          <div className="md:mb-20 mb-0">
             <div className="flex flex-row space-x-2 items-start">
               <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
               <FaUndo size={15} onClick={undoMove} />
