@@ -1,12 +1,19 @@
 import useFetchPuzzleList from "@/hooks/useFetchPuzzleList";
 import useFetchPuzzleListNoWallet from "@/hooks/useFetchPuzzleListNoWallet";
 import { ConnectedWallet } from "@privy-io/react-auth";
+import { HiMenu, HiX } from 'react-icons/hi'; // Import icons from HeroIcons
 import Link from "next/link";
 
 const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
   const { puzzles } = useFetchPuzzleListNoWallet();
   return (
-    <div className="fixed top-0 left-0 w-80 bg-slate-500 h-screen pt-20">
+    <div>
+      <button className="fixed top-0 left-0 z-[8]  bg-gray-800 text-white px-3 py-2 md:hidden block"
+        onClick={toggleDrawer}>
+        {isOpen ? <HiX size={20} /> : <HiMenu size={20} />} {/* Toggle Icon */}
+      </button>
+      <div className={`fixed top-0 left-0 sm:w-80 my-w-full z-[7] bg-slate-500 h-screen pt-20  pt-[7rem] md:block
+        ${isOpen ? 'block' : 'hidden'}`}>
       <div className="w-full">
         <table className="table-fixed w-full">
           <tbody>
@@ -32,6 +39,8 @@ const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
         </table>
       </div>
     </div>
+    </div>
+    
   );
 };
 
