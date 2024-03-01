@@ -10,7 +10,7 @@ export const USER_RATING = gql`
 `;
 
 export default function useFetchRatings(address: Address | undefined) {
-  const { data, loading, error } = useQuery(USER_RATING, {
+  const { data, loading, error, refetch } = useQuery(USER_RATING, {
     variables: { userAddress: address },
   });
 
@@ -21,5 +21,5 @@ export default function useFetchRatings(address: Address | undefined) {
         ?.newUserRating || rating;
   }
 
-  return { rating, loading, error };
+  return { rating, loading, error, refetch };
 }

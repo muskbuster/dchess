@@ -7,7 +7,6 @@ import Confetti from "react-dom-confetti";
 import { StyledButton } from "@/components/Styled/Button";
 import { FaUndo } from "react-icons/fa";
 
-import NFTVisual from "../../Common/ArtDisplay";
 import useFetchPuzzles from "@/hooks/useFetchPuzzles";
 import { canonicalFen, truncateAddress } from "@/utils/general";
 import { zeroAddress, Address } from "viem";
@@ -18,6 +17,8 @@ import useHasSolved from "@/hooks/useHasSolved";
 import { MintComponent } from "./MintComponent";
 import { BoardAreaComponent } from "./BoardAreaComponent";
 import { DrawerComponent } from "./DrawerComponent";
+import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
+import useFetchRatings from "@/hooks/useFetchRatings";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -62,8 +63,14 @@ const PlayScreen = ({
     problemStatus.valueOf() == ProblemStatus.Success.valueOf();
   const isFail = problemStatus.valueOf() == ProblemStatus.Fail.valueOf();
 
-  const { data: attempted } = useHasAttempted(puzzleId, activeWallet);
-  const { data: solved } = useHasSolved(puzzleId, activeWallet);
+  const { data: attempted, refetch: refetchHasAttempted } = useHasAttempted(
+    puzzleId,
+    activeWallet
+  );
+  const { data: solved, refetch: refetchHasSolved } = useHasSolved(
+    puzzleId,
+    activeWallet
+  );
 
   useEffect(() => {
     if (solved) setProblemStatus(ProblemStatus.Success);
@@ -76,20 +83,39 @@ const PlayScreen = ({
     loading: fetchPuzzlesLoading,
   } = useFetchPuzzles();
 
+  const userInfo = useUserInfo();
+  const dispatch = useUserInfoDispatch();
+  const { rating, refetch: refetchRating } = useFetchRatings(userInfo?.address);
+  useEffect(() => {
+    dispatch({
+      type: "UPDATE_RATING",
+      payload: {
+        rating: rating,
+      },
+    });
+  }, [rating, dispatch]);
+
   const {
     write: writeSolution,
-    refetch: refetchSolution,
-    isSuccess: isSubmitSolutionSuccess,
-    isError,
-    error,
+    isSuccess: isSubmissionSuccess,
+    isLoading: isSubmissionLoading,
   } = useSubmitSolution(puzzleId, selectedMove);
 
   useEffect(() => {
-    if (isSubmitSolutionSuccess) {
-      // TODO: replace with getting status
-      window.location.reload();
+    if (isSubmissionSuccess) {
+      refetchHasAttempted();
+      refetchHasSolved();
+      // adding delay so new rating has propagated
+      setTimeout(() => {
+        refetchRating();
+      }, 3000);
     }
-  }, [isSubmitSolutionSuccess]);
+  }, [
+    isSubmissionSuccess,
+    refetchHasAttempted,
+    refetchHasSolved,
+    refetchRating,
+  ]);
 
   const onMove = async (chess: any) => {
     setSelectedMove(chess.history()[0]);
@@ -129,7 +155,7 @@ const PlayScreen = ({
 
   return (
     <div className="flex flex-row justify-center space-x-5 items-center ml-64">
-      <DrawerComponent activeWallet={activeWallet} />
+      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
         fetchPuzzlesLoading={fetchPuzzlesLoading}
@@ -180,6 +206,7 @@ const PlayScreen = ({
               <FaUndo size={15} onClick={undoMove} />
             </div>
             <StyledButton
+              waiting={isSubmissionLoading}
               className="max-w-32"
               wide={false}
               disabled={selectedMove === "--" || !loggedIn}

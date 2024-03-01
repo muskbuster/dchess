@@ -7,7 +7,7 @@ export const Navbar = () => {
     <nav className="navbar fixed w-full z-20 top-0 start-0">
       <div className="flex flex-row justify-end w-full">
         <div className="flex flex-row pr-5 pt-5">
-          <Link href="https://app.virtuoso.club/" target="_blank">
+          <Link href="https://testnet.virtuoso.club/" target="_blank">
             <StyledButton wide={false}>Launch App</StyledButton>
           </Link>
         </div>

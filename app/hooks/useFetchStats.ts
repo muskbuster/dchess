@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 async function getStats() {
-  return (await fetch("/api/stats").then((res) => res.json())) as string;
+  const response = await fetch("/api/stats");
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
 }
 
 export default function useFetchStats(userAddress: string) {

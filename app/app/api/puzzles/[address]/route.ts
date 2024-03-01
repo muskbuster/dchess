@@ -16,7 +16,7 @@ export async function GET(
   } catch (e) {
     console.log(e);
     return NextResponse.json(
-      { message: "Unable to find user stats" },
+      { message: "Unable to find puzzles" },
       { status: 500 }
     );
   }

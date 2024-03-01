@@ -1,7 +1,6 @@
 // @ts-ignore
 import { NextChessground } from "next-chessground";
 import { useRef } from "react";
-import { FaArrowRotateLeft } from "react-icons/fa6";
 
 export const BoardAreaComponent = ({
   successfulSolved,
@@ -21,7 +20,7 @@ export const BoardAreaComponent = ({
   const ref = useRef();
 
   return (
-    <div className="w-1/3 flex flex-col items-center space-y-5">
+    <div className="w-1/3 flex flex-col items-center space-y-5 min-w-[400px]">
       <NextChessground
         key={attempts}
         ref={ref}

@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Chess } from "chess.js";
 
 async function stockfishVerify(fen: string) {
-  return await fetch(`https://lichess.org/api/cloud-eval?fen=${fen}`).then(
-    (res) => res.json()
-  );
+  const response = await fetch(`https://lichess.org/api/cloud-eval?fen=${fen}`);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
 }
 
 export default function useStockfishVerification(
