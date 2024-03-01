@@ -9,7 +9,7 @@ async function getAccessControl(userAddress: string) {
 
 export default function useAccessControl(userAddress: string) {
   const { isError, isLoading, data, error } = useQuery<string>({
-    queryKey: ["get-access-control"],
+    queryKey: ["get-access-control", userAddress],
     queryFn: () => getAccessControl(userAddress),
   });
 
