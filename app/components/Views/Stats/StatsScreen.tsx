@@ -35,11 +35,11 @@ const UserRow = ({
     <tr className={`${userData.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
       <td>
-        <Link href={`/profile/${userData.user}`}>{resolvedAddress}</Link>
+        <Link className="break-words" href={`/profile/${userData.user}`}>{resolvedAddress}</Link>
       </td>
       <td>{userData.ratings}</td>
-      <td>{userData.solves}</td>
-      <td>{userData.minted}</td>
+      <td className="md:table-cell hidden">{userData.solves}</td>
+      <td className="md:table-cell hidden">{userData.minted}</td>
     </tr>
   );
 };
@@ -64,10 +64,10 @@ const CreatorRow = ({
     <tr className={`${creator.you ? "text-red-500" : ""}`}>
       <th>{rank}</th>
       <td>
-        <Link href={`/profile/${creator.user}`}>{resolvedAddress}</Link>
+        <Link className="break-words" href={`/profile/${creator.user}`}>{resolvedAddress}</Link>
       </td>
       <td>{earned}</td>
-      <td>{creator.created}</td>
+      <td className="md:table-cell hidden">{creator.created}</td>
     </tr>
   );
 };
@@ -92,12 +92,12 @@ const StatsScreen = ({
   const { ethusd } = useETHConversion();
 
   return (
-    <div role="tablist" className="tabs tabs-lifted mx-10">
+    <div role="tablist" className="tabs tabs-lifted md:mx-10 mx-[5px]">
       <input
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white text-lg"
+        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white md:text-lg text-xs"
         aria-label="Top Players"
         defaultChecked
       />
@@ -106,15 +106,15 @@ const StatsScreen = ({
         className="tab-content bg-slate-700 border-slate-500 rounded-box p-6"
       >
         <div className="overflow-x-auto">
-          <table className="table">
+          <table className="table"  >
             {/* head */}
-            <thead className="text-white text-lg">
+            <thead className="text-white md:text-lg text-xs">
               <tr>
                 <th>Rank</th>
                 <th>Player</th>
                 <th>Ratings</th>
-                <th># Solved</th>
-                <th># Minted</th>
+                <th className="md:table-cell hidden"># Solved</th>
+                <th className="md:table-cell hidden"># Minted</th>
               </tr>
             </thead>
             <tbody>
@@ -130,7 +130,7 @@ const StatsScreen = ({
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white text-lg"
+        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white md:text-lg text-xs"
         aria-label="Top Creators"
       />
       <div
@@ -140,12 +140,12 @@ const StatsScreen = ({
         <div className="overflow-x-auto">
           <table className="table">
             {/* head */}
-            <thead className="text-white text-lg">
+            <thead className="text-white md:text-lg text-xs">
               <tr>
                 <th>Rank</th>
                 <th>Creator</th>
                 <th>Earned (in USD) </th>
-                <th># Puzzles Created </th>
+                <th className="md:table-cell hidden"># Puzzles Created </th>
               </tr>
             </thead>
             <tbody>
