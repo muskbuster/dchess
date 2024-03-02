@@ -110,13 +110,13 @@ Warning: misleading descriptions can lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return (
-    <div className="flex flex-row justify-center">
+    <div className="my-flex md:flex-row  my-flex-col items-center justify-center">
       {createState == CreateState.Problem ? (
-        <div className="w-1/3 text-white px-12 rounded-md">
+        <div className="lg:w-1/3 md:w-[40%] w-[100%] text-white lg:px-12 md:px-7 px-5 rounded-md">
           <NextEditor ref={ref} onSelect={handleSelect} />
         </div>
       ) : (
-        <div className="w-1/3">
+        <div className="w-1/3 w-[100%]">
           <NextChessground
             fen={fen}
             key={attempts}
@@ -126,11 +126,11 @@ Warning: misleading descriptions can lead to a ban!`;
         </div>
       )}
 
-      <div className="ml-20 w-1/3 flex flex-col">
+      <div className="md:ml-20 ml-0 lg:w-1/3 md:w-[40%] w-[100%] flex flex-col md:px-0 px-5">
         <div className="text-sm font-extralight">{tooltip}</div>
         <div className="text-xl font-bold mt-10 mb-5">Description</div>
         <textarea
-          className="input input-bordered h-32 max-w-96 text-black p-2 bg-slate-50 disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
+          className="input input-bordered h-32 md:max-w-96 max-w-full text-white md:text-black p-2 md:bg-slate-50 bg-[#334155] disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
           value={description}
           onChange={handleDescriptionChange}
           disabled={createState !== CreateState.Problem}
