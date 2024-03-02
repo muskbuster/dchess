@@ -52,15 +52,15 @@ export const StyledButton = ({
   return waiting ? (
     waitingButton
   ) : (
-    <div className="relative">
+    <div className="relative z-0">
       <button
         onClick={onClick}
-        className={`${wide ? "btn-wide" : ""} p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black ${className} pixeloid-sans-bold text-base disabled:bg-yellow-200 disabled:text-gray-500`}
+        className={`${wide ? "btn-wide" : ""} z-10 p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black ${className} pixeloid-sans-bold text-base disabled:bg-[#7C8701] disabled:text-black-500`}
         disabled={disabled}
       >
         {children}
       </button>
-      <div className="absolute bg-[#E6FA04] rounded-[12px] top-0.5 left-0.5 -right-0.5 -bottom-0.5 -z-[1]"></div>
+      <button disabled={disabled} className="absolute bg-[#E6FA04] rounded-[12px] top-0.5 left-0.5 -right-0.5 -bottom-0.5 -z-[1] disabled:bg-[#7C8701] disabled:text-black-500"/>
     </div>
   );
 };

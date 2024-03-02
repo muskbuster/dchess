@@ -102,9 +102,9 @@ const WalletWrapper = ({
     <UserInfoProvider>
       <div className="flex flex-col min-h-screen bg-[#030d1f]">
         <NavBar loggedIn={authenticated} />
-        <div className="grow">
+        <div className="grow flex flex-col">
           {!authenticated && <PleaseLogInAlert />}
-          <div className="m-5">{screen}</div>
+          <div className="m-5 grow flex flex-col">{screen}</div>
         </div>
         <Footer />
       </div>

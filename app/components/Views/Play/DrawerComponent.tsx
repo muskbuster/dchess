@@ -6,29 +6,33 @@ import Link from "next/link";
 const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
   const { puzzles } = useFetchPuzzleListNoWallet();
   return (
-    <div className="max-h-[80vh] overflow-y-scroll w-96 bg-[#010712] rounded-[16px]">
-      <div className="pixeloid-sans-bold text-lg pt-6 pb-2 px-5">List Of Puzzles</div>
-      <div className="border-t border-[#596174] mx-2"></div>
-      <div className="w-full pixeloid-sans px-3">
-        <div className="flex justify-between text-sm px-3 pt-2 pb-2 text-[#596172]">
-          <span>Name</span>
-          <span>Success</span>
+    <div className="relative">
+      <div className="absolute inset-0 overflow-y-scroll bg-[#010712] rounded-[16px]">
+        <div className="sticky top-0 bg-[#010712]">
+          <div className="pixeloid-sans-bold text-lg pt-6 pb-2 px-5">List Of Puzzles</div>
+          <div className="border-t border-[#596174] mx-2"></div>
         </div>
-        <ul className="">
-          {puzzles.map((p: any, idx: number) => (
-              <li
-                key={idx}
-                className={`flex justify-between px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
-              >
-                <Link href={`/play/${p.puzzle_id}`}>
-                  Puzzle #{p.puzzle_id + 1}
-                </Link>
-                <div className=""></div>
-                <div className="text-[#E6FA04]">{`${p.success_rate}%`}</div>
-              </li>
-            ))}
-          <li></li>
-        </ul>
+        <div className="w-full pixeloid-sans px-3">
+          <div className="flex justify-between text-sm px-3 pt-2 pb-2 text-[#596172]">
+            <span>Name</span>
+            <span>Success</span>
+          </div>
+          <ul className="">
+            {puzzles.map((p: any, idx: number) => (
+                <li
+                  key={idx}
+                  className={`flex justify-between px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
+                >
+                  <Link href={`/play/${p.puzzle_id}`}>
+                    Puzzle #{p.puzzle_id + 1}
+                  </Link>
+                  <div className=""></div>
+                  <div className="text-[#E6FA04]">{`${p.success_rate}%`}</div>
+                </li>
+              ))}
+            <li></li>
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -154,7 +154,7 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="grid grid-cols-3 justify-center">
+    <div className="grow grid grid-cols-4 justify-center gap-x-20">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
@@ -164,8 +164,8 @@ const PlayScreen = ({
         onMove={onMove}
         viewOnly={viewOnly}
       />
-      <div className="flex flex-col items-center">
-        <div className="flex flex-row items-center space-x-10">
+      <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-10">
+        <div className="flex flex-row items-center space-x-10 pixeloid-sans-bold pb-4">
           {puzzleId > 0 ? (
             <Link href={`/play/${puzzleId - 1}`}>
               <CaretLeftIcon
@@ -200,15 +200,14 @@ const PlayScreen = ({
           <></>
         )}
         {isAttempt ? (
-          <div className="mb-20">
-            <div className="flex flex-row space-x-2 items-start">
+          <div className="mb-20 w-full">
+            <div className="flex flex-row justify-center space-x-2 items-start pb-6">
               <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
               <FaUndo size={15} onClick={undoMove} />
             </div>
             <StyledButton
               waiting={isSubmissionLoading}
-              className="max-w-32"
-              wide={false}
+              className="w-full"
               disabled={selectedMove === "--" || !loggedIn}
               onClick={handleSubmit}
             >
