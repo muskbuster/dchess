@@ -77,7 +77,7 @@ const LoggedInBar = () => {
   return (
     <div className="flex flex-row space-x-2 items-center">
       <div className="flex">
-        <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
+        <div className="h-12 bg-white rounded-lg text-black flex items-center px-4 md:text-base text-xs">
           <Ribbon className="h-6 w-6" />
           {userRating}
           <EthIcon className="h-6 w-6 ml-2" /> {balance} ETH
