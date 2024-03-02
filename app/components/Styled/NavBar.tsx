@@ -18,8 +18,8 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const activeStyle = 'bg-[#171F2E] text-[#E6FA04]'
 
   return (
-    <div className="bg-[#E6FA04CF]">
-      <nav className="navbar bg-[#010712] w-full z-20 top-0 start-0 py-5 border-b-2 border-[#E6FA04CF]">
+    <nav className="bg-gradient-to-r from-[#E6FA040F] via-[#E6FA04CF] to-[#E6FA040F]">
+      <div className="navbar bg-[#010712] w-full z-20 top-0 start-0 py-3.5 px-6 mb-0.5">
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row space-x-2">
             <StyledButtonSecondary 
@@ -88,8 +88,8 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
             )}
           </div>
         </div>
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 };
 
