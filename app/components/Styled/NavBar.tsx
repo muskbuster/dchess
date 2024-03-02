@@ -1,6 +1,7 @@
 import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
 import LoggedInBar from "./LoggedInBar";
+import NavToggle from './NavToggle';
 import useAccessControl from "@/hooks/useAccessControl";
 import { useUserInfo } from "@/contexts/UserInfoContext";
 import { zeroAddress } from "viem";
@@ -13,10 +14,13 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
     userInfo?.address || zeroAddress
   );
   const router = useRouter();
-
+  const toggleNav = () => {
+    setIsNavOpen(!isNavOpen);
+  };
   return (
-    <nav className="navbar bg-slate-600 fixed w-full z-20 top-0 start-0">
-      <div className="flex flex-row justify-between w-full">
+    <nav className="navbar bg-slate-600 fixed w-full z-20 top-0 start-0 border-b-[1px] border-solid border-white md:border-b-0">
+      <div className="flex flex-row justify-between w-full sm:static relative">
+        
         <div className="flex flex-row space-x-2">
           <StyledButton wide={false} onClick={() => router.push("/play/0")}>
             Play
