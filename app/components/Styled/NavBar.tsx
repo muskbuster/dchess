@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyledButton } from "./Button";
 import { usePrivy } from "@privy-io/react-auth";
 import LoggedInBar from "./LoggedInBar";
@@ -7,13 +8,10 @@ import { useUserInfo } from "@/contexts/UserInfoContext";
 import { zeroAddress } from "viem";
 import { useRouter } from "next/navigation";
 
-const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
+const NavBar = ({ loggedIn = false }) => {
   const { login } = usePrivy();
-  const userInfo = useUserInfo();
-  const { getOnLeaderboard, puzzleCreate } = useAccessControl(
-    userInfo?.address || zeroAddress
-  );
-  const router = useRouter();
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
