@@ -19,7 +19,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
 
   return (
     <div className="bg-[#E6FA04CF]">
-      <nav className="navbar bg-[#010712] fixed w-full z-20 top-0 start-0 py-5 border-b-2 border-[#E6FA04CF]">
+      <nav className="navbar bg-[#010712] w-full z-20 top-0 start-0 py-5 border-b-2 border-[#E6FA04CF]">
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row space-x-2">
             <StyledButtonSecondary 

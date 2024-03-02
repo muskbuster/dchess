@@ -154,7 +154,7 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="flex flex-row justify-center space-x-5 items-center ml-64">
+    <div className="grid grid-cols-3 justify-center space-x-5 items-center">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
@@ -164,7 +164,7 @@ const PlayScreen = ({
         onMove={onMove}
         viewOnly={viewOnly}
       />
-      <div className="w-1/3 flex flex-col items-center">
+      <div className="flex flex-col items-center">
         <div className="flex flex-row items-center space-x-10">
           {puzzleId > 0 ? (
             <Link href={`/play/${puzzleId - 1}`}>

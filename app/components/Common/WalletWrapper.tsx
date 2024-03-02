@@ -104,7 +104,7 @@ const WalletWrapper = ({
         <NavBar loggedIn={authenticated} />
         <div className="grow">
           {!authenticated && <PleaseLogInAlert />}
-          <div className="m-2 mt-36 mb-36">{screen}</div>
+          <div className="m-2">{screen}</div>
         </div>
         <Footer />
       </div>

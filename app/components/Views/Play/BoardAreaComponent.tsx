@@ -20,7 +20,7 @@ export const BoardAreaComponent = ({
   const ref = useRef();
 
   return (
-    <div className="w-1/3 flex flex-col items-center space-y-5 min-w-[400px]">
+    <div className="flex flex-col items-center space-y-5 min-w-[400px]">
       <NextChessground
         key={attempts}
         ref={ref}
