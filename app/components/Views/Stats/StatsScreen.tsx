@@ -5,7 +5,7 @@ import useFetchStats from "@/hooks/useFetchStats";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
 import { zeroAddress } from "viem";
-
+/***** */
 type UserRating = {
   user: string;
   ratings: number;
