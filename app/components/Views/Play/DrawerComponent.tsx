@@ -6,30 +6,29 @@ import Link from "next/link";
 const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
   const { puzzles } = useFetchPuzzleListNoWallet();
   return (
-    <div className="max-h-[80vh] overflow-scroll w-80 bg-slate-500">
-      <div className="w-full">
-        <table className="table-fixed w-full">
-          <tbody>
-            {puzzles.map((p: any, idx: number) => (
-              <tr
+    <div className="max-h-[80vh] overflow-y-scroll w-96 bg-[#010712] rounded-[16px]">
+      <div className="pixeloid-sans-bold text-lg pt-6 pb-2 px-5">List Of Puzzles</div>
+      <div className="border-t border-[#596174] mx-2"></div>
+      <div className="w-full pixeloid-sans px-3">
+        <div className="flex justify-between text-sm px-3 pt-2 pb-2 text-[#596172]">
+          <span>Name</span>
+          <span>Success</span>
+        </div>
+        <ul className="">
+          {puzzles.map((p: any, idx: number) => (
+              <li
                 key={idx}
-                className={`${
-                  p.puzzle_id == puzzleId
-                    ? "opacity-100 font-bold"
-                    : "opacity-70"
-                }`}
+                className={`flex justify-between px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
               >
-                <td className="w-1/2 pl-2">
-                  <Link href={`/play/${p.puzzle_id}`}>
-                    Puzzle #{p.puzzle_id + 1}
-                  </Link>
-                </td>
-                <td className="w-1/4 text-right"></td>
-                <td className="w-1/4 text-right pr-2">{`${p.success_rate}%`}</td>
-              </tr>
+                <Link href={`/play/${p.puzzle_id}`}>
+                  Puzzle #{p.puzzle_id + 1}
+                </Link>
+                <div className=""></div>
+                <div className="text-[#E6FA04]">{`${p.success_rate}%`}</div>
+              </li>
             ))}
-          </tbody>
-        </table>
+          <li></li>
+        </ul>
       </div>
     </div>
   );

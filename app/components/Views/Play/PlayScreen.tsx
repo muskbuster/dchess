@@ -154,7 +154,7 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="grid grid-cols-3 justify-center space-x-5 items-center">
+    <div className="grid grid-cols-3 justify-center">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       <BoardAreaComponent
         successfulSolved={successfulSolved}
