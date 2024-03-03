@@ -12,10 +12,10 @@ import { UserInfoProvider } from "@/contexts/UserInfoContext";
 
 const PleaseLogInAlert = () => {
   return (
-    <div className="w-full flex items-center justify-center">
+    <div className="w-full flex items-center justify-center pixeloid-sans">
       <div
         role="alert"
-        className="alert absolute top-5 z-50 h-fit w-fit flex flex-row items-center justify-center pr-10"
+        className="alert bg-[#171F2E] rounded-[12px] text-white absolute top-5 z-50 h-fit w-fit flex flex-row items-center justify-center pr-10"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

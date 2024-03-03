@@ -26,7 +26,7 @@ const DrawerComponentWallet = ({ activeWallet, puzzleId }: { activeWallet: Conne
                   className={`flex px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
                 >
                   <div className="flex items-center">
-                    {p.solved ? (<img src="icons/Check.png" className="pr-3 h-4"/>) : p.failed ? (<img src="icons/Close.png" className="pr-3 h-4"/>) : ""}
+                    {p.solved ? (<img src="/icons/Check.png" className="pr-3 h-4"/>) : p.failed ? (<img src="/icons/Close.png" className="pr-3 h-4"/>) : ""}
                   </div>
                   <Link href={`/play/${p.puzzle_id}`}>
                     Puzzle #{p.puzzle_id + 1}

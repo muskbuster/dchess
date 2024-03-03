@@ -104,9 +104,7 @@ const CreateScreen = ({
     setViewOnly(true);
   };
 
-  const placeholderDescription = `You can leave hints here or keep it mysterious. \
-For example: White to play. Mate in 3 moves!\n\n\
-Warning: misleading descriptions can lead to a ban!`;
+  const placeholderDescription = `For example: White to play. Mate in 3 moves!\n\n\Warning: misleading descriptions can lead to a ban!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return (
@@ -126,19 +124,20 @@ Warning: misleading descriptions can lead to a ban!`;
         </div>
       )}
 
-      <div className="ml-20 w-1/3 flex flex-col">
-        <div className="text-sm font-extralight">{tooltip}</div>
-        <div className="text-xl font-bold mt-10 mb-5">Description</div>
+      <div className="ml-8 w-1/3 flex flex-col justify-center bg-[#010712] rounded-[16px] p-8 pixeloid-sans">
+        <div className="text-xl font-bold mt-10 mb-2">Description</div>
+        <div className="text-sm mb-3">You can leave hints here or keep it mysterious.</div>
         <textarea
-          className="input input-bordered h-32 max-w-96 text-black p-2 bg-slate-50 disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
+          className="mb-3 input input-bordered h-32 w-full p-2 bg-[#171F2E] rounded-[16px] disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
           value={description}
           onChange={handleDescriptionChange}
           disabled={createState !== CreateState.Problem}
           placeholder={placeholderDescription}
         />
+        <div className="text-sm text-[#596172] mb-3">Warning: misleading descriptions can lead to a ban!</div>
         {createState == CreateState.Solution ? (
-          <div className="flex flex-row items-start mt-5">
-            <div className="font-light mb-5 text-sm mr-5">{`winning move: ${winningMove}`}</div>
+          <div className="flex flex-row items-start mt-2 justify-center text-[#E6FA04]">
+            <div className="font-light mb-5 text-lg mr-5">{`Winning move: ${winningMove}`}</div>
             {winningMove != "--" ? (
               <FaUndo className="cursor-pointer" size={15} onClick={undoMove} />
             ) : (
@@ -150,7 +149,7 @@ Warning: misleading descriptions can lead to a ban!`;
         )}
         {createState == CreateState.Problem ? (
           <StyledButton
-            className="w-32 mt-10"
+            className="w-full"
             disabled={!validGame || description == ""}
             onClick={handleNext}
           >
@@ -158,15 +157,19 @@ Warning: misleading descriptions can lead to a ban!`;
           </StyledButton>
         ) : (
           <StyledButton
-            className="w-32 mt-10"
+            className="w-full"
             disabled={winningMove == "--" || !isStockfishVerificationSuccess}
             onClick={handleSubmit}
           >
             Submit
           </StyledButton>
         )}
-        <div className="text-sm font-light mt-2">
-          {winningMove != "--"
+        <div className="flex items-center pt-4">
+          <img src="/icons/Exclaim.png" alt="" className="mr-3"/>
+          <div className="text-sm font-extralight">{tooltip}</div>
+        </div>
+        <div className="text-sm font-light mt-2 text-success">
+        {winningMove != "--"
             ? isStockfishVerificationSuccess
               ? "Solution verified by Stockfish!"
               : isStockfishVerificationFailed
