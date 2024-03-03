@@ -3,8 +3,10 @@ import useFetchPuzzleListNoWallet from "@/hooks/useFetchPuzzleListNoWallet";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
 
-const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
-  const { puzzles } = useFetchPuzzleListNoWallet();
+const DrawerComponentWallet = ({ activeWallet, puzzleId }: { activeWallet: ConnectedWallet | undefined; puzzleId: number }) => {
+  const { puzzles } = activeWallet ? 
+    useFetchPuzzleList(activeWallet) : 
+    useFetchPuzzleListNoWallet();
   return (
     <div className="relative">
       <div className="absolute inset-0 overflow-y-scroll bg-[#010712] rounded-[16px]">
@@ -21,63 +23,21 @@ const DrawerComponentNoWallet = ({ puzzleId }: { puzzleId: number }) => {
             {puzzles.map((p: any, idx: number) => (
                 <li
                   key={idx}
-                  className={`flex justify-between px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
+                  className={`flex px-4 py-2.5 rounded-[12px] ${p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""}`}
                 >
+                  <div className="flex items-center">
+                    {p.solved ? (<img src="icons/Check.png" className="pr-3 h-4"/>) : p.failed ? (<img src="icons/Close.png" className="pr-3 h-4"/>) : ""}
+                  </div>
                   <Link href={`/play/${p.puzzle_id}`}>
                     Puzzle #{p.puzzle_id + 1}
                   </Link>
-                  <div className=""></div>
+                  <div className="grow"></div>
                   <div className="text-[#E6FA04]">{`${p.success_rate}%`}</div>
                 </li>
               ))}
             <li></li>
           </ul>
         </div>
-      </div>
-    </div>
-  );
-};
-
-const DrawerComponentWallet = ({
-  activeWallet,
-  puzzleId,
-}: {
-  activeWallet: ConnectedWallet;
-  puzzleId: number;
-}) => {
-  const { puzzles } = useFetchPuzzleList(activeWallet);
-  return (
-    <div className="fixed top-0 left-0 w-80 bg-slate-500 h-screen pt-20 overflow-scroll pb-16 px-2">
-      <div className="w-full">
-        <table className="table-fixed w-full">
-          <tbody>
-            {puzzles.map((p: any, idx: number) => (
-              <tr key={idx}>
-                <td
-                  className={`w-3/5 pl-2 ${
-                    p.puzzle_id == puzzleId
-                      ? "opacity-100 font-bold"
-                      : "opacity-70"
-                  }`}
-                >
-                  <Link href={`/play/${p.puzzle_id}`}>
-                    Puzzle #{p.puzzle_id + 1}
-                  </Link>
-                </td>
-                <td className="w-1/5 text-right">
-                  {p.solved ? "✅" : p.failed ? "❌" : ""}
-                </td>
-                <td
-                  className={`w-1/5 text-right pr-2 ${
-                    p.puzzle_id == puzzleId
-                      ? "opacity-100 font-bold"
-                      : "opacity-70"
-                  }`}
-                >{`${p.success_rate}%`}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );
@@ -90,9 +50,5 @@ export const DrawerComponent = ({
   activeWallet: ConnectedWallet | undefined;
   puzzleId: number;
 }) => {
-  return activeWallet ? (
-    <DrawerComponentWallet activeWallet={activeWallet} puzzleId={puzzleId} />
-  ) : (
-    <DrawerComponentNoWallet puzzleId={puzzleId} />
-  );
+  return <DrawerComponentWallet activeWallet={activeWallet} puzzleId={puzzleId} />
 };
