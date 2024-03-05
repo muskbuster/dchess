@@ -5,6 +5,7 @@ import useFetchStats from "@/hooks/useFetchStats";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
 import { zeroAddress } from "viem";
+import "./StatsScreen.css";
 
 type UserRating = {
   user: string;
@@ -32,14 +33,14 @@ const UserRow = ({
   const { resolvedAddress } = useEnsName(userData.user);
 
   return (
-    <tr className={`${userData.you ? "text-red-500" : ""}`}>
-      <th>{rank}</th>
+    <tr className={`border-b-1 border-slate-800 ${userData.you ? "text-red-500" : ""}`}>
+      <th className="text-[#596172]">{rank}</th>
       <td>
         <Link href={`/profile/${userData.user}`}>{resolvedAddress}</Link>
       </td>
-      <td>{userData.ratings}</td>
-      <td>{userData.solves}</td>
-      <td>{userData.minted}</td>
+      <td className="text-[#E6FA04] pixeloid-sans-bold">{userData.ratings}</td>
+      <td className="text-[#E6FA04] pixeloid-sans-bold">{userData.solves}</td>
+      <td className="text-[#E6FA04] pixeloid-sans-bold">{userData.minted}</td>
     </tr>
   );
 };
@@ -61,13 +62,13 @@ const CreatorRow = ({
   )}`;
 
   return (
-    <tr className={`${creator.you ? "text-red-500" : ""}`}>
-      <th>{rank}</th>
+    <tr className={`border-b-1 border-slate-800 ${creator.you ? "text-red-500" : ""}`}>
+      <th className="text-[#596172]">{rank}</th>
       <td>
         <Link href={`/profile/${creator.user}`}>{resolvedAddress}</Link>
       </td>
-      <td>{earned}</td>
-      <td>{creator.created}</td>
+      <td className="text-[#E6FA04] pixeloid-sans-bold">{earned}</td>
+      <td className="text-[#E6FA04] pixeloid-sans-bold">{creator.created}</td>
     </tr>
   );
 };
@@ -92,24 +93,24 @@ const StatsScreen = ({
   const { ethusd } = useETHConversion();
 
   return (
-    <div role="tablist" className="tabs tabs-lifted mx-10">
+    <div role="tablist" className="tabs tabs-lifted mx-10 pixeloid-sans">
       <input
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white text-lg"
+        className="tab [--tab-bg:#E6FA04] [--tab-border-color:#E6FA04] pixeloid-sans-bold text-lg"
         aria-label="Top Players"
         defaultChecked
       />
       <div
         role="tabpanel"
-        className="tab-content bg-slate-700 border-slate-500 rounded-box p-6"
+        className="tab-content bg-[#000000E5] border-none rounded-box p-6"
       >
         <div className="overflow-x-auto">
           <table className="table">
             {/* head */}
-            <thead className="text-white text-lg">
-              <tr>
+            <thead className="text-[#596172] text-base">
+              <tr className="border-b-1 border-slate-800">
                 <th>Rank</th>
                 <th>Player</th>
                 <th>Ratings</th>
@@ -130,18 +131,18 @@ const StatsScreen = ({
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab [--tab-bg:#334155] [--tab-border-color:#64748b] text-white text-lg"
+        className="tab [--tab-bg:#E6FA04] [--tab-border-color:#E6FA04] pixeloid-sans-bold text-lg"
         aria-label="Top Creators"
       />
       <div
         role="tabpanel"
-        className="tab-content bg-slate-700 border-slate-500 rounded-box p-6 "
+        className="tab-content bg-[#000000E5] border-none rounded-box p-6 "
       >
         <div className="overflow-x-auto">
           <table className="table">
             {/* head */}
-            <thead className="text-white text-lg">
-              <tr>
+            <thead className="text-[#596172] text-base">
+              <tr className="border-b-1 border-slate-800">
                 <th>Rank</th>
                 <th>Creator</th>
                 <th>Earned (in USD) </th>
