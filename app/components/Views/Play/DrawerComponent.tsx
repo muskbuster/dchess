@@ -13,12 +13,12 @@ const DrawerComponentWallet = ({ activeWallet, puzzleId }: { activeWallet: Conne
         <div className="sticky top-0 bg-[#010712]">
           <div className="pixeloid-sans-bold text-lg pt-6 pb-2 px-5">List Of Puzzles</div>
           <div className="border-t border-[#596174] mx-2"></div>
-        </div>
-        <div className="w-full pixeloid-sans px-3">
-          <div className="flex justify-between text-sm px-3 pt-2 pb-2 text-[#596172]">
+          <div className="flex justify-between text-sm px-6 pt-2 pb-2 text-[#596172]">
             <span>Name</span>
             <span>Success</span>
           </div>
+        </div>
+        <div className="w-full pixeloid-sans px-3">
           <ul className="">
             {puzzles.map((p: any, idx: number) => (
                 <li
