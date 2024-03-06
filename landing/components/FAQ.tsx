@@ -17,7 +17,7 @@ providing sufficient proof which created a stir among the chess community.`;
   const q3 = `How does Virtuoso Club work?`;
   const a3_1 = `We believe the key is to build incentives that reward Chess “creators” \
 for promoting and maintaining the game.`;
-  const a3_2 = `As of today, Virtuoso Club's serves as a training platform to learn the game of chess:`;
+  const a3_2 = `As of today, Virtuoso Club allows players to get better at the game of chess by solving puzzles of various difficulty:`;
   const a3_2_1 = `a) Players compete amongst each other`;
   const a3_2_2 = `b) Players mint NFTs to gain privileges`;
   const a3_2_3 = `c) Players can create puzzles and earn ETH`;
