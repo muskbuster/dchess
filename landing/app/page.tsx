@@ -13,7 +13,7 @@ export default function Home() {
     {
       title: 'a3_2_2',
       desc: `Mint NFTs to gain privileges and support creators`,
-      className: 'bg-pink-200 rounded-[16px] w-1/3 p-12 flex items-center justify-center bg-gradient-to-r from-[#393b2c] to-[#3b3d27]',
+      className: 'bg-pink-200 rounded-[16px] w-1/3 p-12 flex items-center justify-center bg-gradient-to-r from-[#3b3d27] to-[#3b3d27]',
     },
     {
       title: 'a3_2_3',
