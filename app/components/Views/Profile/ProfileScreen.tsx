@@ -14,9 +14,18 @@ const ProfileStats = ({
 }) => {
   return (
     <div>
-      <div>Rating: {profile.ratings}</div>
-      <div>Solved: {profile.totalSolved}</div>
-      <div>Attempted: {profile.totalAttempted}</div>
+      <div className="flex justify-between pb-3">
+        <span>Rating:</span>
+        <span className="text-[#E6FA04]">{profile.ratings}</span> 
+      </div>
+      <div className="flex justify-between pb-3">
+        <span>Solved:</span>
+        <span className="text-[#E6FA04]">{profile.totalSolved}</span>
+      </div>
+      <div className="flex justify-between pb-3">
+        <span>Attempted:</span>
+        <span className="text-[#E6FA04]">{profile.totalAttempted}</span>
+      </div>
     </div>
   );
 };
@@ -31,13 +40,13 @@ const ProfileScreen = ({
   const { profile } = useFetchProfile(address);
 
   return (
-    <div className="flex flex-row w-full justify-center">
-      <div className="flex flex-col space-y-5 w-1/4">
-        <div className="text-2xl mb-5"> Account</div>
+    <div className="flex flex-row w-full justify-center gap-x-10 grow pixeloid-sans">
+      <div className="flex flex-col space-y-5 w-1/4 bg-[#010712] rounded-[16px] p-10">
+        <div className="text-xl mb-5 pixeloid-sans-bold"> Account</div>
         <ProfileStats profile={profile} />
       </div>
-      <div className="flex flex-col space-y-5 w-1/2">
-        <div className="text-2xl mb-5"> NFTs Owned</div>
+      <div className="flex flex-col space-y-5 w-1/2 bg-[#010712] rounded-[16px] p-10">
+        <div className="text-xl mb-5 pixeloid-sans-bold"> NFTs Owned</div>
         <Gallery ids={profile.nftsOwned} />
       </div>
     </div>

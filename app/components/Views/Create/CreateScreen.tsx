@@ -110,7 +110,7 @@ const CreateScreen = ({
   return (
     <div className="flex flex-row justify-center">
       {createState == CreateState.Problem ? (
-        <div className="w-1/3 text-white px-12 rounded-md">
+        <div className="w-1/3 px-12 rounded-md pixeloid-sans">
           <NextEditor ref={ref} onSelect={handleSelect} />
         </div>
       ) : (

@@ -19,7 +19,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
 
   return (
     <nav className="bg-gradient-to-r from-[#E6FA040F] via-[#E6FA04CF] to-[#E6FA040F]">
-      <div className="navbar bg-[#010712] w-full z-20 top-0 start-0 py-3.5 px-6 mb-0.5">
+      <div className="navbar bg-[#010712] w-full z-20 top-0 start-0 py-3 px-6 mb-0.5">
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row space-x-2">
             <StyledButtonSecondary 
