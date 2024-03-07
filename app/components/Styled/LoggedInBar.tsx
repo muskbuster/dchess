@@ -79,16 +79,18 @@ const LoggedInBar = () => {
       <div className="flex pr-3">
         <div className="h-12 bg-[#171F2E] rounded-[12px] flex items-center px-5 text-sm">
           <div className="pr-4 flex items-center">
-            <img src="/icons/Medal.png" alt="" className="pr-2" /><span>{userRating}</span>
+            <img src="/icons/Medal.png" alt="" className="pr-2" />
+            <span>{userRating}</span>
           </div>
           <div className="flex items-center">
-            <img src="/icons/Eph.png" alt="" className="pr-2" /><span>{balance}</span>
+            <img src="/icons/Eph.png" alt="" className="pr-2" />
+            <span>{balance}</span>
           </div>
         </div>
       </div>
 
       <div
-        className="flex cursor-pointer bg-gray-100 rounded-full active:ring-4 active:ring-gray-300 duration-300"
+        className="flex cursor-pointer bg-[#171F2E] border-gray-700 p-1 border rounded-full active:ring-4 active:ring-gray-300 duration-300"
         onClick={() => setOpenDropdown(!openDropdown)}
       >
         <MinidenticonImg randomizer={userInfo?.address || zeroAddress} />
