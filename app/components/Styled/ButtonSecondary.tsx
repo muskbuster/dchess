@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
-
-import { Ubuntu, Poppins } from "next/font/google";
-
+import { Ubuntu } from "next/font/google";
 const fontStyle = Ubuntu({ weight: "400", subsets: ["latin"] });
 
 interface Props {
@@ -50,8 +48,7 @@ export const StyledButtonSecondary = ({
   ) : (
     <button
       onClick={onClick}
-      className={`btn btn-sm btn-wide btn-primary
-       ${className} ${fontStyle.className} `}
+      className={`py-4 px-5 rounded-[12px] ${className} pixeloid-sans-bold text-sm`}
       disabled={disabled}
     >
       {children}

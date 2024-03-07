@@ -1,3 +1,7 @@
 .edit-square {
   background-color: #64748b;
 }
+
+.next-chessground label {
+  padding-left: 0.5rem;
+}

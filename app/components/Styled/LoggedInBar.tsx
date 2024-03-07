@@ -75,12 +75,15 @@ const LoggedInBar = () => {
   };
 
   return (
-    <div className="flex flex-row space-x-2 items-center">
-      <div className="flex">
-        <div className="h-12 bg-white rounded-lg text-black flex items-center px-4">
-          <Ribbon className="h-6 w-6" />
-          {userRating}
-          <EthIcon className="h-6 w-6 ml-2" /> {balance} ETH
+    <div className="flex flex-row space-x-2 items-center pixeloid-sans-bold">
+      <div className="flex pr-3">
+        <div className="h-12 bg-[#171F2E] rounded-[12px] flex items-center px-5 text-sm">
+          <div className="pr-4 flex items-center">
+            <img src="/icons/Medal.png" alt="" className="pr-2" /><span>{userRating}</span>
+          </div>
+          <div className="flex items-center">
+            <img src="/icons/Eph.png" alt="" className="pr-2" /><span>{balance}</span>
+          </div>
         </div>
       </div>
 
@@ -90,7 +93,7 @@ const LoggedInBar = () => {
       >
         <MinidenticonImg randomizer={userInfo?.address || zeroAddress} />
         {openDropdown && (
-          <div className="absolute top-16 right-1 w-72 bg-slate-600 rounded-lg m-2 flex flex-col items-start px-4">
+          <div className="absolute top-16 right-1 w-72 bg-[#171F2E] rounded-[12px] m-2 flex flex-col items-start px-4">
             <div className="border-b w-full mt-3 mb-2">
               <AddressBar address={userInfo?.address || zeroAddress} />
             </div>

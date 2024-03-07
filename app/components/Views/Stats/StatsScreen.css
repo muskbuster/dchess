@@ -1,0 +1,20 @@
+.tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]), .tabs-lifted > .tab:is(input:checked) {
+    padding: 1.5rem!important;
+    color: black;
+    border: none;
+}
+
+.tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]), .tabs-lifted > .tab {
+    color: white;
+    padding: 1.5rem!important;
+    background-color: #010712;
+    border: none;
+
+}
+
+.tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]), .tabs-lifted > .tab::after {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+}
