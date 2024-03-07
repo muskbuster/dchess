@@ -164,7 +164,7 @@ const PlayScreen = ({
         onMove={onMove}
         viewOnly={viewOnly}
       />
-      <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-10">
+      <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-5">
         <div className="flex flex-row items-center space-x-10 pixeloid-sans-bold pb-4">
           {puzzleId > 0 ? (
             <Link href={`/play/${puzzleId - 1}`}>
@@ -190,8 +190,8 @@ const PlayScreen = ({
             <CaretRightIcon height={40} width={40} className="text-slate-700" />
           )}
         </div>
+        <div className="font-extralight text-xs">{`submitted by ${submitter}`}</div>
         <div className="my-5">{description}</div>
-        <div className="font-extralight">{`submitted by ${submitter}`}</div>
         {successfulSolved ? (
           <div className="mt-10 font-extrabold text-green-500">solved!</div>
         ) : isFail ? (
@@ -201,7 +201,7 @@ const PlayScreen = ({
         )}
         {isAttempt ? (
           <div className="mb-20 w-full">
-            <div className="flex flex-row justify-center space-x-2 items-start pb-6">
+            <div className="flex flex-row justify-center space-x-2 items-start mt-10">
               <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
               <FaUndo size={15} onClick={undoMove} />
             </div>
