@@ -20,14 +20,16 @@ export const BoardAreaComponent = ({
   const ref = useRef();
 
   return (
-    <div className="w-1/3 flex flex-col items-center space-y-5 min-w-[400px]">
-      <NextChessground
-        key={attempts}
-        ref={ref}
-        fen={fen}
-        onMove={onMove}
-        viewOnly={viewOnly}
-      />
+    <div className="col-span-2 flex">
+      <div className="grow max-w-[42rem]">
+          <NextChessground
+            key={attempts}
+            ref={ref}
+            fen={fen}
+            onMove={onMove}
+            viewOnly={viewOnly}
+          />
+      </div>
     </div>
   );
 };

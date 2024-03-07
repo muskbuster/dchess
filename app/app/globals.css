@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face { font-family: 'pixeloid-sans'; src: url('/fonts/PixeloidSans.ttf'); }
+@font-face { font-family: 'pixeloid-sans-bold'; src: url('/fonts/PixeloidSans-Bold.ttf'); }
+
+.pixeloid-sans { font-family: 'pixeloid-sans'; }
+.pixeloid-sans-bold { font-family: 'pixeloid-sans-bold'; }
+
+/* scrollbar */
+*::-webkit-scrollbar {
+        width: 12px;
+}
+*::-webkit-scrollbar-track {
+    background: #010712;
+    border-radius: 20px;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(128, 124, 124);
+    border-radius: 20px;
+    border: 3px solid #010712;
+}
+
