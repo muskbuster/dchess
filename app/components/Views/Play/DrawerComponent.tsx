@@ -2,6 +2,7 @@ import useFetchPuzzleList from "@/hooks/useFetchPuzzleList";
 import useFetchPuzzleListNoWallet from "@/hooks/useFetchPuzzleListNoWallet";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import Link from "next/link";
+import { FaStar } from "react-icons/fa";
 
 const DrawerComponentWallet = ({
   activeWallet,
@@ -29,7 +30,7 @@ const DrawerComponentWallet = ({
             {puzzles.map((p: any, idx: number) => (
               <li
                 key={idx}
-                className={`flex px-4 py-2.5 rounded-[12px] ${
+                className={`flex px-4 py-2.5 rounded-[12px] items-center ${
                   p.puzzle_id == puzzleId ? "bg-[#171F2E]" : ""
                 }`}
               >
@@ -42,6 +43,11 @@ const DrawerComponentWallet = ({
                     ""
                   )}
                 </div>
+                {p.minted ? (
+                  <FaStar className="text-yellow-300 mr-3 h-4" />
+                ) : (
+                  ""
+                )}
                 <Link href={`/play/${p.puzzle_id}`}>
                   Puzzle #{p.puzzle_id + 1}
                 </Link>
