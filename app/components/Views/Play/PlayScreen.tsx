@@ -159,7 +159,7 @@ const PlayScreen = ({
     <div className="grow grid grid-cols-4 justify-center gap-x-20">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
       {!isAttempt ? (
-        <div className="col-span-2">
+        <div className="col-span-2 w-[90%] h-[90%]">
           <ArtDisplay id={puzzleId} />
         </div>
       ) : (
