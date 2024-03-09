@@ -117,7 +117,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           {
             openNavLinks &&
             <div className="block sm:hidden">
-              <div className="absolute top-[115%] right-0 left-0 px-3 w-full bg-[#010712] rounded-[20px] flex flex-col items-start pixeloid-sans z-[1000]">
+              <div className="absolute top-[101%] right-0 left-0 p-3 w-full bg-[#010712] rounded-b-[20px] flex flex-col items-start pixeloid-sans z-[1000]">
                 {navLinks}
               </div>
             </div>
@@ -128,8 +128,10 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
             {loggedIn ? (
               <LoggedInBar />
             ) : (
-              <StyledButton wide={false} onClick={login} className="text-sm sm:text-lg px-3 py-3">
-                Connect Wallet
+              <StyledButton wide={false} onClick={login} className="px-3 py-3">
+                <span id="connect-wallet-btn">
+                  Connect Wallet
+                </span>
               </StyledButton>
             )}
           </div>

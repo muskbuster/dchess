@@ -55,8 +55,8 @@ export const StyledButton = ({
         onClick={onClick}
         className={`${
           wide ? "btn-wide" : ""
-        } z-10 p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[8px] border-2 
-        border-black ${className} pixeloid-sans-bold text-base disabled:bg-[#7C8701] disabled:text-black-500`}
+        } z-10 sm:p-4 bg-[#E6FA04] active:bg-yellow-700 text-black sm:text-lg rounded-[8px] border-2 
+        border-black ${className} pixeloid-sans-bold disabled:bg-[#7C8701] disabled:text-black-500`}
         disabled={disabled}
       >
         {children}
