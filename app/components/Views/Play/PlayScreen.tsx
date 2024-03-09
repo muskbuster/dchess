@@ -218,7 +218,7 @@ const PlayScreen = ({
             </div>
             <StyledButton
               waiting={isSubmissionLoading}
-              className="w-full"
+              className="w-full p-3"
               disabled={selectedMove === "--" || !loggedIn}
               onClick={handleSubmit}
             >

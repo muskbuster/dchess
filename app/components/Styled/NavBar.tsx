@@ -111,7 +111,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           {
             openNavLinks &&
             <div className="block sm:hidden">
-              <div className="absolute top-[120%] right-0 left-0 px-3 w-full bg-[#010712] rounded-[20px] flex flex-col items-start pixeloid-sans z-[1000]">
+              <div className="absolute top-[115%] right-0 left-0 px-3 w-full bg-[#010712] rounded-[20px] flex flex-col items-start pixeloid-sans z-[1000]">
                 {navLinks}
               </div>
             </div>
