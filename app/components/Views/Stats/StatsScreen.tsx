@@ -97,7 +97,7 @@ const StatsScreen = ({
   const { ethusd } = useETHConversion();
 
   return (
-    <div role="tablist" className="tabs tabs-lifted sm:mx-10 pixeloid-sans">
+    <div role="tablist" className="tabs tabs-lifted sm:mx-10 pt-2 sm:pt-0 pixeloid-sans">
       <input
         type="radio"
         name="my_tabs_2"
