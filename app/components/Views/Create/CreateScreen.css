@@ -5,3 +5,9 @@
 .next-chessground label {
   padding-left: 0.5rem;
 }
+
+@media (max-width: 639px) {
+  label, span {
+    font-size: 14px;
+  }
+}
