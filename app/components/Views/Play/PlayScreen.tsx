@@ -211,8 +211,8 @@ const PlayScreen = ({
           <></>
         )}
         {isAttempt ? (
-          <div className="mb-20 w-full">
-            <div className="flex flex-row justify-center space-x-2 items-start mt-10">
+          <div className="w-full">
+            <div className="flex flex-row justify-center space-x-2 items-start mt-4 sm:mt-10">
               <div className="font-light mb-5 text-sm">{`selected move: ${selectedMove}`}</div>
               <FaUndo size={15} onClick={undoMove} />
             </div>
