@@ -1,0 +1,10 @@
+#nav-links {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    #nav-links {
+        flex-direction: row;
+    }
+}
