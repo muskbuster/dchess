@@ -17,17 +17,17 @@ providing sufficient proof which created a stir among the chess community.`;
   return (
     <div className="flex flex-col lg:max-w-[700px] pixeloid-sans">
       <div className="">
-        <h2 className={`mb-4 text-2xl pixeloid-sans-bold`}>{q1}</h2>
+        <h2 className={`mb-4 text-xl sm:text-2xl pixeloid-sans-bold`}>{q1}</h2>
         <div className={`max-w-[750px]`}>
-          <p>{a1}</p>
+          <p className="text-sm sm:text-base">{a1}</p>
         </div>
       </div>
       <div className="lg:mt-10 mt-5">
-        <h2 className={`mb-4 text-2xl pixeloid-sans-bold`}>{q2}</h2>
+        <h2 className={`mb-4 text-xl sm:text-2xl pixeloid-sans-bold`}>{q2}</h2>
         <div className={`max-w-[750px]`}>
-          <p>{a2_1}</p>
+          <p className="text-sm sm:text-base">{a2_1}</p>
           <br />
-          <p>{a2_2}</p>
+          <p className="text-sm sm:text-base">{a2_2}</p>
         </div>
       </div>
     </div>
