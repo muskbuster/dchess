@@ -21,25 +21,19 @@ const AddressBar = ({
   const truncatedAddress = truncateAddress(address as Address);
 
   return (
-    <div className="flex flex-row rounded pb-2">
-      <div className="flex flex-row space-x-2 items-center">
-        {/* <Image src={base} alt="logo" height={iconSize} /> */}
-        <div
-          className={`text-white ${large ? "text-lg" : "text-xs"} ${
-            mono.className
-          }`}
-        >
-          {isAddress(address) ? truncatedAddress : address}
-        </div>
-        <CopyIcon
-          height={iconSize}
-          width={iconSize}
-          className="text-white active:text-slate-400"
-          onClick={() => {
-            navigator.clipboard.writeText(address);
-          }}
-        />
+    <div className="flex flex-row space-x-2 items-center justify-between pb-2 w-full">
+      {/* <Image src={base} alt="logo" height={iconSize} /> */}
+      <div className={`text-white pixeloid-sans`}>
+        {isAddress(address) ? truncatedAddress : address}
       </div>
+      <CopyIcon
+        height={iconSize}
+        width={iconSize}
+        className="text-white active:text-slate-400"
+        onClick={() => {
+          navigator.clipboard.writeText(address);
+        }}
+      />
     </div>
   );
 };

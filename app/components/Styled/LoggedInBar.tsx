@@ -95,20 +95,20 @@ const LoggedInBar = () => {
       >
         <MinidenticonImg randomizer={userInfo?.address || zeroAddress} />
         {openDropdown && (
-          <div className="absolute top-16 right-1 w-72 bg-[#171F2E] rounded-[12px] m-2 flex flex-col items-start px-4">
-            <div className="border-b w-full mt-3 mb-2">
+          <div className="absolute top-16 right-1 w-72 bg-[#171F2E] rounded-[12px] m-2 flex flex-col items-start px-5 pixeloid-sans">
+            <div className="border-b w-full mt-3 mb-2 border-gray-700">
               <AddressBar address={userInfo?.address || zeroAddress} />
             </div>
             <Link href={`/profile/${address}`}>
-              <div className="w-full my-2">
-                <StyledButton>Profile</StyledButton>
+              <div className="w-full mb-2">
+                <span>Profile</span>
               </div>
             </Link>
-            <div className="w-full mb-5">
-              <StyledButton onClick={handleLogout}>Log out</StyledButton>
+            <div className="w-full mb-2 border-b pb-3 border-gray-700">
+              <span onClick={handleLogout}>Log out</span>
             </div>
             <div className="w-full mb-5">
-              <StyledButton onClick={handleExport}>Export wallet</StyledButton>
+              <span onClick={handleExport}>Export wallet</span>
             </div>
           </div>
         )}

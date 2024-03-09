@@ -153,7 +153,6 @@ const PlayScreen = ({
     fen = canonicalFen(puzzles[puzzleId].fen);
     maxPuzzleId = puzzles.length - 1;
   }
-  console.log(isAttempt, successfulSolved, isFail);
 
   return (
     <div className="grow grid grid-cols-4 justify-center gap-x-20">
