@@ -55,6 +55,7 @@ const PlayScreen = ({
   const [attempts, setAttempts] = useState(0);
   const [viewOnly, setViewOnly] = useState(false || !loggedIn);
   const [isExploding, setIsExploding] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const puzzleIdParams = useParams().id as string;
   const puzzleId = puzzleIdParams ? Number(puzzleIdParams) : 0;
@@ -155,8 +156,11 @@ const PlayScreen = ({
   }
 
   return (
-    <div className="grow grid grid-cols-4 justify-center gap-x-20">
-      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
+    <div className="grow grid grid-cols-1 sm:grid-cols-4 justify-center gap-x-20">
+      <div className="sm:hidden text-[#E6FA04] pixeloid-sans-bold text-sm pt-3 pb-2.5" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
+        List Of Puzzles
+      </div>
+      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} isDrawerOpen={isDrawerOpen} toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} />
       {!isAttempt ? (
         <div className="col-span-2 w-[90%] h-[90%]">
           <ArtDisplay id={puzzleId} />
@@ -197,8 +201,8 @@ const PlayScreen = ({
             <CaretRightIcon height={40} width={40} className="text-slate-700" />
           )}
         </div>
-        <div className="font-extralight text-xs">{`submitted by ${submitter}`}</div>
-        <div className="my-5">{description}</div>
+        <div className="font-extralight text-xs text-center">{`submitted by ${submitter}`}</div>
+        <div className="my-5 text-center">{description}</div>
         {successfulSolved ? (
           <div className="mt-10 font-extrabold text-green-500">solved!</div>
         ) : isFail ? (
