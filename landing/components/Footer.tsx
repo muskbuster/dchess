@@ -1,4 +1,4 @@
-import { FaSquareXTwitter } from "react-icons/fa6";
+import Image from "next/image";
 
 export const Footer = () => {
   return (
@@ -9,7 +9,7 @@ export const Footer = () => {
         </aside>
         <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
           <a href="https://twitter.com/0xasdf_eth" target="_blank">
-            <img src="/icons/X.png" alt="x" className="h-6"/>
+            <Image src="/icons/X.png" alt="x" width={24} height={24} />
           </a>
         </nav>
       </div>
