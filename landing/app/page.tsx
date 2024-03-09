@@ -45,7 +45,7 @@ export default function Home() {
         <div className={`pixeloid-sans`}>
           <p className="mb-4">{a3_1}</p>
           <p className="mb-8">{a3_2}</p>
-          <div className="mb-4 flex flex-col sm:flex-row gap-5 justify-center pixeloid-sans-bold text-sm sm:text-lg text-[#E6FA04]">
+          <div className="mb-4 flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center pixeloid-sans-bold text-sm sm:text-lg text-[#E6FA04]">
             {cards.map(card => <div className={`${card.className}`}>{card.desc}</div>)}
           </div>
           <br/>
