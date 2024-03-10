@@ -36,7 +36,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           >
             <path
               d="M17.5 9.74238V11.2575H16.75V12.0151H16V12.7727H14.5V13.5303H13V14.2878H12.25V15.0454H10.75V15.803H9.25V16.5606H8.5V17.3181H7V18.0757H5.5V18.8333H3.25V18.0757H2.5V2.9242H3.25V2.16663H5.5V2.9242H7V3.68178H8.5V4.43935H9.25V5.19693H10.75V5.9545H12.25V6.71208H13V7.46966H14.5V8.22723H16V8.98481H16.75V9.74238H17.5Z"
-              fill={pathname.includes("play") ? "#E6FA04" : "white"}
+              fill={pathname.includes("play") || pathname == "/" ? "#E6FA04" : "white"}
             />
           </svg>
           <span>Play</span>
