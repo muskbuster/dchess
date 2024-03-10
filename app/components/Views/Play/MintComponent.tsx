@@ -46,7 +46,9 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
         />
       </div>
       <StyledButton className="" wide={false} onClick={handleMint}>
-        Mint | {mintPrice} ETH
+        <span className="px-3 sm:px-0">
+          Mint | {mintPrice} ETH
+        </span>
       </StyledButton>
       {mintSuccess ? (
         <div className="text-sm font-light mt-2">successfully minted</div>

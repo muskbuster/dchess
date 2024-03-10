@@ -161,8 +161,8 @@ const PlayScreen = ({
         List Of Puzzles
       </div>
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} isDrawerOpen={isDrawerOpen} toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} />
-      {!isAttempt ? (
-        <div className="col-span-2 w-[90%] h-[90%]">
+      {true ? (
+        <div className="aspect-square rounded-lg overflow-hidden sm:col-span-2 max-w-[42rem]">
           <ArtDisplay id={puzzleId} />
         </div>
       ) : (

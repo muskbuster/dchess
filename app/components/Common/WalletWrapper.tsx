@@ -103,7 +103,7 @@ const WalletWrapper = ({
       <div className="flex flex-col min-h-screen bg-[#030d1f]">
         <NavBar loggedIn={authenticated} />
         <div className="grow flex flex-col">
-          {/* {!authenticated && <PleaseLogInAlert />} */}
+          {!authenticated && <PleaseLogInAlert />}
           <div className="m-3 sm:m-5 grow flex flex-col">{screen}</div>
         </div>
         <Footer />
