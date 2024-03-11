@@ -2,7 +2,7 @@ import { FaSquareXTwitter } from "react-icons/fa6";
 
 export const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-[#E6FA040F] via-[#E6FA04CF] to-[#E6FA040F]">
+    <footer className="hidden sm:block bg-gradient-to-r from-[#E6FA040F] via-[#E6FA04CF] to-[#E6FA040F]">
       <div className="footer z-20 items-center py-2.5 bg-[#010712] mt-0.5 pixeloid-sans text-xs px-6">
         <aside className="items-center grid-flow-col">
           <p>Copyright © 2024 - All right reserved</p>

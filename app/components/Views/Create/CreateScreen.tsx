@@ -108,13 +108,13 @@ const CreateScreen = ({
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return (
-    <div className="flex flex-row justify-center">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:px-44">
       {createState == CreateState.Problem ? (
-        <div className="w-1/3 px-12 rounded-md pixeloid-sans">
+        <div className="sm:px-12 rounded-md pixeloid-sans">
           <NextEditor ref={ref} onSelect={handleSelect} />
         </div>
       ) : (
-        <div className="w-1/3">
+        <div>
           <NextChessground
             fen={fen}
             key={attempts}
@@ -124,24 +124,24 @@ const CreateScreen = ({
         </div>
       )}
 
-      <div className="ml-8 w-1/3 flex flex-col justify-center bg-[#010712] rounded-[16px] p-8 pixeloid-sans">
-        <div className="text-xl font-bold mt-10 mb-2">Description</div>
-        <div className="text-sm mb-3">
+      <div className="flex flex-col justify-center bg-[#010712] rounded-[16px] p-3 sm:p-8 pixeloid-sans">
+        <div className="text-lg sm:text-xl font-bold sm:mt-10 mb-2">Description</div>
+        <div className="text-xs sm:text-sm mb-3">
           You can leave hints here or keep it mysterious.
         </div>
         <textarea
-          className="mb-3 input input-bordered h-32 w-full p-2 bg-[#171F2E] rounded-[16px] disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
+          className="mb-3 input input-bordered h-32 w-full p-2 bg-[#171F2E] rounded-[16px] disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-xs sm:text-sm rounded-md"
           value={description}
           onChange={handleDescriptionChange}
           disabled={createState !== CreateState.Problem}
           placeholder={placeholderDescription}
         />
-        <div className="text-sm text-[#596172] mb-3">
+        <div className="text-xs sm:text-sm text-[#596172] mb-3">
           Warning: misleading descriptions can lead to a ban!
         </div>
         {createState == CreateState.Solution ? (
           <div className="flex flex-row items-start mt-2 justify-center text-[#E6FA04]">
-            <div className="font-light mb-5 text-lg mr-5">{`Winning move: ${winningMove}`}</div>
+            <div className="font-light mb-5 text-sm sm:text-lg mr-5">{`Winning move: ${winningMove}`}</div>
             {winningMove != "--" ? (
               <FaUndo className="cursor-pointer" size={15} onClick={undoMove} />
             ) : (
@@ -153,7 +153,7 @@ const CreateScreen = ({
         )}
         {createState == CreateState.Problem ? (
           <StyledButton
-            className="w-full"
+            className="w-full p-3"
             disabled={!validGame || description == ""}
             onClick={handleNext}
           >
@@ -161,7 +161,7 @@ const CreateScreen = ({
           </StyledButton>
         ) : (
           <StyledButton
-            className="w-full"
+            className="w-full p-3"
             disabled={winningMove == "--" || !isStockfishVerificationSuccess}
             onClick={handleSubmit}
           >
@@ -170,9 +170,9 @@ const CreateScreen = ({
         )}
         <div className="flex items-center pt-4">
           <img src="/icons/Exclaim.png" alt="" className="mr-3" />
-          <div className="text-sm font-extralight">{tooltip}</div>
+          <div className="text-xs sm:text-sm font-extralight">{tooltip}</div>
         </div>
-        <div className="text-sm font-light mt-2 text-success">
+        <div className="text-xs sm:text-sm font-light mt-2 text-success">
           {winningMove != "--"
             ? isStockfishVerificationSuccess
               ? "Solution verified by Stockfish!"

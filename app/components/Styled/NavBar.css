@@ -1,0 +1,17 @@
+#nav-links {
+    display: flex;
+    flex-direction: column;
+}
+
+#connect-wallet-btn {
+    font-size: 14px;
+}
+
+@media (min-width: 640px) {
+    #nav-links {
+        flex-direction: row;
+    }
+    #connect-wallet-btn {
+        font-size: 18px;
+    }
+}
