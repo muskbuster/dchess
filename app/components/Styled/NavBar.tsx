@@ -19,7 +19,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
   const router = useRouter();
   const pathname = usePathname();
   const activeStyle = "bg-[#171F2E] text-[#E6FA04]";
-  const navLinks = 
+  const navLinks = (
     <div id="nav-links" className="gap-2 w-full">
       <StyledButtonSecondary
         className={`flex items-center w-full ${
@@ -27,7 +27,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         }`}
         onClick={() => router.push("/play/0")}
       >
-        <div className="w-full flex justify-center">            
+        <div className="w-full flex justify-center">
           <svg
             className="h-5 pr-2"
             viewBox="0 0 20 21"
@@ -36,7 +36,11 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           >
             <path
               d="M17.5 9.74238V11.2575H16.75V12.0151H16V12.7727H14.5V13.5303H13V14.2878H12.25V15.0454H10.75V15.803H9.25V16.5606H8.5V17.3181H7V18.0757H5.5V18.8333H3.25V18.0757H2.5V2.9242H3.25V2.16663H5.5V2.9242H7V3.68178H8.5V4.43935H9.25V5.19693H10.75V5.9545H12.25V6.71208H13V7.46966H14.5V8.22723H16V8.98481H16.75V9.74238H17.5Z"
-              fill={pathname.includes("play") || pathname == "/" ? "#E6FA04" : "white"}
+              fill={
+                pathname.includes("play") || pathname == "/"
+                  ? "#E6FA04"
+                  : "white"
+              }
             />
           </svg>
           <span>Play</span>
@@ -61,7 +65,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           disabled={!loggedIn || !getOnLeaderboard}
           onClick={() => router.push("/stats")}
         >
-          <div className="w-full flex justify-center">            
+          <div className="w-full flex justify-center">
             <svg
               className="h-5 pr-2"
               viewBox="0 0 20 21"
@@ -76,7 +80,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
       </div>
       <div
         className={`${
-          !loggedIn || !getOnLeaderboard ? "tooltip tooltip-bottom" : ""
+          !loggedIn || !puzzleCreate ? "tooltip tooltip-bottom" : ""
         }`}
         data-tip={`${
           !loggedIn
@@ -93,7 +97,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
           disabled={!loggedIn || !puzzleCreate}
           onClick={() => router.push("/create")}
         >
-          <div className="w-full flex justify-center">            
+          <div className="w-full flex justify-center">
             <svg
               className="h-5 pr-2"
               viewBox="0 0 20 21"
@@ -107,21 +111,26 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
         </StyledButtonSecondary>
       </div>
     </div>
+  );
 
   return (
     <nav className="bg-gradient-to-r from-[#E6FA040F] via-[#E6FA04CF] to-[#E6FA040F]">
       <div className="relative navbar bg-[#010712] w-full z-20 top-0 start-0 py-3 px-3 sm:px-6 mb-[0.5px] sm:mb-0.5">
         <div className=" flex flex-row justify-between w-full">
-          <img onClick={() => setOpenNavLinks(!openNavLinks) } src="/icons/Burger.png" alt="" className="sm:hidden pr-2" />
+          <img
+            onClick={() => setOpenNavLinks(!openNavLinks)}
+            src="/icons/Burger.png"
+            alt=""
+            className="sm:hidden pr-2"
+          />
           {/* mobile */}
-          {
-            openNavLinks &&
+          {openNavLinks && (
             <div className="block sm:hidden">
               <div className="absolute top-[101%] right-0 left-0 p-3 w-full bg-[#010712] rounded-b-[20px] flex flex-col items-start pixeloid-sans z-[1000]">
                 {navLinks}
               </div>
             </div>
-          }
+          )}
           {/* desktop */}
           <div className="hidden sm:block">{navLinks}</div>
           <div>
@@ -129,9 +138,7 @@ const NavBar = ({ loggedIn = false }: { loggedIn: boolean }) => {
               <LoggedInBar />
             ) : (
               <StyledButton wide={false} onClick={login} className="px-3 py-3">
-                <span id="connect-wallet-btn">
-                  Connect Wallet
-                </span>
+                <span id="connect-wallet-btn">Connect Wallet</span>
               </StyledButton>
             )}
           </div>
