@@ -19,6 +19,7 @@ import { BoardAreaComponent } from "./BoardAreaComponent";
 import { DrawerComponent } from "./DrawerComponent";
 import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
 import useFetchRatings from "@/hooks/useFetchRatings";
+import ArtDisplay from "@/components/Common/ArtDisplay";
 
 // Documentation for the NextChessground
 // https://github.com/victorocna/next-chessground/blob/master/lib/Chessground.jsx
@@ -156,14 +157,20 @@ const PlayScreen = ({
   return (
     <div className="grow grid grid-cols-4 justify-center gap-x-20">
       <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
-      <BoardAreaComponent
-        successfulSolved={successfulSolved}
-        fetchPuzzlesLoading={fetchPuzzlesLoading}
-        attempts={attempts}
-        fen={fen}
-        onMove={onMove}
-        viewOnly={viewOnly}
-      />
+      {!isAttempt ? (
+        <div className="col-span-2 w-[90%] h-[90%]">
+          <ArtDisplay id={puzzleId} />
+        </div>
+      ) : (
+        <BoardAreaComponent
+          successfulSolved={successfulSolved}
+          fetchPuzzlesLoading={fetchPuzzlesLoading}
+          attempts={attempts}
+          fen={fen}
+          onMove={onMove}
+          viewOnly={viewOnly}
+        />
+      )}
       <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-5">
         <div className="flex flex-row items-center space-x-10 pixeloid-sans-bold pb-4">
           {puzzleId > 0 ? (

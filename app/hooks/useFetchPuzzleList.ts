@@ -28,6 +28,7 @@ export default function useFetchPuzzleList(activeWallet: ConnectedWallet) {
         ),
         solved: p.user_solved == "TRUE",
         failed: p.user_solved == "FALSE" && p.user_attempted == "TRUE",
+        minted: p.user_minted == "TRUE",
       };
     });
   }

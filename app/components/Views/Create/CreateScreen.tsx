@@ -1,5 +1,5 @@
 // @ts-ignore
-import { NextEditor, NextChessground, Stockfish } from "next-chessground";
+import { NextEditor, NextChessground } from "next-chessground";
 import { Chess } from "chess.js";
 import { useEffect, useRef, useState } from "react";
 
@@ -104,7 +104,7 @@ const CreateScreen = ({
     setViewOnly(true);
   };
 
-  const placeholderDescription = `For example: White to play. Mate in 3 moves!\n\n\Warning: misleading descriptions can lead to a ban!`;
+  const placeholderDescription = `White to play. Mate in 3 moves!`;
 
   const tooltip = `80% of the proceeds from mint of this puzzle will go to the creator`;
   return (
@@ -126,7 +126,9 @@ const CreateScreen = ({
 
       <div className="ml-8 w-1/3 flex flex-col justify-center bg-[#010712] rounded-[16px] p-8 pixeloid-sans">
         <div className="text-xl font-bold mt-10 mb-2">Description</div>
-        <div className="text-sm mb-3">You can leave hints here or keep it mysterious.</div>
+        <div className="text-sm mb-3">
+          You can leave hints here or keep it mysterious.
+        </div>
         <textarea
           className="mb-3 input input-bordered h-32 w-full p-2 bg-[#171F2E] rounded-[16px] disabled:bg-slate-200 disabled:text-slate-700 disabled:border-slate-300 text-sm rounded-md"
           value={description}
@@ -134,7 +136,9 @@ const CreateScreen = ({
           disabled={createState !== CreateState.Problem}
           placeholder={placeholderDescription}
         />
-        <div className="text-sm text-[#596172] mb-3">Warning: misleading descriptions can lead to a ban!</div>
+        <div className="text-sm text-[#596172] mb-3">
+          Warning: misleading descriptions can lead to a ban!
+        </div>
         {createState == CreateState.Solution ? (
           <div className="flex flex-row items-start mt-2 justify-center text-[#E6FA04]">
             <div className="font-light mb-5 text-lg mr-5">{`Winning move: ${winningMove}`}</div>
@@ -165,11 +169,11 @@ const CreateScreen = ({
           </StyledButton>
         )}
         <div className="flex items-center pt-4">
-          <img src="/icons/Exclaim.png" alt="" className="mr-3"/>
+          <img src="/icons/Exclaim.png" alt="" className="mr-3" />
           <div className="text-sm font-extralight">{tooltip}</div>
         </div>
         <div className="text-sm font-light mt-2 text-success">
-        {winningMove != "--"
+          {winningMove != "--"
             ? isStockfishVerificationSuccess
               ? "Solution verified by Stockfish!"
               : isStockfishVerificationFailed

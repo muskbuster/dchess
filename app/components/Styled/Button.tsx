@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 
-import { Ubuntu, Pixelify_Sans } from "next/font/google";
-
-const fontStyle = Ubuntu({ weight: "400", subsets: ["latin"] });
+import { Pixelify_Sans } from "next/font/google";
 
 interface Props {
   children: ReactNode;
@@ -25,8 +23,8 @@ export const StyledButton = ({
     <button
       className={`btn ${
         wide ? "btn-wide" : ""
-      } text-black text-lg disabled:bg-yellow-200 disabled:text-gray-500
-      ${className} ${fontStyle.className}`}
+      } text-black text-lg disabled:bg-[#E6FA04] disabled:text-gray-500
+      ${className} pixeloid-sans-bold`}
       disabled
     >
       <svg
@@ -55,12 +53,18 @@ export const StyledButton = ({
     <div className="relative z-0">
       <button
         onClick={onClick}
-        className={`${wide ? "btn-wide" : ""} z-10 p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[12px] border-2 border-black ${className} pixeloid-sans-bold text-base disabled:bg-[#7C8701] disabled:text-black-500`}
+        className={`${
+          wide ? "btn-wide" : ""
+        } z-10 p-4 bg-[#E6FA04] active:bg-yellow-700 text-black text-lg rounded-[8px] border-2 
+        border-black ${className} pixeloid-sans-bold text-base disabled:bg-[#7C8701] disabled:text-black-500`}
         disabled={disabled}
       >
         {children}
       </button>
-      <button disabled={disabled} className="absolute bg-[#E6FA04] rounded-[12px] top-0.5 left-0.5 -right-0.5 -bottom-0.5 -z-[1] disabled:bg-[#7C8701] disabled:text-black-500"/>
+      <button
+        disabled={disabled}
+        className="absolute bg-[#E6FA04] rounded-[8px] top-0.5 left-0.5 -right-0.5 -bottom-0.5 -z-[1] disabled:bg-[#7C8701] disabled:text-black-500"
+      />
     </div>
   );
 };
