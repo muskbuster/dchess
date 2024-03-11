@@ -29,7 +29,7 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
   }, [isSuccess]);
 
   return (
-    <div>
+    <div className="w-full">
       <div className="my-2 flex flex-row items-center space-x-2 justify-center">
         <FaMinusSquare
           size={30}
@@ -45,10 +45,8 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
           onClick={() => setMintCount(mintCount + 1)}
         />
       </div>
-      <StyledButton className="" wide={false} onClick={handleMint}>
-        <span className="px-3 sm:px-0">
+      <StyledButton className="w-full p-3" wide={false} onClick={handleMint}>
           Mint | {mintPrice} ETH
-        </span>
       </StyledButton>
       {mintSuccess ? (
         <div className="text-sm font-light mt-2">successfully minted</div>
