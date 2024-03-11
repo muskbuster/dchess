@@ -10,7 +10,7 @@ const ArtDisplay = ({ id }: { id: number }) => {
       srcDoc={art}
       style={{
         minWidth: "100%",
-        minHeight: "100%",
+        aspectRatio: 1 / 1,
       }}
     />
   );
