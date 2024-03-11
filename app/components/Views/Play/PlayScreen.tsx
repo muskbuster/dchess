@@ -67,11 +67,13 @@ const PlayScreen = ({
 
   const { data: attempted, refetch: refetchHasAttempted } = useHasAttempted(
     puzzleId,
-    activeWallet
+    activeWallet,
+    loggedIn
   );
   const { data: solved, refetch: refetchHasSolved } = useHasSolved(
     puzzleId,
-    activeWallet
+    activeWallet,
+    loggedIn
   );
 
   useEffect(() => {
@@ -160,7 +162,13 @@ const PlayScreen = ({
       <div className="sm:hidden text-[#E6FA04] pixeloid-sans-bold text-sm pt-3 pb-2.5" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
         List Of Puzzles
       </div>
-      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} isDrawerOpen={isDrawerOpen} toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)} />
+      <DrawerComponent 
+        loggedIn={loggedIn} 
+        activeWallet={activeWallet} 
+        puzzleId={puzzleId} 
+        isDrawerOpen={isDrawerOpen} 
+        toggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)}
+      />
       {!isAttempt ? (
         <div className="aspect-square rounded-lg overflow-hidden sm:col-span-2 max-w-[42rem]">
           <ArtDisplay id={puzzleId} />
@@ -173,6 +181,7 @@ const PlayScreen = ({
           fen={fen}
           onMove={onMove}
           viewOnly={viewOnly}
+          loggedIn={loggedIn}
         />
       )}
       <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-5">

@@ -9,6 +9,7 @@ import StatsScreen from "@/components/Views/Stats/StatsScreen";
 import ProfileScreen from "@/components/Views/Profile/ProfileScreen";
 import { Footer } from "../Styled/Footer";
 import { UserInfoProvider } from "@/contexts/UserInfoContext";
+import { Loader } from "../Styled/Loader";
 
 const PleaseLogInAlert = () => {
   return (
@@ -94,7 +95,7 @@ const WalletWrapper = ({
 
   const LoadingScreen = (
     <div className="flex items-center justify-center w-screen h-screen">
-      <span className="loading loading-spinner loading-lg"></span>
+      <Loader />
     </div>
   );
 

@@ -116,13 +116,15 @@ export const DrawerComponent = ({
   puzzleId,
   isDrawerOpen,
   toggleDrawer,
+  loggedIn
 }: {
   activeWallet: ConnectedWallet | undefined;
   puzzleId: number;
   isDrawerOpen: boolean;
   toggleDrawer: any;
+  loggedIn: boolean;
 }) => {
-  const wallet = activeWallet ? 
+  const wallet = loggedIn && activeWallet ? 
     <DrawerComponentWallet activeWallet={activeWallet} puzzleId={puzzleId} toggleDrawer={toggleDrawer} /> :
     <DrawerComponentNoWallet puzzleId={puzzleId} toggleDrawer={toggleDrawer} />;
   return (

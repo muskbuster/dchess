@@ -28,6 +28,8 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
     }
   }, [isSuccess]);
 
+  const tooltip = `minting supports puzzle creators`;
+
   return (
     <div className="w-full">
       <div className="my-2 flex flex-row items-center space-x-2 justify-center">
@@ -51,7 +53,10 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
       {mintSuccess ? (
         <div className="text-sm font-light mt-2">successfully minted</div>
       ) : (
-        <></>
+        <div className="flex items-center mt-4">
+          <img src="/icons/Exclaim.png" alt="" className="mr-3" />
+          <div className="text-sm font-extralight">{tooltip}</div>
+        </div>
       )}
     </div>
   );
