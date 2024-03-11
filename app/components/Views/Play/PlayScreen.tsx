@@ -66,11 +66,13 @@ const PlayScreen = ({
 
   const { data: attempted, refetch: refetchHasAttempted } = useHasAttempted(
     puzzleId,
-    activeWallet
+    activeWallet,
+    loggedIn
   );
   const { data: solved, refetch: refetchHasSolved } = useHasSolved(
     puzzleId,
-    activeWallet
+    activeWallet,
+    loggedIn
   );
 
   useEffect(() => {
@@ -156,7 +158,11 @@ const PlayScreen = ({
 
   return (
     <div className="grow grid grid-cols-4 justify-center gap-x-20">
-      <DrawerComponent activeWallet={activeWallet} puzzleId={puzzleId} />
+      <DrawerComponent
+        loggedIn={loggedIn}
+        activeWallet={activeWallet}
+        puzzleId={puzzleId}
+      />
       {!isAttempt ? (
         <div className="col-span-2 w-[90%] h-[90%]">
           <ArtDisplay id={puzzleId} />
@@ -169,6 +175,7 @@ const PlayScreen = ({
           fen={fen}
           onMove={onMove}
           viewOnly={viewOnly}
+          loggedIn={loggedIn}
         />
       )}
       <div className="flex flex-col items-center justify-center bg-[#010712] rounded-[16px] pixeloid-sans p-5">

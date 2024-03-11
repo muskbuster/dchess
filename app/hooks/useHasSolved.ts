@@ -7,9 +7,10 @@ const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
 export default function useHasSolved(
   puzzleId: number,
-  activeWallet: ConnectedWallet | undefined
+  activeWallet: ConnectedWallet | undefined,
+  loggedIn: boolean
 ) {
-  const address = activeWallet?.address || zeroAddress;
+  const address = loggedIn && activeWallet ? activeWallet.address : zeroAddress;
   const { data, isLoading, isError, refetch, error } = useContractRead({
     abi: DChess.abi,
     address: CONTRACT_ADDRESS,
