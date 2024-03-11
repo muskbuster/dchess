@@ -9,6 +9,7 @@ export const BoardAreaComponent = ({
   fen,
   onMove,
   viewOnly,
+  loggedIn,
 }: {
   successfulSolved: any;
   fetchPuzzlesLoading: any;
@@ -16,19 +17,20 @@ export const BoardAreaComponent = ({
   fen: any;
   onMove: any;
   viewOnly: any;
+  loggedIn: boolean;
 }) => {
   const ref = useRef();
 
   return (
-    <div className="col-span-2 flex">
+    <div className={`col-span-2 flex ${!loggedIn ? "brightness-50" : ""}`}>
       <div className="grow max-w-[42rem]">
-          <NextChessground
-            key={attempts}
-            ref={ref}
-            fen={fen}
-            onMove={onMove}
-            viewOnly={viewOnly}
-          />
+        <NextChessground
+          key={attempts}
+          ref={ref}
+          fen={fen}
+          onMove={onMove}
+          viewOnly={viewOnly}
+        />
       </div>
     </div>
   );
