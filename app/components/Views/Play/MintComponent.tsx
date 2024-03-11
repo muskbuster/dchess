@@ -31,7 +31,7 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
   const tooltip = `minting supports puzzle creators`;
 
   return (
-    <div>
+    <div className="w-full">
       <div className="my-2 flex flex-row items-center space-x-2 justify-center">
         <FaMinusSquare
           size={30}
@@ -47,11 +47,9 @@ export const MintComponent = ({ puzzleId }: { puzzleId: number }) => {
           onClick={() => setMintCount(mintCount + 1)}
         />
       </div>
-      <div>
-        <StyledButton className="w-full" wide={false} onClick={handleMint}>
+      <StyledButton className="w-full p-3" wide={false} onClick={handleMint}>
           Mint | {mintPrice} ETH
-        </StyledButton>
-      </div>
+      </StyledButton>
       {mintSuccess ? (
         <div className="text-sm font-light mt-2">successfully minted</div>
       ) : (
