@@ -30,12 +30,12 @@ export default function useStockfishVerification(
     retry: true,
     retryDelay: (attempt) => attempt * 1000,
   });
-  if (isError) console.log("lichess error: ", error);
+  if (isError) console.log("error: ", error);
 
   let isStockfishVerificationSuccess = false;
   let isStockfishVerificationFailed = false;
   if (!isError && !isLoading && winningMove != "--" && data) {
-    const actualMove = data["sans"];
+    const actualMove = data.san;
     if (winningMove == actualMove) {
       isStockfishVerificationSuccess = true;
     } else {
