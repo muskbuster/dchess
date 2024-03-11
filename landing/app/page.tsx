@@ -36,12 +36,12 @@ export default function Home() {
         <div className="w-full lg:w-2/3 flex flex-col justify-center">
           <FAQ />
         </div>
-        <div className="lg:w-1/3 mr-0 flex flex-col items-center md:w-[600px] md:h-[600px] w-[95vw] h-[95vw] rounded-lg overflow-hidden">
+        <div className="lg:w-1/3 mr-0 flex flex-col items-center rounded-lg overflow-hidden">
           <IframeResizer
             src="https://www.fiveoutofnine.com/api/chess/asset/220"
             style={{
               minWidth: "100%",
-              minHeight: "100%",
+              aspectRatio: 1 / 1,
             }}
           />
           <div className="mt-2 text-xs opacity-30">
