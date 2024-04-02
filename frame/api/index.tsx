@@ -11,7 +11,7 @@ import { serveStatic } from "frog/serve-static";
 // }
 
 export const app = new Frog({
-  basePath: "/api",
+  basePath: "/",
 });
 
 app.frame("/", (c) => {
