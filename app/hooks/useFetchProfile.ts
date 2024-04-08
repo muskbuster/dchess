@@ -15,8 +15,11 @@ export default function useFetchProfile(userAddress: string) {
   let profile = {
     totalSolved: 0,
     totalAttempted: 0,
+    totalMinted: 0,
+    points: 0,
     ratings: 1000,
     nftsOwned: [],
+    farcasterInfo: null,
   };
   if (isError) console.log(error);
 

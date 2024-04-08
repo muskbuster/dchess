@@ -3,16 +3,13 @@ import { minidenticon } from "minidenticons";
 import { useEffect, useMemo, useState } from "react";
 
 import { useBalance } from "wagmi";
-import Ribbon from "../../public/Ribbon.svg";
-import EthIcon from "../../public/Ethereum.svg";
 import useFetchRatings from "@/hooks/useFetchRatings";
-import { Address, zeroAddress } from "viem";
+import { zeroAddress } from "viem";
 import { useAccount } from "wagmi";
 import Image from "next/image";
 import AddressBar from "@/components/Common/AddressBar";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
-import { StyledButton } from "@/components/Styled/Button";
 import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
 
 const MinidenticonImg = ({ randomizer }: { randomizer: string }) => {
@@ -61,9 +58,11 @@ const LoggedInBar = () => {
   const router = useRouter();
 
   let balance = "0.0000";
-  if (!isError && !isLoading) {
+  if (!isError && !isLoading && rawBalance) {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
+
+  const points = "0000";
 
   const handleLogout = () => {
     logout();
@@ -79,12 +78,50 @@ const LoggedInBar = () => {
       <div className="flex pr-3">
         <div className="h-12 bg-[#171F2E] rounded-[12px] flex items-center px-5 text-sm">
           <div className="pr-4 flex items-center">
-            <img src="/icons/Medal.png" alt="" className="pr-2" />
-            <span>{userRating}</span>
+            <Image
+              src="/icons/Fire.png"
+              width={30}
+              height={30}
+              alt="Fire"
+              className="pr-2"
+            />
+            <span
+              className={`${points == "0000" ? `text-gray-600` : `text-white`}`}
+            >
+              {points}
+            </span>
+          </div>
+          <div className="pr-4 flex items-center">
+            <Image
+              src="/icons/Medal.png"
+              width={30}
+              height={30}
+              alt="Medal"
+              className="pr-2"
+            />
+            <span
+              className={`${
+                userRating == "1000" ? `text-gray-600` : `text-white`
+              }`}
+            >
+              {userRating}
+            </span>
           </div>
           <div className="flex items-center">
-            <img src="/icons/Eph.png" alt="" className="pr-2" />
-            <span>{balance}</span>
+            <Image
+              src="/icons/Eph.png"
+              width={30}
+              height={30}
+              alt="Eth"
+              className="pr-2"
+            />
+            <span
+              className={`${
+                balance == "0.0000" ? `text-gray-600` : `text-white`
+              }`}
+            >
+              {balance}
+            </span>
           </div>
         </div>
       </div>

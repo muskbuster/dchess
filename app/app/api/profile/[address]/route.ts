@@ -17,7 +17,13 @@ export async function GET(
     const profile = {
       totalSolved: info.length > 0 ? info[0].solves : 0,
       totalAttempted: info.length > 0 ? info[0].attempts : 0,
+      totalMinted: 0,
+      points: 0,
       ratings: info.length > 0 ? info[0].ratings : 1000,
+      farcasterInfo: {
+        username: "vitalik.eth",
+        displayName: "Vitalik Buterin",
+      },
       nftsOwned,
     };
     return NextResponse.json(JSON.stringify(profile), { status: 200 });
