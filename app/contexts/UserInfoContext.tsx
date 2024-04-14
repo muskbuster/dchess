@@ -4,6 +4,7 @@ import { Address, zeroAddress } from "viem";
 type UserInfoType = {
   address: Address;
   rating: number;
+  points: string;
 };
 
 export const UserInfoContext = createContext<UserInfoType | undefined>(
@@ -15,6 +16,7 @@ const UserInfoDispatchContext = createContext<any>(null);
 const initialValue: UserInfoType = {
   address: zeroAddress,
   rating: 1000,
+  points: "0000",
 };
 
 export function UserInfoProvider({ children }: { children: ReactNode }) {
@@ -43,11 +45,19 @@ function userInfoReducer(userInfo: UserInfoType, action: any) {
       return {
         address: action.payload.address,
         rating: userInfo.rating,
+        points: userInfo.points,
       };
     case "UPDATE_RATING":
       return {
         address: userInfo.address,
         rating: action.payload.rating,
+        points: userInfo.points,
+      };
+    case "UPDATE_POINTS":
+      return {
+        address: userInfo.address,
+        rating: userInfo.rating,
+        points: action.payload.points,
       };
     default:
       throw Error("Unknown action: " + action.type);

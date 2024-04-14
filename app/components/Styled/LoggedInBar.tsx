@@ -11,6 +11,7 @@ import AddressBar from "@/components/Common/AddressBar";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
+import useFetchPoints from "@/hooks/useFetchPoints";
 
 const MinidenticonImg = ({ randomizer }: { randomizer: string }) => {
   const svgURI = useMemo(
@@ -45,6 +46,7 @@ const LoggedInBar = () => {
   const userInfo = useUserInfo();
 
   const { rating: userRating } = useFetchRatings(address);
+  const { points: userPoints } = useFetchPoints(address);
   useEffect(() => {
     dispatch({
       type: "UPDATE_RATING",
@@ -53,6 +55,14 @@ const LoggedInBar = () => {
       },
     });
   }, [userRating, dispatch]);
+  useEffect(() => {
+    dispatch({
+      type: "UPDATE_POINTS",
+      payload: {
+        rating: userPoints,
+      },
+    });
+  }, [userPoints, dispatch]);
 
   const { logout, exportWallet } = usePrivy();
   const router = useRouter();
@@ -61,8 +71,6 @@ const LoggedInBar = () => {
   if (!isError && !isLoading && rawBalance) {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
-
-  const points = "0000";
 
   const handleLogout = () => {
     logout();
@@ -86,9 +94,11 @@ const LoggedInBar = () => {
               className="pr-2"
             />
             <span
-              className={`${points == "0000" ? `text-gray-600` : `text-white`}`}
+              className={`${
+                userPoints == "0000" ? `text-gray-600` : `text-white`
+              }`}
             >
-              {points}
+              {userPoints}
             </span>
           </div>
           <div className="pr-4 flex items-center">
