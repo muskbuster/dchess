@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 import { unstable_noStore as noStore } from "next/cache";
+import prisma from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -13,17 +14,19 @@ export async function GET(
   try {
     const info = await getPlayerInfo(userAddress.slice(2));
     const nftsOwned = await getNftsOwned(userAddress.slice(2));
+    const mintedCount = await getMinted(userAddress);
+    const points = await getPoints(userAddress);
+    const ens = await getEns(userAddress);
+    const farcasterUsername = await getFarcasterUsername(userAddress);
 
     const profile = {
       totalSolved: info.length > 0 ? info[0].solves : 0,
       totalAttempted: info.length > 0 ? info[0].attempts : 0,
-      totalMinted: 0,
-      points: 0,
+      totalMinted: mintedCount,
+      points: points,
       ratings: info.length > 0 ? info[0].ratings : 1000,
-      farcasterInfo: {
-        username: "vitalik.eth",
-        displayName: "Vitalik Buterin",
-      },
+      farcasterUsername: farcasterUsername,
+      ens: ens,
       nftsOwned,
     };
     return NextResponse.json(JSON.stringify(profile), { status: 200 });
@@ -183,4 +186,37 @@ async function nftsSent(userAddress: string) {
       value: r.value,
     };
   });
+}
+
+async function getMinted(address: string): Promise<number> {
+  const adjustedAddress = address.slice(2).toLowerCase();
+  const count = await prisma.base_token_minted_token_minted.count({
+    where: {
+      solver: Buffer.from(adjustedAddress, "hex"),
+    },
+  });
+  return count;
+}
+
+async function getPoints(address: string) {
+  const user = await prisma.user.findFirst({ where: { address: address } });
+  if (!user) return 0;
+
+  return user.points;
+}
+
+async function getEns(address: string) {
+  const user = await prisma.user.findFirst({ where: { address: address } });
+
+  if (!user) return null;
+
+  return user.ens;
+}
+
+async function getFarcasterUsername(address: string) {
+  const user = await prisma.user.findFirst({ where: { address: address } });
+
+  if (!user) return null;
+
+  return user.farcaster;
 }

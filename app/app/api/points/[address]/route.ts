@@ -1,10 +1,3 @@
-// param is the action and points are updated as such, maybe it should just be refresh points
-// each time some action is done, points are refreshed and updated
-// many queries, check last updated at time?
-// more secure vs less cost
-// going for more secure, cost can always be brought down later
-// what do we need to check:
-// per user, all attempts, solved, minted and shared
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
@@ -19,6 +12,18 @@ export async function GET(
   points += (await solveCount(userAddress)) * 50;
   points += (await mintCount(userAddress)) * 250;
   points += postCount(userAddress) * 500;
+
+  // persist points
+  await prisma.user.upsert({
+    where: { address: userAddress },
+    update: {
+      points: points,
+    },
+    create: {
+      address: userAddress,
+      points: points,
+    },
+  });
 
   const result = {
     points,

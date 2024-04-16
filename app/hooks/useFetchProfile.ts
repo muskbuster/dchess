@@ -19,7 +19,8 @@ export default function useFetchProfile(userAddress: string) {
     points: 0,
     ratings: 1000,
     nftsOwned: [],
-    farcasterInfo: null,
+    farcasterUsername: null,
+    ens: null,
   };
   if (isError) console.log(error);
 

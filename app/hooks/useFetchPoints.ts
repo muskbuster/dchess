@@ -23,7 +23,6 @@ export default function useFetchPoints(userAddress: string | undefined) {
 
   if (!isError && !isLoading && data) {
     points = data.points.toString();
-    // points = JSON.parse(data!);
   }
 
   return { isLoading, points };

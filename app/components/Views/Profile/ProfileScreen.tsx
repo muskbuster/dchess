@@ -14,13 +14,16 @@ const ProfileStats = ({
     totalAttempted: number;
     totalMinted: number;
     points: number;
-    farcasterInfo: { username: string; displayName: string } | null;
+    farcasterUsername: string | null;
+    ens: string | null;
   };
 }) => {
   return (
     <div className="text-sm sm:text-base">
-      {profile.farcasterInfo && (
-        <div className="flex justify-between pb-5">
+      {profile.farcasterUsername && (
+        <div
+          className={`flex justify-between ${profile.ens ? "pb-3" : "pb-5"}`}
+        >
           <span>Farcaster:</span>
           <div className="flex flex-row justify-center">
             <Image
@@ -31,14 +34,21 @@ const ProfileStats = ({
               className="mr-2"
             />
             <Link
-              href={`https://warpcast.com/${profile.farcasterInfo.username}`}
+              href={`https://warpcast.com/${profile.farcasterUsername}`}
               target="_blank"
             >
               <span className="text-[#E6FA04]">
-                {profile.farcasterInfo.displayName} (@
-                {profile.farcasterInfo.username})
+                @{profile.farcasterUsername}
               </span>
             </Link>
+          </div>
+        </div>
+      )}
+      {profile.ens && (
+        <div className="flex justify-between pb-5">
+          <span>ENS:</span>
+          <div className="flex flex-row justify-center">
+            <span className="text-[#E6FA04]">{profile.ens}</span>
           </div>
         </div>
       )}

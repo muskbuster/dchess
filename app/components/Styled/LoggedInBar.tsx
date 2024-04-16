@@ -12,6 +12,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useUserInfo, useUserInfoDispatch } from "@/contexts/UserInfoContext";
 import useFetchPoints from "@/hooks/useFetchPoints";
+import useResolveSocials from "@/hooks/useResolveSocials";
 
 const MinidenticonImg = ({ randomizer }: { randomizer: string }) => {
   const svgURI = useMemo(
@@ -71,6 +72,8 @@ const LoggedInBar = () => {
   if (!isError && !isLoading && rawBalance) {
     balance = Number(rawBalance?.formatted).toFixed(4);
   }
+
+  useResolveSocials(address);
 
   const handleLogout = () => {
     logout();

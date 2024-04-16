@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { zeroAddress } from "viem";
 
+/* TEMPORARILY DISABLING ACCESS CONTROL */
+
+/*
 async function getAccessControl(userAddress: string) {
   return (await fetch(`/api/access/${userAddress}`).then((res) =>
     res.json()
@@ -21,6 +24,20 @@ export default function useAccessControl(userAddress: string) {
     const nftCount = JSON.parse(data!)?.total;
     if (nftCount >= 1) getOnLeaderboard = true;
     if (nftCount >= 5) puzzleCreate = true;
+  }
+
+  return { isLoading, getOnLeaderboard, puzzleCreate };
+}
+*/
+
+export default function useAccessControl(userAddress: string) {
+  let getOnLeaderboard = false;
+  let puzzleCreate = false;
+  let isLoading = false;
+
+  if (userAddress != zeroAddress) {
+    getOnLeaderboard = true;
+    puzzleCreate = true;
   }
 
   return { isLoading, getOnLeaderboard, puzzleCreate };
