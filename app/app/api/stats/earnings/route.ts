@@ -87,7 +87,7 @@ FROM
 WHERE
     latest.latest_block_number = all_ratings.block_number
 ORDER BY
-    creators.count DESC`;
+    minted_count DESC`;
 
   return rows.map((r) => {
     return {
