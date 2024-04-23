@@ -2,8 +2,6 @@ import { zeroAddress } from "viem";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import useFetchRatingsStats from "@/hooks/stats/useFetchRatingsStats";
 import { CanonicalUsername } from "./CanonicalUsername";
-import useResolveSocials from "@/hooks/useResolveSocials";
-import useFetchPoints from "@/hooks/useFetchPoints";
 
 type UserRating = {
   address: string;
