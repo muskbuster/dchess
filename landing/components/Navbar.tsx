@@ -11,9 +11,11 @@ export const Navbar = () => {
         <div className="flex flex-row justify-between w-full">
           <div className="lg:flex flex-row space-x-3 items-center">
             <Image src={logo} alt="logo" width={40} />
-            <p className="text-white pixeloid-sans-bold text-xl hidden sm:inline">Virtuoso Club</p>
+            <p className="text-white pixeloid-sans-bold text-xl hidden sm:inline">
+              Virtuoso Club
+            </p>
           </div>
-          <Link href="https://testnet.virtuoso.club/" target="_blank">
+          <Link href="https://app.virtuoso.club/" target="_blank">
             <StyledButton wide={false}>Launch App</StyledButton>
           </Link>
         </div>
