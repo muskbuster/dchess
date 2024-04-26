@@ -27,6 +27,8 @@ To refresh deployment, simply delete the folder (for example `deployments/base-s
 -   `yarn hardhat --network <networkName> deploy` $\rightarrow$ will deploy the code to the right network
 -   `yarn hardhat verify --network base-sepolia <CONTRACT_ADDRESS> ...PARAMS` to verify contracts
 
+More info: https://github.com/wighawag/hardhat-deploy
+
 #### Post-deployment
 
 -   `yarn hardhat --network <networkName> run scripts/whitelistCreators.ts` $\rightarrow$ whitelists creators found in `/data/whitelistedCreators.json`. This is used for updating the list (use this for mainnet as well). Make sure that as you update the list. You also copy the data file to FE. Otherwise, it will be using the previous state.
