@@ -57,7 +57,6 @@ app.frame("/", (c) => {
 app.frame("/stats/:username", async (c) => {
   const username = c.req.param("username");
   const stats = await findStatsByUsername(username);
-  // fetch stats from db
   const points = stats.points;
   const ratings = stats.ratings;
   const puzzlesSolved = stats.solves;
