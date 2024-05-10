@@ -15,6 +15,7 @@ import { findStatsByUsername } from "./database.js";
 
 export const app = new Frog({
   ui: { vars },
+  basePath: "/api",
 });
 
 app.frame("/", (c) => {
