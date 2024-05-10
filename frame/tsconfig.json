@@ -16,7 +16,10 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["frog/client"]
+    "types": ["frog/client", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.mtsx"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.mtsx"],
+  "ts-node": {
+    "esm": true // «———— enabling ESM for ts-node
+  }
 }

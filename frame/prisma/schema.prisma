@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  puzzleId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  address   String   @unique
+  points    Int      @default(0)
+  ens       String?
+  farcaster String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Post      Post[]
+}
+
+model base_approval_for_all_approval_for_all {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  account          Bytes
+  operator         Bytes
+  approved         Boolean
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}
+
+model base_ownership_transferred_ownership_transferred {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  previous_owner   Bytes
+  new_owner        Bytes
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}
+
+model base_puzzle_added_puzzle_added {
+  vid               BigInt
+  block             Int
+  id                Bytes
+  internal_token_id Decimal @db.Decimal
+  fen               String
+  solution_hash     Bytes
+  board             Decimal @db.Decimal
+  creator           Bytes
+  description       String
+  block_number      Decimal @db.Decimal
+  block_timestamp   Decimal @db.Decimal
+  transaction_hash  Bytes
+  gs_chain          String? @map("_gs_chain")
+  gs_gid            String  @id @map("_gs_gid")
+}
+
+model base_puzzle_attempted_puzzle_attempted {
+  vid                 BigInt
+  block               Int
+  id                  Bytes
+  internal_token_id   Decimal @db.Decimal
+  user                Bytes
+  solution_submission Bytes
+  block_number        Decimal @db.Decimal
+  block_timestamp     Decimal @db.Decimal
+  transaction_hash    Bytes
+  gs_chain            String? @map("_gs_chain")
+  gs_gid              String  @id @map("_gs_gid")
+}
+
+model base_puzzle_rating_changed_puzzle_rating_changed {
+  vid               BigInt
+  block             Int
+  id                Bytes
+  internal_token_id Decimal @db.Decimal
+  new_puzzle_rating Decimal @db.Decimal
+  block_number      Decimal @db.Decimal
+  block_timestamp   Decimal @db.Decimal
+  transaction_hash  Bytes
+  gs_chain          String? @map("_gs_chain")
+  gs_gid            String  @id @map("_gs_gid")
+}
+
+model base_puzzle_solved_puzzle_solved {
+  vid               BigInt
+  block             Int
+  id                Bytes
+  internal_token_id Decimal @db.Decimal
+  user              Bytes
+  block_number      Decimal @db.Decimal
+  block_timestamp   Decimal @db.Decimal
+  transaction_hash  Bytes
+  gs_chain          String? @map("_gs_chain")
+  gs_gid            String  @id @map("_gs_gid")
+}
+
+model base_token_minted_token_minted {
+  vid               BigInt
+  block             Int
+  id                Bytes
+  internal_token_id Decimal @db.Decimal
+  solver            Bytes
+  block_number      Decimal @db.Decimal
+  block_timestamp   Decimal @db.Decimal
+  transaction_hash  Bytes
+  gs_chain          String? @map("_gs_chain")
+  gs_gid            String  @id @map("_gs_gid")
+}
+
+model base_transfer_batch_transfer_batch {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  operator         Bytes
+  from             Bytes
+  to               Bytes
+  ids              Decimal[] @db.Decimal
+  values           Decimal[] @db.Decimal
+  block_number     Decimal   @db.Decimal
+  block_timestamp  Decimal   @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String?   @map("_gs_chain")
+  gs_gid           String    @id @map("_gs_gid")
+}
+
+model base_transfer_single_transfer_single {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  operator         Bytes
+  from             Bytes
+  to               Bytes
+  d_chess_id       Decimal @db.Decimal
+  value            Decimal @db.Decimal
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}
+
+model base_uri_uri {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  value            String
+  d_chess_id       Decimal @db.Decimal
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}
+
+model base_user_rating_changed_user_rating_changed {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  user             Bytes
+  new_user_rating  Decimal @db.Decimal
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}
+
+model base_withdraw_all_withdraw_all {
+  vid              BigInt
+  block            Int
+  id               Bytes
+  amount           Decimal @db.Decimal
+  block_number     Decimal @db.Decimal
+  block_timestamp  Decimal @db.Decimal
+  transaction_hash Bytes
+  gs_chain         String? @map("_gs_chain")
+  gs_gid           String  @id @map("_gs_gid")
+}

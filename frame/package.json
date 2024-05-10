@@ -8,10 +8,15 @@
     "deploy": "vercel"
   },
   "dependencies": {
+    "@prisma/client": "^5.13.0",
     "frog": "latest",
     "hono": "^4"
   },
   "devDependencies": {
+    "@neynar/nodejs-sdk": "^1.21.2",
+    "dotenv": "^16.4.5",
+    "prisma": "^5.13.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vercel": "^33.6.2"
