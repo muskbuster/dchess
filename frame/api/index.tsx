@@ -35,7 +35,10 @@ app.frame("/", (c) => {
             paddingBottom="20"
             paddingRight="8"
           >
-            <Image src="/logo.png" width="96" />
+            <Image
+              src="https://virtuoso-club.s3.amazonaws.com/logo.png"
+              width="96"
+            />
           </Column>
           <Column width="4/5" alignItems="flex-start" justifyContent="center">
             <Heading color="heading" size="48" font="pixelated">
@@ -75,7 +78,10 @@ app.frame("/stats/:username", async (c) => {
             paddingBottom="20"
             paddingRight="8"
           >
-            <Image src="/logo.png" width="96" />
+            <Image
+              src="https://virtuoso-club.s3.amazonaws.com/logo.png"
+              width="96"
+            />
           </Column>
           <Column
             width="4/5"
