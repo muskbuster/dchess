@@ -6,10 +6,11 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Elo} from "./lib/Elo.sol";
-
+ import "/workspace/dchess/contracts/node_modules/fhevm/lib/TFHE.sol";
+import "/workspace/dchess/contracts/node_modules/fhevm/abstracts/EIP712WithModifier.sol";
 import {IThreeOutOfNineART} from "./interfaces/IThreeOutOfNineART.sol";
 
-contract SimpleChessToken is ERC721, Ownable {
+contract SimpleChessToken is EIP712WithModifierERC721, Ownable {
     using Strings for uint256;
 
     mapping(uint256 => uint256) public positions; // token ID maps to puzzle
@@ -24,7 +25,7 @@ contract SimpleChessToken is ERC721, Ownable {
         string memory name,
         string memory symbol,
         address artAddr
-    ) ERC721(name, symbol) Ownable(msg.sender) {
+    ) ERC721(name, symbol) EIP712WithModifier("Authorization token", "1") Ownable(msg.sender) {
         art = IThreeOutOfNineART(artAddr);
     }
 

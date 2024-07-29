@@ -15,15 +15,15 @@ const configureChainsConfig = configureChains(
   [
     jsonRpcProvider({
       rpc: (chain) => ({
-        http: process.env.NEXT_PUBLIC_ALCHEMY_HTTPS as string,
-        webSocket: process.env.NEXT_PUBLIC_ALCHEMY_WSS as string,
+        http:"https://stylish-frosty-film.base-sepolia.quiknode.pro/3d45f841c4cfa5d4fa12f20f175069ee57db1991/",
+        webSocket:"wss://stylish-frosty-film.base-sepolia.quiknode.pro/3d45f841c4cfa5d4fa12f20f175069ee57db1991/",
       }),
     }),
   ]
 );
 
 const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT as string,
+  uri:"https://gateway-arbitrum.network.thegraph.com/api/" as string,
   cache: new InMemoryCache(),
 });
 
@@ -44,7 +44,7 @@ const PrivyWrapper = ({
 
   return (
     <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}
+      appId="cltn4pfm807ld12sf83bqr3iy"
       config={{
         loginMethods: ["sms", "wallet"],
         appearance: {

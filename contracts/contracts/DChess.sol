@@ -4,7 +4,8 @@ pragma solidity ^0.8.20;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-
+import "/workspace/dchess/contracts/node_modules/fhevm/lib/TFHE.sol";
+import "/workspace/dchess/contracts/node_modules/fhevm/abstracts/EIP712WithModifier.sol";
 import {Elo} from "./lib/Elo.sol";
 
 import {IThreeOutOfNineART} from "./interfaces/IThreeOutOfNineART.sol";
@@ -12,8 +13,8 @@ import {IDChess} from "./interfaces/IDChess.sol";
 
 // import "hardhat/console.sol";
 
-contract DChess is IDChess, ERC1155, Ownable {
-    uint256 constant DEFAULT_RATING = 1000;
+contract DChess is  IDChess, ERC1155, Ownable,EIP712WithModifier {
+    euint32 DEFAULT_RATING = TFHE.asEuint32(100);
 
     uint256 public internalTokenCounter;
     uint256 public tokenMintPrice; // Token price of minting an NFT for a solved puzzle
@@ -26,19 +27,19 @@ contract DChess is IDChess, ERC1155, Ownable {
         bytes32 solution; // Hash of the solution
         mapping(address => bool) userHasSolved;
         mapping(address => bool) userHasAttempted;
-        uint256 rating;
+        euint32 rating;
         uint256 metadata; // Used to generate nft art
         address creator;
         string description; // description of the puzzle
     }
 
     mapping(uint256 => Puzzle) public puzzlesById;
-    mapping(address => uint256) public userRatings;
+    mapping(address => euint32) public userRatings;
 
     constructor(
         address initialOwner,
         address _artAddr
-    ) Ownable(initialOwner) ERC1155("") {
+    ) Ownable(initialOwner) EIP712WithModifier("Authorization token", "1") ERC1155("") {
         tokenMintPrice = 0.002 ether;
         kFactor = 50;
         platformFee = 40;
@@ -176,13 +177,8 @@ contract DChess is IDChess, ERC1155, Ownable {
 
     function adjustRatings(uint256 internalTokenId, bool success) private {
         Puzzle storage puzzle = puzzlesById[internalTokenId];
-        uint256 puzzleRating = puzzle.rating;
-        uint256 userRating = userRatings[_msgSender()];
-        if (userRating == 0) {
-            // initialize to DEFAULT if no rating found
-            userRating = DEFAULT_RATING;
-            userRatings[_msgSender()] = DEFAULT_RATING;
-        }
+        uint256 puzzleRating = TFHE.decrypt(puzzle.rating);
+        uint256 userRating = TFHE.decrypt(userRatings[_msgSender()]);
         (uint256 change, bool negative) = Elo.ratingChange(
             userRating,
             puzzleRating,
@@ -192,12 +188,14 @@ contract DChess is IDChess, ERC1155, Ownable {
         change = change / 100; // change is 2 decimal places (1501 = 15.01 ELO change)
 
         if (negative) {
-            userRatings[_msgSender()] -= change;
-            puzzle.rating += change;
+            userRating -= change;
+            puzzleRating += change;
         } else {
-            userRatings[_msgSender()] += change;
-            puzzle.rating -= change;
+            userRating+= change;
+            puzzleRating-= change;
         }
+        userRatings[_msgSender()]= TFHE.asEuint32(userRating);
+        puzzle.rating=TFHE.asEuint32(puzzleRating);
         emit PuzzleRatingChanged(internalTokenId, puzzle.rating);
         emit UserRatingChanged(_msgSender(), userRatings[_msgSender()]);
     }

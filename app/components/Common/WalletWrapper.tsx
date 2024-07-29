@@ -52,7 +52,7 @@ const WalletWrapper = ({
   useEffect(() => {
     if (!ready) return;
 
-    const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
+    const chainId = 84532 ;
     if (activeWallet) {
       (async () => await activeWallet.switchChain(chainId))();
     }
